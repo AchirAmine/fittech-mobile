@@ -63,6 +63,9 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
           onBack={() => navigation.goBack()}
         />
       }
+      footer={
+        <NeonButton title="Continue" onPress={handleContinue} style={styles.continueBtn} />
+      }
     >
       {/* Title */}
       <StepHeading title="Secure Your Account" />
@@ -119,8 +122,6 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
         {/* Password Rules */}
         <PasswordRequirements password={password} rules={PASSWORD_RULES} />
       </View>
-
-      <NeonButton title="Continue" onPress={handleContinue} style={styles.continueBtn} />
     </AppScreen>
   );
 };
@@ -128,16 +129,17 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   illustrationWrap: {
     alignSelf: 'center',
-    width: 280,
-    height: 200,
-    marginBottom: 24,
+    width: '100%',
+    maxWidth: 280,
+    height: 160,
+    marginBottom: 16,
   },
   illustration: {
     width: '100%',
     height: '100%',
   },
   form: { gap: 16 },
-  continueBtn: { marginTop: 32 },
+  continueBtn: { marginTop: 16, marginBottom: 8 },
 });
 
 export default memo(RegisterStep2Screen);

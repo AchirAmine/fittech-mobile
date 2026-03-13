@@ -12,12 +12,7 @@ export const authService = {
   register: async (userData: Partial<User> & { password?: string }): Promise<AxiosResponse<ApiResponse<{ user: User, token: string, refreshToken: string }>>> => {
     // Transform frontend data structure to match backend API
     
-    // Map date format DD/MM/YYYY to YYYY-MM-DD for backend
-    let dateOfBirth = userData.dateOfBirth;
-    if (dateOfBirth && dateOfBirth.includes('/')) {
-      const [d, m, y] = dateOfBirth.split('/');
-      dateOfBirth = `${y}-${m}-${d}`;
-    }
+    const dateOfBirth = userData.dateOfBirth;
 
     const formData = new FormData();
     formData.append('firstName', userData.firstName || '');
@@ -62,8 +57,12 @@ export const authService = {
     return axiosClient.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email });
   },
 
-  resetPassword: async (token: string, newPassword: string): Promise<AxiosResponse<ApiResponse<null>>> => {
-    return axiosClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, { token, newPassword });
+  resetPassword: async (email: string, newPassword: string): Promise<AxiosResponse<ApiResponse<null>>> => {
+    return axiosClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, { email, newPassword });
+  },
+
+  verifyResetOtp: async (email: string, otp: string): Promise<AxiosResponse<ApiResponse<null>>> => {
+    return axiosClient.post(API_ENDPOINTS.AUTH.VERIFY_OTP, { email, otp });
   },
 
   verifyEmail: async (email: string, code: string): Promise<AxiosResponse<ApiResponse<null>>> => {

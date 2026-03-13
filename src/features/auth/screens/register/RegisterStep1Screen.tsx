@@ -93,8 +93,17 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
 
         if (!isValidMonth || !isValidDay || parts[2].length !== 4 || !matchesInput) {
           newErrors.dateOfBirth = 'Invalid date';
-        } else if (inputDate >= today) {
-          newErrors.dateOfBirth = 'Birth date must be in the past';
+        } else {
+          const minAgeDate = new Date();
+          minAgeDate.setFullYear(today.getFullYear() - 80);
+          const maxAgeDate = new Date();
+          maxAgeDate.setFullYear(today.getFullYear() - 5);
+
+          if (inputDate > maxAgeDate) {
+            newErrors.dateOfBirth = 'You must be at least 5 years old';
+          } else if (inputDate < minAgeDate) {
+            newErrors.dateOfBirth = 'Age cannot exceed 80 years';
+          }
         }
       } else {
         newErrors.dateOfBirth = 'Format must be DD/MM/YYYY';
@@ -162,6 +171,9 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
           totalSteps={7}
           onBack={() => navigation.goBack()}
         />
+      }
+      footer={
+        <NeonButton title="Continue" onPress={handleContinueFixed} style={styles.continueBtn} />
       }
     >
       {/* Title */}
@@ -260,8 +272,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
         </View>
       </View>
 
-      <NeonButton title="Continue" onPress={handleContinueFixed} style={styles.continueBtn} />
-
       {/* Date Picker (Native) */}
       {showDatePicker && (
         <DateTimePicker
@@ -276,7 +286,16 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
           mode="date"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={handleDateSelect}
-          maximumDate={new Date()}
+          maximumDate={(() => {
+            const d = new Date();
+            d.setFullYear(d.getFullYear() - 5);
+            return d;
+          })()}
+          minimumDate={(() => {
+            const d = new Date();
+            d.setFullYear(d.getFullYear() - 80);
+            return d;
+          })()}
         />
       )}
     </AppScreen>
@@ -286,19 +305,19 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   avatarWrap: {
     alignSelf: 'center',
-    marginBottom: 32,
+    marginBottom: 20,
     position: 'relative',
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     borderWidth: 3,
   },
   avatarPlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },

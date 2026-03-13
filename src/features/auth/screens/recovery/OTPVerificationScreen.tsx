@@ -57,13 +57,13 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
     setLoading(true);
     setApiError(null);
     try {
-      await authService.verifyEmail(email, otpString);
-      
-      // Verification was successful
       if (mode === 'register') {
+        await authService.verifyEmail(email, otpString);
         navigation.navigate(ROUTES.AUTH.SUCCESS, { type: 'register' });
       } else {
-        navigation.navigate(ROUTES.AUTH.RESET_PASSWORD, { token: otpString });
+        // Verify OTP for password recovery
+        await authService.verifyResetOtp(email, otpString);
+        navigation.navigate(ROUTES.AUTH.RESET_PASSWORD, { email });
       }
     } catch (error: unknown) {
       logger.error('OTP verification failed:', error);
@@ -102,7 +102,7 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
       <AuthBottomSheet variant="modal" onDismiss={() => navigation.goBack()}>
         <AuthHeader
           title="Confirm Your Email"
-          subtitle={`We've sent 5 digits verification code${'\\n'}to ${email}`}
+          subtitle={`We’ve sent 6 digits verification code to ${email}`}
           showLogo={true}
           logoSize="large"        />
 

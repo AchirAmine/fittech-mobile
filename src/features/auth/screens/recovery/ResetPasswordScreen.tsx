@@ -31,10 +31,12 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
 
 const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
   const { colors } = useTheme();
-  const { token } = route.params;
+  const { email } = route.params;
   const [showPass, setShowPass] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  
+  // ... (rest of state)
 
   const RESET_PASSWORD_IMAGE = require('@features/auth/assets/reset-password-illustration.png') as number;
 
@@ -49,7 +51,7 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
     setLoading(true);
     setApiError(null);
     try {
-      await authService.resetPassword(token, data.password);
+      await authService.resetPassword(email, data.password);
       navigation.navigate(ROUTES.AUTH.SUCCESS, { 
         type: 'login',
         title: 'Password Reset Successful',
@@ -62,7 +64,7 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
     } finally {
       setLoading(false);
     }
-  }, [navigation, token]);
+  }, [navigation, email]);
 
   const toggleShowPass = useCallback(() => {
     setShowPass((prev) => !prev);

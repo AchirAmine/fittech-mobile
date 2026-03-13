@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { 
+  View, Text, StyleSheet, Image, Dimensions, ScrollView 
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
@@ -21,34 +23,40 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.content}>
-        {/* Central Illustration Area */}
-        <View style={styles.illustrationContainer}>
-          <Image 
-            source={require('@features/auth/assets/welcome-illustration.png')} 
-            style={styles.illustration}
-            resizeMode="contain"
-          />
+      <ScrollView 
+        style={styles.flex} 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.content}>
+          {/* Central Illustration Area */}
+          <View style={styles.illustrationContainer}>
+            <Image 
+              source={require('@features/auth/assets/welcome-illustration.png')} 
+              style={styles.illustration}
+              resizeMode="contain"
+            />
+          </View>
+  
+          {/* Text Segment */}
+          <View style={styles.footerContainer}>
+            <Text style={styles.headline}>
+              The best Fitness app{'\n'}of the century
+            </Text>
+            <Text style={[styles.description, { color: colors.textSecondary }]}>
+              Your place to train, connect with coaches, track your progress, and stay motivated on your fitness journey.
+            </Text>
+          </View>
+  
+          <View style={styles.buttonWrapper}>
+            <NeonButton 
+              title="Get Started" 
+              onPress={handleGetStarted} 
+              style={styles.button}
+            />
+          </View>
         </View>
-
-        {/* Text Segment */}
-        <View style={styles.footerContainer}>
-          <Text style={styles.headline}>
-            The best Fitness app{'\n'}of the century
-          </Text>
-          <Text style={[styles.description, { color: colors.textSecondary }]}>
-            Your place to train, connect with coaches, track your progress, and stay motivated on your fitness journey.
-          </Text>
-        </View>
-
-        <View style={styles.buttonWrapper}>
-          <NeonButton 
-            title="Get Started" 
-            onPress={handleGetStarted} 
-            style={styles.button}
-          />
-        </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -57,21 +65,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  flex: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
   content: {
     flex: 1,
     paddingHorizontal: 32,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 80,
+    paddingTop: 40,
     paddingBottom: 40,
     zIndex: 1,
   },
   illustrationContainer: {
     width: width,
-    height: width * 1.1,
+    height: Math.min(width * 1.1, Dimensions.get('window').height * 0.45),
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    marginBottom: 20,
   },
   illustration: {
     width: '100%',
@@ -79,6 +93,9 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    marginBottom: 24,
   },
   headline: {
     fontFamily: Theme.Typography.fontFamily.medium,

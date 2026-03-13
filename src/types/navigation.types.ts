@@ -55,7 +55,7 @@ export type AuthStackParamList = {
   // Existing auth screens
   ForgotPassword: undefined;
   OTPVerification: { email: string; mode: 'register' | 'reset' };
-  ResetPassword: { token: string };
+  ResetPassword: { email: string };
   Success: { 
     type: 'login' | 'register'; 
     title?: string;
