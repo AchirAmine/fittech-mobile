@@ -33,11 +33,11 @@ const SuccessScreen: React.FC<Props> = ({ navigation, route }) => {
   }));
 
   const navigateToHome = useCallback(() => {
-    // In a real flow, you might reset the stack or navigate to a MainTabNavigator
-    // For now we assume we just navigate to Splash or allow Redux Auth status change to route them to Main.
-    // If Auth status changes to `isAuthenticated = true`, AppNavigator usually handles the switch automatically.
-    // Right now, let's navigate them back to AuthChoice just for safety till Main is built.
-    navigation.navigate(ROUTES.AUTH.AUTH_CHOICE as any);
+    // Navigate to WELCOME or AUTH_CHOICE to ensure a clean start
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ROUTES.AUTH.WELCOME as any }],
+    });
   }, [navigation]);
 
   const defaultTitle = type === 'login' ? 'Login Successful' : 'Registration Successful';

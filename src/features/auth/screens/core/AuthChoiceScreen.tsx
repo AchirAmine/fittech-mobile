@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
-import { hexToRGBA } from '@shared/constants/colors';
 import { Logo, NeonButton } from '@shared/components/ui';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@appTypes/navigation.types';
@@ -14,7 +13,7 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'AuthChoice'>;
 const { width, height } = Dimensions.get('window');
 
 const AuthChoiceScreen: React.FC<Props> = ({ navigation }) => {
-  const { colors, isDark, toggleTheme } = useTheme();
+  const { colors } = useTheme();
 
   const handleLogin = () => {
     navigation.navigate(ROUTES.AUTH.LOGIN);
@@ -30,7 +29,6 @@ const AuthChoiceScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Top Branding Section */}
       <View style={[styles.topSection, { backgroundColor: colors.primaryMid }]}>
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.headerContent}>
@@ -40,17 +38,6 @@ const AuthChoiceScreen: React.FC<Props> = ({ navigation }) => {
               size="large"
             />
 
-            <TouchableOpacity 
-              onPress={toggleTheme} 
-              style={[styles.themeToggle, { backgroundColor: hexToRGBA(colors.white, 0.2) }]}
-              activeOpacity={0.7}
-            >
-              <Ionicons 
-                name={isDark ? 'sunny' : 'moon'} 
-                size={22} 
-                color={colors.white} 
-              />
-            </TouchableOpacity>
             
             <View style={styles.illustrationContainer}>
               <Image 
@@ -62,11 +49,9 @@ const AuthChoiceScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         </SafeAreaView>
 
-        {/* Diagonal Cut Effect */}
         <View style={[styles.diagonalCut, { backgroundColor: colors.primaryMid }]} />
       </View>
 
-      {/* Bottom Actions Section */}
       <View style={[styles.bottomSection, { backgroundColor: colors.background }]}>
         <View style={styles.buttonContainer}>
           <NeonButton 
@@ -146,17 +131,6 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     width: '100%',
-  },
-  themeToggle: {
-    position: 'absolute',
-    top: 10,
-    right: 20,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
   },
 });
 

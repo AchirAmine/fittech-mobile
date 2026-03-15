@@ -11,6 +11,8 @@ import {
 } from '@expo-google-fonts/poppins';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@shared/services/queryClient';
 import { store, persistor } from '@store/store';
 import { injectStore } from '@shared/services';
 import { AppNavigator } from '@navigation/AppNavigator';
@@ -19,6 +21,7 @@ import { ThemeProvider } from '@shared/context/ThemeContext';
 import { LightColors } from '@shared/constants/colors';
 
 injectStore(store);
+
 
 export default function App(): React.ReactElement {
   const [fontsLoaded] = useFonts({
@@ -38,14 +41,16 @@ export default function App(): React.ReactElement {
 
   return (
     <Provider store={store}>
-      <ThemeProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <StatusBar style="auto" />
-          <PersistGate loading={<SplashScreen />} persistor={persistor}>
-            <AppNavigator />
-          </PersistGate>
-        </GestureHandlerRootView>
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <StatusBar style="auto" />
+            <PersistGate loading={<SplashScreen />} persistor={persistor}>
+              <AppNavigator />
+            </PersistGate>
+          </GestureHandlerRootView>
+        </ThemeProvider>
+      </QueryClientProvider>
     </Provider>
   );
 }

@@ -10,8 +10,7 @@ export const authService = {
   },
 
   register: async (userData: Partial<User> & { password?: string }): Promise<AxiosResponse<ApiResponse<{ user: User, token: string, refreshToken: string }>>> => {
-    // Transform frontend data structure to match backend API
-    
+
     const dateOfBirth = userData.dateOfBirth;
 
     const formData = new FormData();
@@ -20,6 +19,7 @@ export const authService = {
     formData.append('email', userData.email || '');
     formData.append('password', userData.password || '');
     formData.append('gender', userData.gender || '');
+    formData.append('phoneNumber', userData.phone || '');
     formData.append('dateOfBirth', dateOfBirth || '');
     formData.append('height', String(userData.healthProfile?.heightValue || ''));
     formData.append('weight', String(userData.healthProfile?.weightValue || ''));
@@ -37,7 +37,7 @@ export const authService = {
       } as any);
     }
 
-    // Use multipart/form-data for registration
+
     return axiosClient.post(API_ENDPOINTS.AUTH.REGISTER, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

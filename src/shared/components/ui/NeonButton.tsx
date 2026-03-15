@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, StyleSheet, StyleProp, ViewStyle, TextStyle } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, StyleProp, ViewStyle, TextStyle, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
@@ -11,13 +11,16 @@ export interface NeonButtonProps {
   textStyle?: StyleProp<TextStyle>;
   outlined?: boolean;
   disabled?: boolean;
+  loading?: boolean;
   icon?: React.ComponentProps<typeof Ionicons>['name'];
 }
 
-export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, textStyle, outlined, disabled, icon }) => {
+export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, textStyle, outlined, disabled, loading, icon }) => {
   const { colors, isDark } = useTheme();
 
-  const content = (
+  const content = loading ? (
+    <ActivityIndicator color={outlined ? colors.success : colors.white} />
+  ) : (
     <>
       {icon && (
         <Ionicons 

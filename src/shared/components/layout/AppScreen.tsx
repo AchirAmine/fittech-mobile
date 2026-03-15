@@ -18,8 +18,6 @@ import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import Animated, { 
   FadeInDown, 
-  FadeInRight,
-  LinearTransition,
   FadeInUp,
   FadeOutUp
 } from 'react-native-reanimated';
@@ -102,7 +100,6 @@ export const AppScreen: React.FC<AppScreenProps> = ({
         )}
       </View>
 
-      {/* Error Banner */}
       {errorMessage && (
         <Animated.View 
           entering={FadeInUp} 
@@ -119,7 +116,6 @@ export const AppScreen: React.FC<AppScreenProps> = ({
         </Animated.View>
       )}
 
-      {/* Loading Overlay */}
       {isLoading && (
         <View style={[styles.loadingOverlay, { backgroundColor: hexToRGBA(colors.background, 0.7) }]}>
           <Loader />

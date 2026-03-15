@@ -4,34 +4,18 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { useAppDispatch } from '@shared/hooks/useReduxHooks';
-import { useTheme } from '@shared/hooks/useTheme';
-import { Theme } from '@shared/constants/theme';
+
 import { getErrorMessage } from '@shared/constants/errorMessages';
 import { Input, NeonButton } from '@shared/components';
 import { AuthSelectionTemplate, SelectableCard } from '@features/auth/components';
 import { register } from '@features/auth/store/authActions';
 import logger from '@shared/utils/logger';
-import { Ionicons } from '@expo/vector-icons';
+import { HEALTH_CONCERNS } from '@shared/constants/healthConstants';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep7'>;
 
-interface HealthConcernOption {
-  id: string;
-  label: string;
-  icon: keyof typeof Ionicons.glyphMap;
-}
-
-const HEALTH_CONCERNS: HealthConcernOption[] = [
-  { id: 'diabetes', label: 'Diabetes', icon: 'water-outline' },
-  { id: 'heart', label: 'Heart conditions', icon: 'heart-outline' },
-  { id: 'joint', label: 'Joint problems', icon: 'body-outline' },
-  { id: 'asthma', label: 'Asthma', icon: 'pulse-outline' },
-  { id: 'none', label: 'None of the above', icon: 'ban-outline' },
-  { id: 'other', label: 'Other health concerns', icon: 'medical-outline' },
-];
 
 const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
-  const { colors } = useTheme();
   const { data: prevData } = route.params;
   const dispatch = useAppDispatch();
 

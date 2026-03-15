@@ -3,7 +3,6 @@ import { createNativeStackNavigator, NativeStackNavigationOptions } from '@react
 import { AuthStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 
-// Auth Screens
 import SplashScreen from '@features/auth/screens/core/SplashScreen';
 import WelcomeScreen from '@features/auth/screens/core/WelcomeScreen';
 import AuthChoiceScreen from '@features/auth/screens/core/AuthChoiceScreen';
@@ -40,7 +39,6 @@ export const AuthNavigator = () => (
     <AuthStack.Screen name={ROUTES.AUTH.WELCOME} component={WelcomeScreen} />
     <AuthStack.Screen name={ROUTES.AUTH.AUTH_CHOICE} component={AuthChoiceScreen} />
 
-    {/* Multi-step signup flow */}
     <AuthStack.Screen name={ROUTES.AUTH.REGISTER_STEP1} component={RegisterStep1Screen} />
     <AuthStack.Screen name={ROUTES.AUTH.REGISTER_STEP2} component={RegisterStep2Screen} />
     <AuthStack.Screen name={ROUTES.AUTH.REGISTER_STEP3} component={RegisterStep3Screen} />

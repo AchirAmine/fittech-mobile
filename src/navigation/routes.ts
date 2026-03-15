@@ -19,6 +19,8 @@ export const ROUTES = {
   },
   MAIN: {
     HOME: 'Home',
+    ACCOUNT: 'Account',
     PROFILE: 'Profile',
+    HEALTH_PROFILE: 'HealthProfile',
   },
 } as const;

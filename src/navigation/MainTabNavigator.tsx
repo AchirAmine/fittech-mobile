@@ -1,14 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
 
 import { ROUTES } from '@navigation/routes';
 import { MainTabParamList } from '@appTypes/navigation.types';
 
-import { HomeScreen } from '@features/home';
-import { ProfileScreen } from '@features/profile';
+import { HomeScreen } from '@screens/HomeScreen';
+import { AccountNavigator } from './AccountNavigator';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -28,7 +27,7 @@ export const MainTabNavigator = () => {
           let iconName: keyof typeof Ionicons.glyphMap = 'home';
           if (route.name === ROUTES.MAIN.HOME) {
             iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === ROUTES.MAIN.PROFILE) {
+          } else if (route.name === ROUTES.MAIN.ACCOUNT) {
             iconName = focused ? 'person' : 'person-outline';
           }
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -36,7 +35,14 @@ export const MainTabNavigator = () => {
       })}
     >
       <Tab.Screen name={ROUTES.MAIN.HOME} component={HomeScreen} />
-      <Tab.Screen name={ROUTES.MAIN.PROFILE} component={ProfileScreen} />
+      <Tab.Screen 
+        name={ROUTES.MAIN.ACCOUNT} 
+        component={AccountNavigator} 
+        options={{ 
+          tabBarLabel: 'Account',
+          headerShown: false 
+        }} 
+      />
     </Tab.Navigator>
   );
 };

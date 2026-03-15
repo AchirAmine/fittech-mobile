@@ -21,6 +21,7 @@ export interface Member {
   gender: string;
   dateOfBirth: string;
   email: string;
+  phoneNumber?: string;
   height: number;
   weight: number;
   fitnessObjective: string;

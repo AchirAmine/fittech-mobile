@@ -1,13 +1,14 @@
 import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { useColorScheme, Appearance } from 'react-native';
+import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LightColors, DarkColors, ColorTheme } from '@shared/constants/colors';
 import logger from '@shared/utils/logger';
 
-type ThemeType = 'light' | 'dark';
+type ThemeType = 'light' | 'dark' | 'system';
 
 interface ThemeContextType {
-  theme: ThemeType;
+  theme: ThemeType; // Current preference
+  resolvedTheme: 'light' | 'dark'; // Actual active theme
   colors: ColorTheme;
   isDark: boolean;
   toggleTheme: () => void;
@@ -20,30 +21,25 @@ const THEME_STORAGE_KEY = '@fittech_theme_preference';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const systemColorScheme = useColorScheme();
-  const [theme, setThemeState] = useState<ThemeType>(systemColorScheme || 'light');
+  const [themePreference, setThemePreference] = useState<ThemeType>('system');
 
   // Load saved theme on mount
   useEffect(() => {
     const loadTheme = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-        if (savedTheme === 'light' || savedTheme === 'dark') {
-          setThemeState(savedTheme);
-        } else if (systemColorScheme) {
-          setThemeState(systemColorScheme);
+        if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system') {
+          setThemePreference(savedTheme as ThemeType);
         }
       } catch (error) {
         logger.error('Failed to load theme preference:', error);
       }
     };
     loadTheme();
-  }, [systemColorScheme]);
+  }, []);
 
-  // Handle system theme changes if no manual override is active (or logic as preferred)
-  // For simplicity, we respect manual override first, then system.
-  
   const setTheme = useCallback(async (newTheme: ThemeType) => {
-    setThemeState(newTheme);
+    setThemePreference(newTheme);
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, newTheme);
     } catch (error) {
@@ -52,20 +48,30 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const toggleTheme = useCallback(() => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
+    // If it was light/dark, toggle it. If it was system, toggle based on current resolved theme.
+    const currentResolved = themePreference === 'system' ? (systemColorScheme || 'light') : themePreference;
+    const newTheme = currentResolved === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-  }, [theme, setTheme]);
+  }, [themePreference, systemColorScheme, setTheme]);
 
-  const colors = useMemo(() => (theme === 'dark' ? DarkColors : LightColors), [theme]);
-  const isDark = theme === 'dark';
+  const resolvedTheme = useMemo((): 'light' | 'dark' => {
+    if (themePreference === 'system') {
+      return systemColorScheme || 'light';
+    }
+    return themePreference;
+  }, [themePreference, systemColorScheme]);
+
+  const colors = useMemo(() => (resolvedTheme === 'dark' ? DarkColors : LightColors), [resolvedTheme]);
+  const isDark = resolvedTheme === 'dark';
 
   const value = useMemo(() => ({
-    theme,
+    theme: themePreference,
+    resolvedTheme,
     colors,
     isDark,
     toggleTheme,
     setTheme,
-  }), [theme, colors, isDark, toggleTheme, setTheme]);
+  }), [themePreference, resolvedTheme, colors, isDark, toggleTheme, setTheme]);
 
   return (
     <ThemeContext.Provider value={value}>

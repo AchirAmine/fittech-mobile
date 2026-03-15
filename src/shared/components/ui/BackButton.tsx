@@ -1,8 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View, StyleProp, ViewStyle } from 'react-native';
+import { TouchableOpacity, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
-import { Theme } from '@shared/constants/theme';
 
 interface BackButtonProps {
   onPress: () => void;

@@ -8,12 +8,16 @@ export interface User {
   displayName?: string;
   photoUrl?: string;
   photoLocalUri?: string | null;
-  profilePicture?: string;
+  profilePicture?: any;
   gender?: 'male' | 'female' | string;
   phone?: string;
   memberSince?: string;
   createdAt?: string;
   dateOfBirth?: string;
+  height?: number;
+  weight?: number;
+  fitnessObjective?: string;
+  medicalRestrictions?: string;
   status?: string;
   role?: string;
   subscription?: {

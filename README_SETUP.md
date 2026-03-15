@@ -135,25 +135,6 @@ src/
 
 ---
 
-## Responsive Scaling
-
-The project includes `src/shared/utils/responsive.ts` with three scaling utilities:
-
-```ts
-import { scale, verticalScale, moderateScale } from '@shared/utils/responsive';
-
-// Use for horizontal sizes (width, padding-left/right)
-width: scale(200)
-
-// Use for vertical sizes (height, padding-top/bottom)  
-height: verticalScale(100)
-
-// Use for font sizes (gentle, mixed scaling)
-fontSize: moderateScale(16)
-```
-
-Base reference: **375pt width** (iPhone 6/7/8 logical pixels).
-
 ---
 
 ## Auth Screens Flow

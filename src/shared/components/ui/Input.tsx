@@ -1,4 +1,4 @@
-import React, { memo, useRef, useCallback, useState } from 'react';
+import React, { memo, useRef, useCallback, useState, useEffect } from 'react';
 import {
   View, TextInput, Text, StyleSheet, TextInputProps, TouchableOpacity,
   Animated,
@@ -14,7 +14,11 @@ export interface InputProps extends TextInputProps {
   rightIcon?: React.ComponentProps<typeof Ionicons>['name'];
   onRightIconPress?: () => void;
   onIconPress?: () => void;
+  rightText?: string;
+  onRightTextPress?: () => void;
   containerStyle?: object;
+  labelBg?: string;
+  value?: string;
 }
 
 export const Input: React.FC<InputProps> = memo(({
@@ -24,11 +28,15 @@ export const Input: React.FC<InputProps> = memo(({
   rightIcon,
   onRightIconPress,
   onIconPress,
+  rightText,
+  onRightTextPress,
   containerStyle,
+  labelBg,
   value,
   onFocus,
   onBlur,
   placeholder,
+  editable = true,
   ...rest
 }) => {
   const { colors } = useTheme();
@@ -56,6 +64,14 @@ export const Input: React.FC<InputProps> = memo(({
     }
     onBlur?.(e);
   }, [onBlur, value, animateLabel]);
+
+  useEffect(() => {
+    if (value || isFocused) {
+      animateLabel(1);
+    } else {
+      animateLabel(0);
+    }
+  }, [value, isFocused, animateLabel]);
   
   const hasValue = Boolean(value) || isFocused;
 
@@ -74,48 +90,64 @@ export const Input: React.FC<InputProps> = memo(({
       outputRange: [15, 12],
     }),
     color: isFocused || hasValue ? colors.primary : colors.textMuted,
-    backgroundColor: colors.background,
+    backgroundColor: labelBg || colors.background,
     paddingHorizontal: 4,
     fontFamily: Theme.Typography.fontFamily.medium,
     zIndex: 10,
   };
 
+  const content = (
+    <>
+      {icon && (
+        onIconPress ? (
+          <TouchableOpacity onPress={onIconPress} style={styles.inputIcon} disabled={!editable}>
+            <Ionicons name={icon} size={20} color={editable ? colors.primary : colors.primaryMid} />
+          </TouchableOpacity>
+        ) : (
+          <Ionicons name={icon} size={20} color={editable ? colors.primary : colors.primaryMid} style={styles.inputIcon} />
+        )
+      )}
+
+      {label && (
+        <Animated.Text style={labelStyle}>
+          {label}
+        </Animated.Text>
+      )}
+
+      <TextInput
+        style={[styles.input, { color: editable ? colors.textPrimary : colors.primary, paddingTop: label ? 12 : 8 }]}
+        placeholderTextColor="transparent"
+        value={value}
+        onFocus={editable ? handleFocus : undefined}
+        onBlur={handleBlur}
+        placeholder={label ? undefined : placeholder}
+        editable={editable}
+        {...rest}
+      />
+
+      {rightIcon && (
+        <TouchableOpacity onPress={onRightIconPress} style={styles.rightIconBtn}>
+          <Ionicons name={rightIcon} size={20} color={hasValue ? colors.primary : colors.textMuted} />
+        </TouchableOpacity>
+      )}
+    </>
+  );
 
   return (
     <View style={containerStyle}>
       <View style={[
         styles.inputWrap,
-        {  borderColor: error ? colors.error : (hasValue ? colors.primaryMid : colors.border) }
+        {  
+          borderColor: error ? colors.error : (hasValue ? colors.primaryMid : colors.border),
+          opacity: 1,
+          backgroundColor: 'transparent',
+        }
       ]}>
-        {icon && (
-          onIconPress ? (
-            <TouchableOpacity onPress={onIconPress} style={styles.inputIcon}>
-              <Ionicons name={icon} size={20} color={colors.primary} />
-            </TouchableOpacity>
-          ) : (
-            <Ionicons name={icon} size={20} color={colors.primary} style={styles.inputIcon} />
-          )
-        )}
+        {content}
 
-        {label && (
-          <Animated.Text style={labelStyle}>
-            {label}
-          </Animated.Text>
-        )}
-
-        <TextInput
-          style={[styles.input, { color: colors.textPrimary, paddingTop: label ? 12 : 8 }]}
-          placeholderTextColor="transparent"
-          value={value}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          placeholder={label ? undefined : placeholder}
-          {...rest}
-        />
-
-        {rightIcon && (
-          <TouchableOpacity onPress={onRightIconPress} style={styles.rightIconBtn}>
-            <Ionicons name={rightIcon} size={20} color={hasValue ? colors.primary : colors.textMuted} />
+        {rightText && (
+          <TouchableOpacity onPress={onRightTextPress} style={styles.rightTextBtn}>
+            <Text style={[styles.rightText, { color: colors.primary }]}>{rightText}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -139,6 +171,14 @@ const styles = StyleSheet.create({
   },
   rightIconBtn: {
     padding: 4,
+  },
+  rightTextBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  rightText: {
+    fontFamily: Theme.Typography.fontFamily.semiBold,
+    fontSize: 14,
   },
   input: {
     flex: 1,

@@ -36,8 +36,6 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
   
-  // ... (rest of state)
-
   const RESET_PASSWORD_IMAGE = require('@features/auth/assets/reset-password-illustration.png') as number;
 
   const { control, handleSubmit, watch, formState: { errors } } = useForm({

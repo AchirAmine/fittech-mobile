@@ -1,28 +1,13 @@
 import React, { useState, useCallback, memo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { Input } from '@shared/components';
 import { AuthSelectionTemplate, SelectableCard } from '@features/auth/components';
+import { GOALS } from '@shared/constants/healthConstants';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep5'>;
-
-interface GoalOption {
-  id: string;
-  label: string;
-  icon: keyof typeof Ionicons.glyphMap;
-}
-
-const GOALS: GoalOption[] = [
-  { id: 'lose_weight', label: 'Lose weight', icon: 'fitness-outline' },
-  { id: 'build_strength', label: 'Build Strength', icon: 'barbell-outline' },
-  { id: 'gain_weight', label: 'Gain Weight', icon: 'barbell-outline' },
-  { id: 'reduce_stress', label: 'Reduce Stress', icon: 'body-outline' },
-  { id: 'improve_health', label: 'Improve Health', icon: 'heart-outline' },
-  { id: 'other', label: 'Other', icon: 'create-outline' },
-];
 
 const RegisterStep5Screen: React.FC<Props> = ({ navigation, route }) => {
   const { data: prevData } = route.params;
@@ -62,7 +47,6 @@ const RegisterStep5Screen: React.FC<Props> = ({ navigation, route }) => {
       error={error}
       onDismissError={() => setError('')}
     >
-      {/* Goals */}
       {GOALS.map((goal) => (
         <SelectableCard
           key={goal.id}

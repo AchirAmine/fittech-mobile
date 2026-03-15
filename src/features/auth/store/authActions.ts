@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { authService } from "@features/auth/services/authService";
-import { memberService } from "@shared/services";
 import { User } from "@appTypes/index";
 
 export const login = createAsyncThunk<
@@ -28,14 +27,3 @@ export const register = createAsyncThunk<
   }
 });
 
-export const getMe = createAsyncThunk<User>(
-  "auth/getMe",
-  async (_, { rejectWithValue }) => {
-    try {
-      const member = await memberService.getMe();
-      return member as unknown as User;
-    } catch (error) {
-      return rejectWithValue(error);
-    }
-  },
-);

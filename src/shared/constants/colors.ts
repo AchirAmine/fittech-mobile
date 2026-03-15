@@ -1,16 +1,14 @@
 const Palette = {
-  // Brand Colors (Deep Blue)
   primary: {
     100: '#E8EEF8',
-    200: '#8BB5F0', // primaryLight (dark)
+    200: '#8BB5F0', 
     300: '#4A7FD4',
-    400: '#6E9BEC', // primaryMid (dark)
+    400: '#6E9BEC', 
     500: '#2E5FBF',
-    700: '#1B3A7A', // Primary Brand
+    700: '#1B3A7A', 
     900: '#0D1F4A',
   },
 
-  // Functional/Status Colors
   semantic: {
     success: '#00C897',
     error:   '#FF3B30',
@@ -18,23 +16,21 @@ const Palette = {
     info:    '#007AFF',
   },
 
-  // Neutrals/Base Colors
   neutral: {
-    0:    '#FFFFFF', // pureWhite
-    10:   '#E8EDF8', // textPrimary (dark)
-    50:   '#F4F6FB', // lightBackground
-    100:  '#E0E6F0', // lightBorder
-    200:  '#7A92C4', // textSecondary
-    500:  '#999999', // textMuted (light)
-    600:  '#2A3A5A', // textMuted (dark)
-    800:  '#162850', // cardSecondary (dark)
-    850:  '#0F1E3D', // card (dark)
-    900:  '#060D1F', // darkBackground
-    950:  '#0A1628', // textPrimary (light)
-    1000: '#000000', // pureBlack
+    0:    '#FFFFFF', 
+    10:   '#E8EDF8', 
+    50:   '#F4F6FB', 
+    100:  '#E0E6F0', 
+    200:  '#7A92C4', 
+    500:  '#999999', 
+    600:  '#2A3A5A', 
+    800:  '#162850', 
+    850:  '#0F1E3D', 
+    900:  '#060D1F', 
+    950:  '#0A1628', 
+    1000: '#000000', 
   },
 
-  // Translucent/Overlays
   translucent: {
     white:   (opacity: number) => `rgba(255, 255, 255, ${opacity})`,
     black:   (opacity: number) => `rgba(0, 0, 0, ${opacity})`,
@@ -47,33 +43,27 @@ const Palette = {
  * Ensures Light and Dark modes remain synchronized.
  */
 export interface ThemeColors {
-  // Backgrounds
   background:    string;
   card:          string;
   cardSecondary: string;
 
-  // Primary
   primary:      string;
   primaryMid:   string;
   primaryLight: string;
   primaryDark:  string;
 
-  // Text
   textPrimary:   string;
   textSecondary: string;
   textMuted:     string;
 
-  // Status
   success: string;
   error:   string;
   warning: string;
   info:    string;
 
-  // UI Elements
   border:  string;
   shadow:  string;
 
-  // Base
   white:       string;
   black:       string;
   transparent: 'transparent';

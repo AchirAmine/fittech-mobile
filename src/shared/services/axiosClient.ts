@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { ApiError } from '@appTypes/api.types';
 
-// Minimal interface describing the shape we need from the Redux store
+
 interface StoreShape {
   getState(): {
     auth: {
@@ -31,9 +31,7 @@ interface ApiErrorResponseData {
   field?: string | null;
 }
 
-/**
- * Handle API Errors consistently (network, timeout, 4xx, 5xx)
- */
+
 export const handleApiError = (error: AxiosError<ApiErrorResponseData>): ApiError => {
   const formattedError: ApiError = {
     message: 'An unexpected error occurred',
@@ -61,7 +59,7 @@ export const handleApiError = (error: AxiosError<ApiErrorResponseData>): ApiErro
   return formattedError;
 };
 
-// Request interceptor: attach token
+
 axiosClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (store) {
@@ -76,7 +74,7 @@ axiosClient.interceptors.request.use(
   (error: AxiosError<ApiErrorResponseData>) => Promise.reject(handleApiError(error))
 );
 
-// Response interceptor: handle 401 and token refresh
+
 axiosClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError<ApiErrorResponseData>) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
@@ -14,8 +14,6 @@ interface LogoProps {
 
 export const Logo: React.FC<LogoProps> = ({ 
   size = 'medium', 
-  showText = true, 
-  color,
   textColor,
   style 
 }) => {

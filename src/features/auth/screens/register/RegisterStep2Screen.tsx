@@ -5,11 +5,10 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
-import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
-import { NeonButton, Input, BackButton, AppScreen } from '@shared/components';
+import { NeonButton, Input, AppScreen } from '@shared/components';
 import {
-  StepIndicator, StepHeading, PasswordRequirements, PasswordRule, RegisterStepHeader,
+  StepHeading, PasswordRequirements, PasswordRule, RegisterStepHeader,
 } from '@features/auth/components';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep2'>;
@@ -22,7 +21,7 @@ const PASSWORD_RULES: PasswordRule[] = [
 ];
 
 const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
-  const { colors } = useTheme();
+  useTheme();
   const { data: prevData } = route.params;
 
   const [email, setEmail] = useState('');
@@ -67,10 +66,10 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
         <NeonButton title="Continue" onPress={handleContinue} style={styles.continueBtn} />
       }
     >
-      {/* Title */}
+
       <StepHeading title="Secure Your Account" />
 
-      {/* Security Illustration */}
+
       <View style={styles.illustrationWrap}>
         <Image
           source={require('../../assets/secure-account-illustration.png')}
@@ -79,9 +78,9 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
         />
       </View>
 
-      {/* Form */}
+
       <View style={styles.form}>
-        {/* Email */}
+
         <Input
           label="Email"
           icon="mail-outline"
@@ -93,7 +92,7 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
           error={errors.email}
         />
 
-        {/* Password */}
+
         <Input
           label="Password"
           icon="lock-closed-outline"
@@ -106,7 +105,7 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
           error={errors.password}
         />
 
-        {/* Confirm Password */}
+
         <Input
           label="Confirm Password"
           icon="lock-closed-outline"
@@ -119,7 +118,7 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
           error={errors.confirmPassword}
         />
 
-        {/* Password Rules */}
+
         <PasswordRequirements password={password} rules={PASSWORD_RULES} />
       </View>
     </AppScreen>

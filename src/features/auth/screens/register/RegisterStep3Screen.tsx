@@ -8,7 +8,7 @@ import { StepIndicator, StepHeading, ValuePicker } from '@features/auth/componen
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep3'>;
 
-const generateWeights = (unit: 'kg') => {
+const generateWeights = () => {
   return Array.from({ length: 221 }, (_, i) => 30 + i); // 30–250
 };
 
@@ -16,7 +16,7 @@ const RegisterStep3Screen: React.FC<Props> = ({ navigation, route }) => {
   const { data: prevData } = route.params;
 
   const unit = 'kg';
-  const weights = generateWeights(unit);
+  const weights = generateWeights();
   const defaultIndex = weights.indexOf(75);
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex >= 0 ? defaultIndex : 0);
 

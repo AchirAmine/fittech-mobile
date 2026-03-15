@@ -1,76 +1,93 @@
 # FitTech - Smart Fitness Management 🏋️‍♂️📱
 
-FitTech is a professional, high-performance fitness management mobile application built with **React Native** and **Expo**. It provides a seamless experience for gym members to track their progress, book classes, and manage their health profile with a cutting-edge UI/UX.
+[![React Native](https://img.shields.io/badge/React_Native-0.81.5-61DAFB?logo=react&logoColor=black)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-54-000020?logo=expo&logoColor=white)](https://expo.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![License](https://img.shields.io/badge/License-Private-red.svg)](LICENSE)
+
+FitTech is a professional, high-performance fitness management mobile application. Engineered for speed and visual excellence, it provides gym members with a premium interface to track health metrics, manage personal goals, and navigate their fitness journey with ease.
 
 ---
 
 ## ✨ Key Features
 
-- **🔐 Advanced Authentication Flow**: Secure Login and a sophisticated 7-step Multi-step Registration process.
-- **🛡️ Secure Token Management**: Automatic token refresh and secure sensitive data storage.
-- **🎨 Premium UI/UX**: Built with custom design tokens, dark/light mode support, and smooth micro-animations using React Native Reanimated.
-- **📊 Personalized Health Profiles**: Goal tracking, body metrics integration, and medical restriction management.
-- **🚀 Scalable Architecture**: Implements a feature-sliced architecture for maximum maintainability.
+### 🔐 Sophisticated Authentication
+- **Multi-Step Onboarding**: A logic-heavy 7-step registration flow to capture precise health data (metrics, goals, activities).
+- **Secure Access**: JWT-based authentication with automatic token refreshing and ultra-secure device storage.
+
+### 🎨 Premium UI/UX Experience
+- **Unified Appearance**: A single, streamlined selector for **Light**, **Dark**, and **Auto** (System) modes.
+- **Dynamic Animations**: Smooth transitions and micro-animations built with **React Native Reanimated**.
+- **Modern Typography**: Carefully selected Google Fonts (Poppins, Bebas Neue) for a state-of-the-art aesthetic.
+
+### 📊 Health & Profile Management
+- **Metric Tracking**: Integrated management of height, weight, and fitness objectives.
+- **Interactive Selectors**: Custom-built UI components for medical restrictions and goal selection.
+
+---
 
 ## 🛠️ Technology Stack
 
 | Layer | Technology |
 | :--- | :--- |
-| **Core** | [React Native](https://reactnative.dev/) + [Expo](https://expo.dev/) |
-| **State Management** | [Redux Toolkit](https://redux-toolkit.js.org/) + [Redux Persist](https://github.com/rt2zz/redux-persist) |
-| **Language** | [TypeScript](https://www.typescriptlang.org/) |
-| **Navigation** | [React Navigation (Stack & Tabs)](https://reactnavigation.org/) |
-| **Styling** | Vanilla StyleSheet + Custom Theme System |
-| **Animations** | [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) |
-| **Networking** | [Axios](https://axios-http.com/) with Interceptors |
-| **Typography** | Poppins (via [Google Fonts](https://fonts.google.com/)) |
+| **Framework** | [React Native](https://reactnative.dev/) + [Expo SDK 54](https://expo.dev/) |
+| **Logic** | [TypeScript](https://www.typescriptlang.org/) (Strict Mode) |
+| **State** | [Redux Toolkit](https://redux-toolkit.js.org/) + [Redux Persist](https://github.com/rt2zz/redux-persist) |
+| **Data Fetching** | [TanStack Query v5](https://tanstack.com/query/latest) |
+| **Navigation** | [React Navigation v7](https://reactnavigation.org/) |
+| **Animations** | [React Native Reanimated v4](https://docs.swmansion.com/react-native-reanimated/) |
+| **Forms** | [React Hook Form](https://react-hook-form.com/) + [Yup Validation](https://github.com/jquense/yup) |
 
-## 🏗️ Architecture Highlights
+---
 
-The project follows a **Feature-Sliced Design (FSD)** approach to ensure scalability:
-- **`src/features`**: Domain-driven modules (Auth, Member, etc.).
-- **`src/shared`**: Reusable infrastructure (Hooks, Services, UI Components, Utils).
-- **`src/navigation`**: Centralized routing logic with strong typing.
-- **`src/store`**: Global state persistence with secure storage.
+## 🏗️ Architecture Design
+
+The project follows a **Feature-Sliced Design (FSD)** approach, ensuring clean separation of concerns and effortless scalability:
+
+- **`src/features`**: Core business domains like `Auth`, `Account`, and `Home`.
+- **`src/shared`**: Cross-feature infrastructure (UI components, themes, hooks, services).
+- **`src/navigation`**: Type-safe routing system for both Tab and Stack navigators.
+- **`src/store`**: Persistent global state with encrypted storage adapters.
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- npm or yarn
-- Expo Go (on your mobile device or emulator)
+- **Node.js** (v18 or higher)
+- **Expo Go** app on your physical device or a configured emulator.
 
-### Installation
-1.  **Clone the repository**:
-    ```bash
-    git clone https://github.com/AchirAmine/fittech-app.git
-    cd fittech-app
-    ```
-2.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
-3.  **Set up Environment Variables**:
-    Create a `.env` file in the root and add your API URL:
-    ```env
-    EXPO_PUBLIC_API_URL=https://your-api-endpoint.com/api
-    ```
-4.  **Start the application**:
-    ```bash
-    npm start
-    ```
+### Installation & Launch
 
-> 💡 **Developer Note:** For detailed technical documentation including architecture, Redux/JWT flow, and project structure, please refer to the [Setup & Technical Guide](./README_SETUP.md).
+1. **Clone & Install**:
+   ```bash
+   git clone https://github.com/AchirAmine/fittech-app.git
+   cd fittech-app
+   npm install
+   ```
+
+2. **Environment Configuration**:
+   Create a `.env` file in the root directory:
+   ```env
+   EXPO_PUBLIC_API_URL=https://your-api-endpoint.com/api
+   ```
+
+3. **Run Application**:
+   ```bash
+   npx expo start
+   ```
+
+---
 
 ## 📸 Screenshots
 
-| Auth Choice | Login | Register 1 | Register 2 |
+| Auth Choice | Login | Register | Account |
 | :---: | :---: | :---: | :---: |
-| ![Auth Choice](./docs/images/auth_choice.jpg) | ![Login](./docs/images/login.jpg) | ![Register 1](./docs/images/register_1.jpg) | ![Register 2](./docs/images/register_2.jpg) |
-
-## 📄 License
-This project is private property of **FitTech**. All rights reserved.
+| ![Auth](./docs/images/auth_choice.jpg) | ![Login](./docs/images/login.jpg) | ![Register](./docs/images/register_1.jpg) | ![Account](./docs/images/account.jpg) |
 
 ---
+
+## 📄 License & Ownership
+This project is the private property of **FitTech**. Unauthorized copying or distribution is strictly prohibited.
 
 Built with ❤️ by [Achir Mohamed Amine]

@@ -1,6 +1,14 @@
 import React from 'react';
-import { 
-  View, Text, StyleSheet, Image, Dimensions, ScrollView 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  ImageBackground,
+  StatusBar,
+  Image,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@shared/hooks/useTheme';

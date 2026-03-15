@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { queryClient } from "@shared/services/queryClient";
 import {
   handlePending,
   handleFulfilled,
@@ -7,7 +8,7 @@ import {
 } from "@store/helpers";
 import { User } from "@appTypes/index";
 import { AuthState } from "./authTypes";
-import { login, register, getMe } from "./authActions";
+import { login, register } from "./authActions";
 
 const initialState: AuthState = {
   user: null,
@@ -36,6 +37,8 @@ const authSlice = createSlice({
       state.isAuthenticated = !!token;
     },
     logout: (state) => {
+      queryClient.clear();
+      
       state.user = null;
       state.token = null;
       state.refreshToken = null;
@@ -49,7 +52,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Login
       .addCase(login.pending, (state) => {
         handlePending(state);
       })
@@ -74,7 +76,6 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         handleRejected(state, action);
       })
-      // Register
       .addCase(register.pending, (state) => {
         handlePending(state);
       })
@@ -90,17 +91,6 @@ const authSlice = createSlice({
       .addCase(register.rejected, (state, action) => {
         handleRejected(state, action);
       })
-      // Get Me
-      .addCase(getMe.pending, (state) => {
-        handlePending(state);
-      })
-      .addCase(getMe.fulfilled, (state, action: PayloadAction<User>) => {
-        handleFulfilled(state);
-        state.user = action.payload;
-      })
-      .addCase(getMe.rejected, (state, action) => {
-        handleRejected(state, action);
-      });
   },
 });
 
