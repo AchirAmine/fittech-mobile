@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
+import { ThemeColors } from '@shared/constants/colors';
 
 interface MetricCardProps {
   label: string;
@@ -9,7 +10,7 @@ interface MetricCardProps {
   unit: string;
   icon: keyof typeof Ionicons.glyphMap;
   onChange: (val: string) => void;
-  colors: any;
+  colors: ThemeColors;
   isDark: boolean;
   isEditing: boolean;
 }

@@ -3,12 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInRight } from 'react-native-reanimated';
 import { HEALTH_CONCERNS } from '@shared/constants/healthConstants';
+import { ThemeColors } from '@shared/constants/colors';
 
 interface RestrictionSelectorProps {
   selectedRestrictions: string[];
   isEditing: boolean;
   onToggle: (id: string) => void;
-  colors: any;
+  colors: ThemeColors;
   isDark: boolean;
 }
 
@@ -42,7 +43,7 @@ export const RestrictionSelector = ({ selectedRestrictions, isEditing, onToggle,
               activeOpacity={isEditing ? 0.7 : 1}
             >
               <View style={[styles.cardIcon, { backgroundColor: concern.color + '20' }]}>
-                <Ionicons name={concern.icon as any} size={24} color={concern.color} />
+                <Ionicons name={concern.icon as keyof typeof Ionicons.glyphMap} size={24} color={concern.color} />
               </View>
               <View style={styles.cardText}>
                 <Text style={[styles.cardLabel, { color: colors.textPrimary }]}>{concern.label}</Text>

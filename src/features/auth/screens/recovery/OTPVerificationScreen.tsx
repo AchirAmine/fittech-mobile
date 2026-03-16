@@ -2,15 +2,15 @@ import React, { useState, useEffect, useCallback, memo } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
 } from 'react-native';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { object, string } from 'yup';
 import { Theme } from '@shared/constants/theme';
 import { ROUTES } from '@navigation/routes';
 import {
   NeonButton,
-  BackButton,
   AppScreen,
   Input,
-  LoadingOverlay,
-  ErrorBanner,
 } from '@shared/components';
 import { AuthBottomSheet, IllustrationPlaceholder, AuthHeader } from '@features/auth/components';
 import { getErrorMessage } from '@shared/constants/errorMessages';
@@ -26,15 +26,27 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'OTPVerification'>;
 const OTP_LENGTH = 6;
 const OTP_IMAGE = require('@features/auth/assets/otp-verification-illustration.png') as number;
 
+const otpSchema = object().shape({
+  otp: string()
+    .required('Verification code is required')
+    .matches(/^\d{6}$/, 'Code must be exactly 6 digits'),
+});
+
+type OTPFormValues = { otp: string };
+
 const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
   const { colors } = useTheme();
   const { email, mode } = route.params;
 
-  const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [timer, setTimer] = useState<number>(183);
   const [loading, setLoading] = useState<boolean>(false);
   const [resendLoading, setResendLoading] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
+
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<OTPFormValues>({
+    resolver: yupResolver(otpSchema),
+    defaultValues: { otp: '' },
+  });
 
   useEffect(() => {
     if (timer <= 0) return;
@@ -50,19 +62,15 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const handleVerify = useCallback(async () => {
-    const otpString = otp.join('');
-    if (otpString.length < OTP_LENGTH) return;
-
+  const onSubmit = useCallback(async (data: OTPFormValues) => {
     setLoading(true);
     setApiError(null);
     try {
       if (mode === 'register') {
-        await authService.verifyEmail(email, otpString);
+        await authService.verifyEmail(email, data.otp);
         navigation.navigate(ROUTES.AUTH.SUCCESS, { type: 'register' });
       } else {
-        // Verify OTP for password recovery
-        await authService.verifyResetOtp(email, otpString);
+        await authService.verifyResetOtp(email, data.otp);
         navigation.navigate(ROUTES.AUTH.RESET_PASSWORD, { email });
       }
     } catch (error: unknown) {
@@ -71,63 +79,69 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
     } finally {
       setLoading(false);
     }
-  }, [navigation, email, otp, mode]);
+  }, [navigation, email, mode]);
 
   const handleResend = useCallback(async () => {
     if (timer > 0) return;
     setResendLoading(true);
     setApiError(null);
     try {
-      // Assuming you have a resendEmail verification or using forgotPassword logic to trigger resend
-      // You should adjust if your authService has a specific resendVerification method
-      await authService.forgotPassword(email); 
+      await authService.forgotPassword(email);
       setTimer(180);
-      setOtp(Array(OTP_LENGTH).fill(''));
+      reset({ otp: '' });
     } catch (error: unknown) {
       logger.error('Resend OTP failed:', error);
       setApiError(getErrorMessage(error as { message?: string; code?: number }));
     } finally {
       setResendLoading(false);
     }
-  }, [email, timer]);
-
-  const isComplete = otp.every((d) => d !== '');
-  const otpStringValue = otp.join('');
+  }, [email, timer, reset]);
 
   return (
-    <View style={styles.wrapper}>
-      <ErrorBanner message={apiError} onDismiss={() => setApiError(null)} />
-      <LoadingOverlay visible={loading || resendLoading} message={resendLoading ? 'Resending code...' : 'Verifying...'} />
-
+    <AppScreen
+      isLoading={loading || resendLoading}
+      loadingMessage={resendLoading ? 'Resending code...' : 'Verifying...'}
+      errorMessage={apiError}
+      onDismissError={() => setApiError(null)}
+      backgroundColor="transparent"
+      scrollable={false}
+      contentContainerStyle={{ paddingHorizontal: 0 }}
+    >
       <AuthBottomSheet variant="modal" onDismiss={() => navigation.goBack()}>
         <AuthHeader
           title="Confirm Your Email"
-          subtitle={`We’ve sent 6 digits verification code to ${email}`}
+          subtitle={`We've sent 6 digits verification code to ${email}`}
           showLogo={true}
-          logoSize="large"        />
+          logoSize="large"
+        />
 
         <IllustrationPlaceholder image={OTP_IMAGE} />
 
         <View style={styles.formContainer}>
-          <Input
-            label="Enter Verification Code"
-            icon="mail-outline"
-            value={otpStringValue}
-            onChangeText={(val) => {
-              const cleaned = val.replace(/[^0-9]/g, '').slice(0, OTP_LENGTH);
-              const newOtp = Array(OTP_LENGTH).fill('');
-              for (let i = 0; i < cleaned.length; i++) {
-                newOtp[i] = cleaned[i];
-              }
-              setOtp(newOtp);
-            }}
-            keyboardType="number-pad"
-            maxLength={OTP_LENGTH}
-            caretHidden
-            placeholder="Enter 6-digit code"
+          <Controller
+            control={control}
+            name="otp"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Enter Verification Code"
+                icon="mail-outline"
+                value={value}
+                onChangeText={(val) => onChange(val.replace(/[^0-9]/g, '').slice(0, OTP_LENGTH))}
+                onBlur={onBlur}
+                keyboardType="number-pad"
+                maxLength={OTP_LENGTH}
+                caretHidden
+                placeholder="Enter 6-digit code"
+                error={errors.otp?.message}
+              />
+            )}
           />
 
-          <TouchableOpacity onPress={handleResend} disabled={timer > 0 || resendLoading} style={styles.resendContainer}>
+          <TouchableOpacity
+            onPress={handleResend}
+            disabled={timer > 0 || resendLoading}
+            style={styles.resendContainer}
+          >
             <Text
               style={[
                 styles.resendLink,
@@ -140,18 +154,17 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
 
           <NeonButton
             title={loading ? 'Verifying...' : 'Verify code'}
-            onPress={handleVerify}
-            disabled={loading || !isComplete}
+            onPress={handleSubmit(onSubmit)}
+            disabled={loading}
             style={styles.verifyBtn}
           />
         </View>
       </AuthBottomSheet>
-    </View>
+    </AppScreen>
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: { flex: 1 },
   formContainer: { gap: 0 },
   resendContainer: {
     alignSelf: 'flex-end',

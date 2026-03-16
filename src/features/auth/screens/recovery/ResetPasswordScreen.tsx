@@ -9,8 +9,6 @@ import {
   Input,
   BackButton,
   AppScreen,
-  LoadingOverlay,
-  ErrorBanner,
 } from '@shared/components';
 import {
   PasswordStrengthIndicator,
@@ -69,10 +67,15 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
   }, []);
 
   return (
-    <View style={styles.wrapper}>
-      <ErrorBanner message={apiError} onDismiss={() => setApiError(null)} />
-      <LoadingOverlay visible={loading} message="Resetting password..." />
-
+    <AppScreen
+      isLoading={loading}
+      loadingMessage="Resetting password..."
+      errorMessage={apiError}
+      onDismissError={() => setApiError(null)}
+      backgroundColor="transparent"
+      scrollable={false}
+      contentContainerStyle={{ paddingHorizontal: 0 }}
+    >
       <AuthBottomSheet variant="modal" onDismiss={() => navigation.goBack()}>
 
         <AuthHeader
@@ -133,12 +136,11 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
           />
         </View>
       </AuthBottomSheet>
-    </View>
+    </AppScreen>
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: { flex: 1 },
   form: { gap: 20 },
   submitBtn: {
     marginTop: 16,

@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Logo, NeonButton } from '@shared/components/ui';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';

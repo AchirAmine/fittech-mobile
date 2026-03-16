@@ -4,10 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Theme } from '@shared/constants/theme';
 import { User } from '@appTypes/index';
+import { ThemeColors } from '@shared/constants/colors';
 
 interface ProfileAvatarProps {
   userData: User | null | undefined;
-  colors: any;
+  colors: ThemeColors;
 }
 
 export const ProfileAvatar = ({ userData, colors }: ProfileAvatarProps) => {

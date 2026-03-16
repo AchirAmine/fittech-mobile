@@ -1,20 +1,15 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useCallback, memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useForm, Controller } from 'react-hook-form';
+
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
-import { NeonButton, BackButton, AppScreen } from '@shared/components';
-import { StepIndicator, StepHeading, ValuePicker } from '@features/auth/components';
+import { AppScreen, NeonButton, BackButton } from '@shared/components';
+import { StepHeading, StepIndicator, ValuePicker } from '@features/auth/components';
+import { generateHeightsCm, formatCm } from '@features/auth/utils/registrationUtils';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep4'>;
-
-const generateHeightsCm = () => Array.from({ length: 151 }, (_, i) => 100 + i);
-
-const formatCm = (cm: number) => {
-  const m = Math.floor(cm / 100);
-  const remaining = cm % 100;
-  return `${m},${remaining < 10 ? '0' : ''}${remaining}`;
-};
 
 const RegisterStep4Screen: React.FC<Props> = ({ navigation, route }) => {
   const { data: prevData } = route.params;
@@ -22,21 +17,22 @@ const RegisterStep4Screen: React.FC<Props> = ({ navigation, route }) => {
   const unit = 'cm';
   const heightsCm = generateHeightsCm();
   const defaultCmIndex = heightsCm.indexOf(170);
-  const [selectedIndex, setSelectedIndex] = useState(defaultCmIndex >= 0 ? defaultCmIndex : 0);
 
-  const handleIndexChange = useCallback((index: number) => {
-    setSelectedIndex(index);
-  }, []);
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      selectedIndex: defaultCmIndex >= 0 ? defaultCmIndex : 0,
+    },
+  });
 
-  const handleContinue = useCallback(() => {
-    const heightValue = heightsCm[selectedIndex];
-    const data: SignupData = {
+  const onSubmit = useCallback((data: { selectedIndex: number }) => {
+    const heightValue = heightsCm[data.selectedIndex];
+    const signupData: SignupData = {
       ...prevData,
       heightValue,
       heightUnit: unit,
     };
-    navigation.navigate(ROUTES.AUTH.REGISTER_STEP5, { data });
-  }, [navigation, prevData, heightsCm, selectedIndex]);
+    navigation.navigate(ROUTES.AUTH.REGISTER_STEP5, { data: signupData });
+  }, [navigation, prevData, heightsCm]);
 
   return (
     <AppScreen
@@ -50,19 +46,25 @@ const RegisterStep4Screen: React.FC<Props> = ({ navigation, route }) => {
         </View>
       }
       footer={
-        <NeonButton title="Continue" onPress={handleContinue} style={styles.continueBtn} />
+        <NeonButton title="Continue" onPress={handleSubmit(onSubmit)} style={styles.continueBtn} />
       }
     >
       <StepHeading title="What's your Height ?" />
 
       <View style={styles.pickerWrapper}>
-        <ValuePicker
-          data={heightsCm}
-          selectedIndex={selectedIndex}
-          onIndexChange={handleIndexChange}
-          formatValue={formatCm}
-          unit={unit}
-          unitOverlayMarginLeft={55}
+        <Controller
+          control={control}
+          name="selectedIndex"
+          render={({ field: { onChange, value } }) => (
+            <ValuePicker
+              data={heightsCm}
+              selectedIndex={value}
+              onIndexChange={onChange}
+              formatValue={formatCm}
+              unit={unit}
+              unitOverlayMarginLeft={55}
+            />
+          )}
         />
       </View>
     </AppScreen>
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 16,
   },
-  pickerWrapper: { 
+  pickerWrapper: {
     flex: 1,
     justifyContent: 'center',
   },

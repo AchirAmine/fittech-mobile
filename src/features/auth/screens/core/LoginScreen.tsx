@@ -6,11 +6,8 @@ import { Theme } from '@shared/constants/theme';
 import { ROUTES } from '@navigation/routes';
 import {
   NeonButton,
-  Logo,
   Input,
   AppScreen,
-  LoadingOverlay,
-  ErrorBanner,
 } from '@shared/components';
 import {
   AuthBottomSheet,
@@ -47,7 +44,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       if (login.fulfilled.match(resultAction)) {
         navigation.navigate(ROUTES.AUTH.SUCCESS, { type: 'login' });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Error is handled by the extraReducers and displayed via ErrorBanner
     }
   }, [dispatch, navigation]);
@@ -71,9 +68,15 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   }, [dispatch]);
 
   return (
-    <View style={styles.wrapper}>
-      <ErrorBanner message={error} onDismiss={() => dispatch(clearError())} />
-      <LoadingOverlay visible={loading} message="Signing in..." />
+    <AppScreen
+      isLoading={loading}
+      loadingMessage="Signing in..."
+      errorMessage={error}
+      onDismissError={() => dispatch(clearError())}
+      backgroundColor="transparent"
+      scrollable={false}
+      contentContainerStyle={{ paddingHorizontal: 0 }}
+    >
       <AuthBottomSheet variant="modal" onDismiss={() => navigation.goBack()} showOverlay={true}>
         <AuthHeader
           title="Welcome Back!"
@@ -139,12 +142,11 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </AuthBottomSheet>
-    </View>
+    </AppScreen>
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: { flex: 1 },
   form: {
     gap: 20,
   },

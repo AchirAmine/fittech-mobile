@@ -1,41 +1,72 @@
 import React, { useState, useCallback, memo } from 'react';
-import {
-  View, Text, StyleSheet, TouchableOpacity,
-  Image, Alert, Linking, Platform,
-} from 'react-native';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { View, StyleSheet, TouchableOpacity, Image, Alert, Linking, Platform, Text } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { object, string, InferType } from 'yup';
+
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
-import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
-import { NeonButton, Input, BackButton, AppScreen } from '@shared/components';
-import {
-  StepIndicator,
-  StepHeading,
-  RegisterStepHeader,
-} from '@features/auth/components';
 import logger from '@shared/utils/logger';
+import { Theme } from '@shared/constants/theme';
+import { GENDER_OPTIONS } from '@shared/constants/authConstants';
+import { AppScreen, Input, NeonButton, BackButton } from '@shared/components';
+import { StepHeading, RegisterStepHeader } from '@features/auth/components';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep1'>;
 
-const GENDER_OPTIONS = [
-  { id: 'male' as const, label: 'Male', icon: 'male-outline' as const },
-  { id: 'female' as const, label: 'Female', icon: 'female-outline' as const },
-];
+const registerStep1Schema = object().shape({
+  firstName: string().trim().required('First name is required'),
+  lastName: string().trim().required('Last name is required'),
+  phone: string().trim().required('Phone number is required'),
+  dateOfBirth: string().trim().required('Date of birth is required')
+    .test('is-valid-date', 'Invalid date', (value) => {
+      if (!value) return false;
+      const parts = value.split('/');
+      if (parts.length !== 3) return false;
+      const [d, m, y] = parts.map(Number);
+      const date = new Date(y, m - 1, d);
+      return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
+    })
+    .test('age-range', 'Age must be between 5 and 80', (value) => {
+      if (!value) return false;
+      const parts = value.split('/');
+      const [d, m, y] = parts.map(Number);
+      const birthDate = new Date(y, m - 1, d);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age >= 5 && age <= 80;
+    }),
+  gender: string().required('Please select your gender'),
+  photo: string().optional(),
+});
 
 const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [gender, setGender] = useState<'male' | 'female' | undefined>(undefined);
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
+    resolver: yupResolver(registerStep1Schema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      phone: '',
+      dateOfBirth: '',
+      gender: '' as 'male' | 'female' | '',
+      photo: undefined as string | undefined,
+    },
+  });
+
+  const photoUri = watch('photo');
+  const dateOfBirth = watch('dateOfBirth');
+  const gender = watch('gender');
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -60,15 +91,15 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
         quality: 0.7,
       });
       if (!result.canceled && result.assets?.[0]) {
-        setPhotoUri(result.assets[0].uri);
+        setValue('photo', result.assets[0].uri);
       }
     } catch (error) {
       logger.error('Image picking error:', error);
     }
-  }, []);
+  }, [setValue]);
 
-  const handleDateChange = useCallback((text: string) => {
-    const isDeleting = text.length < dateOfBirth.length;
+  const handleDateChange = useCallback((text: string, currentVal: string, onChange: (val: string) => void) => {
+    const isDeleting = text.length < currentVal.length;
     let cleaned = text.replace(/\D/g, '');
     
     if (cleaned.length > 8) cleaned = cleaned.slice(0, 8);
@@ -84,8 +115,8 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
       formatted += '/';
     }
     
-    setDateOfBirth(formatted);
-  }, [dateOfBirth]);
+    onChange(formatted);
+  }, []);
 
   const handleDateSelect = useCallback((event: DateTimePickerEvent, selectedDate?: Date) => {
     setShowDatePicker(false);
@@ -94,73 +125,21 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
       const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
       const year = selectedDate.getFullYear();
       const formatted = `${day}/${month}/${year}`;
-      setDateOfBirth(formatted);
-      if (errors.dateOfBirth) {
-        setErrors(prev => ({ ...prev, dateOfBirth: '' }));
-      }
+      setValue('dateOfBirth', formatted, { shouldValidate: true });
     }
-  }, [errors.dateOfBirth]);
+  }, [setValue]);
 
-  const validate = useCallback(() => {
-    const newErrors: Record<string, string> = {};
-    if (!firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!lastName.trim()) newErrors.lastName = 'Last name is required';
-    if (!phone.trim()) newErrors.phone = 'Phone number is required';
-    if (!dateOfBirth.trim()) {
-      newErrors.dateOfBirth = 'Date of birth is required';
-    } else {
-      const parts = dateOfBirth.split('/');
-      if (parts.length === 3) {
-        const [d, m, y] = parts.map(Number);
-        const inputDate = new Date(y, m - 1, d);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-
-        const isValidMonth = m >= 1 && m <= 12;
-        const isValidDay = d >= 1 && d <= 31;
-        const isValidYear = y > 1900 && y < today.getFullYear();
-
-        // Check if the Date object construction matches the input (handles cases like Feb 30 -> Mar 1)
-        const matchesInput = inputDate.getFullYear() === y && 
-                            inputDate.getMonth() === m - 1 && 
-                            inputDate.getDate() === d;
-
-        if (!isValidMonth || !isValidDay || parts[2].length !== 4 || !matchesInput) {
-          newErrors.dateOfBirth = 'Invalid date';
-        } else {
-          const minAgeDate = new Date();
-          minAgeDate.setFullYear(today.getFullYear() - 80);
-          const maxAgeDate = new Date();
-          maxAgeDate.setFullYear(today.getFullYear() - 5);
-
-          if (inputDate > maxAgeDate) {
-            newErrors.dateOfBirth = 'You must be at least 5 years old';
-          } else if (inputDate < minAgeDate) {
-            newErrors.dateOfBirth = 'Age cannot exceed 80 years';
-          }
-        }
-      } else {
-        newErrors.dateOfBirth = 'Format must be DD/MM/YYYY';
-      }
-    }
-    if (!gender) newErrors.gender = 'Please select your gender';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [firstName, lastName, phone, gender, dateOfBirth]);
-
-  const handleContinueFixed = useCallback(() => {
-    if (!validate()) return;
-    const data: SignupData = {
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      phone: phone.trim(),
-      dateOfBirth: dateOfBirth.trim(),
-      gender,
-      photo: photoUri ?? undefined,
+  const onSubmit = useCallback((data: InferType<typeof registerStep1Schema>) => {
+    const signupData: SignupData = {
+      firstName: data.firstName.trim(),
+      lastName: data.lastName.trim(),
+      phone: data.phone.trim(),
+      dateOfBirth: data.dateOfBirth.trim(),
+      gender: data.gender as 'male' | 'female',
+      photo: data.photo,
     };
-    navigation.navigate(ROUTES.AUTH.REGISTER_STEP2, { data });
-  }, [navigation, firstName, lastName, phone, dateOfBirth, gender, photoUri, validate]);
+    navigation.navigate(ROUTES.AUTH.REGISTER_STEP2, { data: signupData });
+  }, [navigation]);
 
   return (
     <AppScreen
@@ -172,7 +151,7 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
         />
       }
       footer={
-        <NeonButton title="Continue" onPress={handleContinueFixed} style={styles.continueBtn} />
+        <NeonButton title="Continue" onPress={handleSubmit(onSubmit)} style={styles.continueBtn} />
       }
     >
 
@@ -208,48 +187,72 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
 
 
       <View style={styles.form}>
-
-        <Input
-          label="First Name"
-          icon="person-outline"
-          placeholder="First Name"
-          value={firstName}
-          onChangeText={setFirstName}
-          error={errors.firstName}
+        <Controller
+          control={control}
+          name="firstName"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="First Name"
+              icon="person-outline"
+              placeholder="First Name"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              error={errors.firstName?.message}
+            />
+          )}
         />
 
-
-        <Input
-          label="Last Name"
-          icon="person-outline"
-          placeholder="Last Name"
-          value={lastName}
-          onChangeText={setLastName}
-          error={errors.lastName}
+        <Controller
+          control={control}
+          name="lastName"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Last Name"
+              icon="person-outline"
+              placeholder="Last Name"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              error={errors.lastName?.message}
+            />
+          )}
         />
 
-
-        <Input
-          label="Phone number"
-          icon="call-outline"
-          placeholder="+213 555 555 555"
-          value={phone}
-          onChangeText={setPhone}
-          keyboardType="phone-pad"
-          error={errors.phone}
+        <Controller
+          control={control}
+          name="phone"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Phone number"
+              icon="call-outline"
+              placeholder="+213 555 555 555"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              keyboardType="phone-pad"
+              error={errors.phone?.message}
+            />
+          )}
         />
 
-
-        <Input
-          label="Date of Birth"
-          icon="calendar-outline"
-          placeholder="DD/MM/YYYY"
-          value={dateOfBirth}
-          onChangeText={handleDateChange}
-          keyboardType="number-pad"
-          maxLength={10}
-          onIconPress={() => setShowDatePicker(true)}
-          error={errors.dateOfBirth}
+        <Controller
+          control={control}
+          name="dateOfBirth"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Date of Birth"
+              icon="calendar-outline"
+              placeholder="DD/MM/YYYY"
+              onBlur={onBlur}
+              onChangeText={(text) => handleDateChange(text, value, onChange)}
+              value={value}
+              keyboardType="number-pad"
+              maxLength={10}
+              onIconPress={() => setShowDatePicker(true)}
+              error={errors.dateOfBirth?.message}
+            />
+          )}
         />
 
         {showDatePicker && (
@@ -281,33 +284,39 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
 
         <View>
           <Text style={[styles.label, { color: colors.textPrimary }]}>Gender</Text>
-          <View style={styles.genderRow}>
-            {GENDER_OPTIONS.map((opt) => (
-              <TouchableOpacity
-                key={opt.id}
-                style={[
-                  styles.genderBtn,
-                  { backgroundColor: colors.card, borderColor: colors.border },
-                  gender === opt.id && { backgroundColor: colors.primaryMid, borderColor: colors.primaryMid },
-                ]}
-                onPress={() => setGender(opt.id)}
-              >
-                <Ionicons
-                  name={opt.icon}
-                  size={18}
-                  color={gender === opt.id ? colors.white : colors.textSecondary}
-                />
-                <Text style={[
-                  styles.genderBtnText,
-                  { color: colors.textSecondary },
-                  gender === opt.id && { color: colors.white },
-                ]}>
-                  {opt.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          {errors.gender ? <Text style={[styles.errorText, { color: colors.error }]}>{errors.gender}</Text> : null}
+          <Controller
+            control={control}
+            name="gender"
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.genderRow}>
+                {GENDER_OPTIONS.map((opt) => (
+                  <TouchableOpacity
+                    key={opt.id}
+                    style={[
+                      styles.genderBtn,
+                      { backgroundColor: colors.card, borderColor: colors.border },
+                      value === opt.id && { backgroundColor: colors.primaryMid, borderColor: colors.primaryMid },
+                    ]}
+                    onPress={() => onChange(opt.id)}
+                  >
+                    <Ionicons
+                      name={opt.icon}
+                      size={18}
+                      color={value === opt.id ? colors.white : colors.textSecondary}
+                    />
+                    <Text style={[
+                      styles.genderBtnText,
+                      { color: colors.textSecondary },
+                      value === opt.id && { color: colors.white },
+                    ]}>
+                      {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          />
+          {errors.gender?.message ? <Text style={[styles.errorText, { color: colors.error }]}>{String(errors.gender.message)}</Text> : null}
         </View>
       </View>
     </AppScreen>

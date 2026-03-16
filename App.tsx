@@ -19,6 +19,7 @@ import { AppNavigator } from '@navigation/AppNavigator';
 import SplashScreen from '@features/auth/screens/core/SplashScreen';
 import { ThemeProvider } from '@shared/context/ThemeContext';
 import { LightColors } from '@shared/constants/colors';
+import { ErrorBoundary } from '@shared/components/ErrorBoundary';
 
 injectStore(store);
 
@@ -42,14 +43,16 @@ export default function App(): React.ReactElement {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <StatusBar style="auto" />
-            <PersistGate loading={<SplashScreen />} persistor={persistor}>
-              <AppNavigator />
-            </PersistGate>
-          </GestureHandlerRootView>
-        </ThemeProvider>
+        <ErrorBoundary>
+          <ThemeProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <StatusBar style="auto" />
+              <PersistGate loading={<SplashScreen />} persistor={persistor}>
+                <AppNavigator />
+              </PersistGate>
+            </GestureHandlerRootView>
+          </ThemeProvider>
+        </ErrorBoundary>
       </QueryClientProvider>
     </Provider>
   );

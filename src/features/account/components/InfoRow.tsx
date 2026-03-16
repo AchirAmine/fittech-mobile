@@ -2,12 +2,13 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Input } from '@shared/components/ui';
+import { ThemeColors } from '@shared/constants/colors';
 
 interface InfoRowProps {
   label: string;
   value: string;
   icon: keyof typeof Ionicons.glyphMap;
-  colors: any;
+  colors: ThemeColors;
   isDark: boolean;
 }
 

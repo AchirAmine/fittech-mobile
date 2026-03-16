@@ -10,9 +10,6 @@ export const authService = {
   },
 
   register: async (userData: Partial<User> & { password?: string }): Promise<AxiosResponse<ApiResponse<{ user: User, token: string, refreshToken: string }>>> => {
-
-    const dateOfBirth = userData.dateOfBirth;
-
     const formData = new FormData();
     formData.append('firstName', userData.firstName || '');
     formData.append('lastName', userData.lastName || '');
@@ -20,7 +17,7 @@ export const authService = {
     formData.append('password', userData.password || '');
     formData.append('gender', userData.gender || '');
     formData.append('phoneNumber', userData.phone || '');
-    formData.append('dateOfBirth', dateOfBirth || '');
+    formData.append('dateOfBirth', userData.dateOfBirth || '');
     formData.append('height', String(userData.healthProfile?.heightValue || ''));
     formData.append('weight', String(userData.healthProfile?.weightValue || ''));
     formData.append('fitnessObjective', userData.healthProfile?.goals?.[0] || '');
@@ -34,9 +31,8 @@ export const authService = {
         uri: userData.photoLocalUri,
         name: filename,
         type,
-      } as any);
+      } as unknown as Blob);
     }
-
 
     return axiosClient.post(API_ENDPOINTS.AUTH.REGISTER, formData, {
       headers: {
@@ -68,6 +64,4 @@ export const authService = {
   verifyEmail: async (email: string, code: string): Promise<AxiosResponse<ApiResponse<null>>> => {
     return axiosClient.post(API_ENDPOINTS.AUTH.VERIFY_EMAIL, { email, code });
   },
-
 };
-

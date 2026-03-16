@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Theme } from '@shared/constants/theme';
+import { ThemeColors } from '@shared/constants/colors';
 
 interface SectionCardProps {
   title: string;
-  colors: any;
+  colors: ThemeColors;
   isDark: boolean;
   children: React.ReactNode;
 }

@@ -1,6 +1,3 @@
-/**
- * Centralized API error messages for consistent UX
- */
 export const ERROR_MESSAGES = {
   NETWORK: 'No connection. Please check your internet and try again.',
   TIMEOUT: 'Request timed out. Please try again.',
@@ -13,48 +10,55 @@ export const ERROR_MESSAGES = {
   UNKNOWN: 'Something went wrong. Please try again.',
 } as const;
 
-export const getErrorMessage = (error: any): string => {
-  const msg = error?.message?.toLowerCase() || '';
-  const code = error?.code ?? 0;
-  const errors = error?.errors;
+interface ApiError {
+  message?: string;
+  code?: number;
+  errors?: Record<string, string[]>;
+}
 
-  // Handle detailed validation errors (flattened Zod errors)
-  if (code === 400 && errors?.fieldErrors) {
-    const fieldErrors = errors.fieldErrors;
-    const firstField = Object.keys(fieldErrors)[0];
-    if (firstField && fieldErrors[firstField]?.[0]) {
-      return `${firstField}: ${fieldErrors[firstField][0]}`;
-    }
+export const getErrorMessage = (error: unknown): string => {
+  if (!error) return '';
+
+  const err = error as ApiError;
+  const msg = (err.message || '').toLowerCase();
+  const code = err.code ?? 0;
+
+  if (msg.includes('server unreachable')) return err.message || ERROR_MESSAGES.SERVER;
+  if (msg.includes('session expired') || msg.includes('unauthorized')) return err.message || ERROR_MESSAGES.UNAUTHORIZED;
+
+  switch (code) {
+    case 401:
+      if (msg.includes('credentials') || msg.includes('invalid')) return ERROR_MESSAGES.LOGIN_FAILED;
+      return ERROR_MESSAGES.UNAUTHORIZED;
+    case 403:
+      return msg.includes('pending') ? (err.message || 'Account pending approval.') : ERROR_MESSAGES.FORBIDDEN;
+    case 404:
+      return ERROR_MESSAGES.NOT_FOUND;
+    case 400:
+    case 422:
+      const fieldErrors = err.errors;
+      if (fieldErrors) {
+        const firstField = Object.keys(fieldErrors)[0];
+        const firstMsg = fieldErrors[firstField]?.[0];
+        if (firstField && firstMsg) return `${firstField}: ${firstMsg}`;
+      }
+      return ERROR_MESSAGES.VALIDATION;
+    case 409:
+      return err.message || 'Conflict occurred.';
   }
 
-  if (code === 0 || msg.includes('network') || msg.includes('connection')) {
-    return ERROR_MESSAGES.NETWORK;
-  }
-  if (msg.includes('timeout') || msg.includes('timed out')) {
+  if (code === 408 || msg.includes('timeout')) {
     return ERROR_MESSAGES.TIMEOUT;
   }
-  if (code === 401) {
-    if (msg.includes('credentials') || msg.includes('login') || msg.includes('invalid')) {
-      return ERROR_MESSAGES.LOGIN_FAILED;
-    }
-    return ERROR_MESSAGES.UNAUTHORIZED;
-  }
-  if (code === 403) {
-    if (msg.includes('pending') || msg.includes('approval')) {
-      return error?.message || 'Your account is pending approval.';
-    }
-    return ERROR_MESSAGES.FORBIDDEN;
-  }
-  if (code === 404) return ERROR_MESSAGES.NOT_FOUND;
-  if (code === 409) return error?.message || 'Conflict error occurred.';
-  if (code >= 500) return ERROR_MESSAGES.SERVER;
-  
-  // If we have a custom message from the backend that isn't generic, use it
-  if (error?.message && error.message !== 'Validation failed' && error.message !== 'Internal server error') {
-    return error.message;
+  if (code === 0 || msg.includes('network error') || msg.includes('no connection')) {
+    return ERROR_MESSAGES.NETWORK;
   }
 
-  if (code === 400 || code === 422) return ERROR_MESSAGES.VALIDATION;
+  if (err.message && !msg.includes('validation failed') && !msg.includes('internal server error')) {
+    return err.message;
+  }
+
+  if (code >= 500) return ERROR_MESSAGES.SERVER;
 
   return ERROR_MESSAGES.UNKNOWN;
 };

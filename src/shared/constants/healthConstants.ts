@@ -32,3 +32,21 @@ export const HEALTH_CONCERNS: HealthConcernOption[] = [
   { id: 'none',     label: 'None of the above', icon: 'ban-outline',   color: '#8E8E93' },
   { id: 'other',    label: 'Other concerns',    icon: 'medical-outline', color: '#00C897' },
 ];
+
+export interface ActivityOption {
+  id: string;
+  label: string;
+  subtitle: string;
+  icon: keyof typeof Ionicons.glyphMap;
+}
+
+export const ACTIVITIES: ActivityOption[] = [
+  { id: 'gym',       label: 'Gym Training',  subtitle: 'Weight lifting & machines',   icon: 'barbell-outline'    },
+  { id: 'running',   label: 'Running',       subtitle: 'Outdoor & treadmill',          icon: 'walk-outline'       },
+  { id: 'swimming',  label: 'Swimming',      subtitle: 'Pool & open water',            icon: 'water-outline'      },
+  { id: 'cycling',   label: 'Cycling',       subtitle: 'Road & stationary bike',       icon: 'bicycle-outline'    },
+  { id: 'yoga',      label: 'Yoga',          subtitle: 'Flexibility & mindfulness',    icon: 'body-outline'       },
+  { id: 'boxing',    label: 'Boxing',        subtitle: 'Combat & cardio',              icon: 'fitness-outline'    },
+  { id: 'hiit',      label: 'HIIT',          subtitle: 'High-intensity intervals',     icon: 'flash-outline'      },
+  { id: 'other',     label: 'Other',         subtitle: 'Custom activity',              icon: 'create-outline'     },
+];

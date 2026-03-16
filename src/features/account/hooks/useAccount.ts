@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { accountService } from '../services/accountService';
-
 import { User } from '@appTypes/index';
 
 export const accountKeys = {
@@ -39,9 +38,8 @@ export const useUpdateAccount = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: any) => {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      return data;
+    mutationFn: async (data: Partial<User>) => {
+      return accountService.updateMe(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: accountKeys.me() });

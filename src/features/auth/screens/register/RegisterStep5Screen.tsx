@@ -1,6 +1,10 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useCallback, memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { object, string, InferType } from 'yup';
+
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { Input } from '@shared/components';
@@ -9,32 +13,39 @@ import { GOALS } from '@shared/constants/healthConstants';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep5'>;
 
+const registerStep5Schema = object().shape({
+  selectedGoal: string().required('Please select your goal to continue'),
+  customGoal: string().when('selectedGoal', {
+    is: 'other',
+    then: (schema) => schema.trim().required('Please enter your goal'),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+});
+
 const RegisterStep5Screen: React.FC<Props> = ({ navigation, route }) => {
   const { data: prevData } = route.params;
 
-  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
-  const [customGoal, setCustomGoal] = useState('');
-  const [error, setError] = useState('');
+  const { control, handleSubmit, watch, formState: { errors } } = useForm({
+    resolver: yupResolver(registerStep5Schema),
+    defaultValues: {
+      selectedGoal: undefined as string | undefined,
+      customGoal: '',
+    },
+  });
 
-  const handleContinue = useCallback(() => {
-    if (!selectedGoal) {
-      setError('Please select your goal to continue');
-      return;
+  const selectedGoal = watch('selectedGoal');
+
+  const onSubmit = useCallback((data: InferType<typeof registerStep5Schema>) => {
+    let finalGoal = data.selectedGoal;
+    if (data.selectedGoal === 'other') {
+      finalGoal = data.customGoal?.trim() ?? '';
     }
-    let finalGoal = selectedGoal;
-    if (selectedGoal === 'other') {
-      finalGoal = customGoal.trim();
-      if (!finalGoal) {
-        setError('Please enter your goal');
-        return;
-      }
-    }
-    const data: SignupData = {
+    const signupData: SignupData = {
       ...prevData,
       goal: finalGoal,
     };
-    navigation.navigate(ROUTES.AUTH.REGISTER_STEP6, { data });
-  }, [navigation, prevData, selectedGoal, customGoal]);
+    navigation.navigate(ROUTES.AUTH.REGISTER_STEP6, { data: signupData });
+  }, [navigation, prevData]);
 
   return (
     <AuthSelectionTemplate
@@ -43,35 +54,42 @@ const RegisterStep5Screen: React.FC<Props> = ({ navigation, route }) => {
       currentStep={5}
       totalSteps={7}
       onBack={() => navigation.goBack()}
-      onContinue={handleContinue}
-      error={error}
-      onDismissError={() => setError('')}
+      onContinue={handleSubmit(onSubmit)}
+      error={errors.selectedGoal?.message || errors.customGoal?.message}
     >
-      {GOALS.map((goal) => (
-        <SelectableCard
-          key={goal.id}
-          label={goal.label}
-          iconName={goal.icon}
-          isSelected={selectedGoal === goal.id}
-          onPress={() => {
-            setSelectedGoal(goal.id);
-            setError('');
-          }}
-        />
-      ))}
+      <Controller
+        control={control}
+        name="selectedGoal"
+        render={({ field: { onChange, value } }) => (
+          <>
+            {GOALS.map((goal) => (
+              <SelectableCard
+                key={goal.id}
+                label={goal.label}
+                iconName={goal.icon}
+                isSelected={value === goal.id}
+                onPress={() => onChange(goal.id)}
+              />
+            ))}
+          </>
+        )}
+      />
 
       {selectedGoal === 'other' && (
         <View style={styles.inputContainer}>
-          <Input
-            label="Enter your goal"
-            placeholder="E.g. Build endurance"
-            value={customGoal}
-            onChangeText={(text) => {
-              setCustomGoal(text);
-              setError('');
-            }}
-            maxLength={100}
-            error={error && selectedGoal === 'other' ? error : undefined}
+          <Controller
+            control={control}
+            name="customGoal"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                label="Enter your goal"
+                placeholder="E.g. Build endurance"
+                value={value}
+                onChangeText={onChange}
+                maxLength={100}
+                error={errors.customGoal?.message}
+              />
+            )}
           />
         </View>
       )}

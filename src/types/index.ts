@@ -8,7 +8,7 @@ export interface User {
   displayName?: string;
   photoUrl?: string;
   photoLocalUri?: string | null;
-  profilePicture?: any;
+  profilePicture?: { uri: string } | number;
   gender?: 'male' | 'female' | string;
   phone?: string;
   memberSince?: string;

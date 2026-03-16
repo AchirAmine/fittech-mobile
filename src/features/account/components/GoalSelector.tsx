@@ -3,12 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInRight } from 'react-native-reanimated';
 import { GOALS } from '@shared/constants/healthConstants';
+import { ThemeColors } from '@shared/constants/colors';
 
 interface GoalSelectorProps {
   selectedGoal: string;
   isEditing: boolean;
   onSelect: (id: string) => void;
-  colors: any;
+  colors: ThemeColors;
   isDark: boolean;
 }
 
@@ -42,7 +43,7 @@ export const GoalSelector = ({ selectedGoal, isEditing, onSelect, colors, isDark
               activeOpacity={isEditing ? 0.7 : 1}
             >
               <View style={[styles.cardIcon, { backgroundColor: goal.color + '20' }]}>
-                <Ionicons name={goal.icon as any} size={24} color={goal.color} />
+                <Ionicons name={goal.icon as keyof typeof Ionicons.glyphMap} size={24} color={goal.color} />
               </View>
               <View style={styles.cardText}>
                 <Text style={[styles.cardLabel, { color: colors.textPrimary }]}>{goal.label}</Text>

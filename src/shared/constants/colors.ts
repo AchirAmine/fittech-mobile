@@ -38,10 +38,6 @@ const Palette = {
   },
 } as const;
 
-/**
- * Interface definition for the application theme colors.
- * Ensures Light and Dark modes remain synchronized.
- */
 export interface ThemeColors {
   background:    string;
   card:          string;

@@ -1,56 +1,38 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useCallback, memo } from 'react';
+import { StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { object, array, string, InferType } from 'yup';
+
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { AuthSelectionTemplate, SelectableCard } from '@features/auth/components';
-import { Ionicons } from '@expo/vector-icons';
+import { ACTIVITIES } from '@shared/constants/healthConstants';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep6'>;
 
-interface ActivityOption {
-  id: string;
-  label: string;
-  subtitle?: string;
-  icon: keyof typeof Ionicons.glyphMap;
-}
-
-const ACTIVITIES: ActivityOption[] = [
-  { id: 'strength', label: 'Strength Training', icon: 'barbell-outline' },
-  { id: 'hiit', label: 'HIIT', subtitle: '(High-intensity interval training)', icon: 'flash-outline' },
-  { id: 'cardio', label: 'Cardio', subtitle: '(Running, Cycling)', icon: 'fitness-outline' },
-  { id: 'sports', label: 'Sports', subtitle: '(Eg. Tennis, Swimming)', icon: 'fitness-outline' },
-];
+const registerStep6Schema = object().shape({
+  activities: array().of(string().required()).min(1, 'Please select at least one activity'),
+});
 
 const RegisterStep6Screen: React.FC<Props> = ({ navigation, route }) => {
   const { data: prevData } = route.params;
 
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [error, setError] = useState('');
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(registerStep6Schema),
+    defaultValues: {
+      activities: [] as string[],
+    },
+  });
 
-  const toggleActivity = useCallback((id: string) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
-    setError('');
-  }, []);
-
-  const handleContinue = useCallback(() => {
-    if (selected.size === 0) {
-      setError('Please select at least one activity');
-      return;
-    }
-    const data: SignupData = {
+  const onSubmit = useCallback((data: InferType<typeof registerStep6Schema>) => {
+    const signupData: SignupData = {
       ...prevData,
-      activities: Array.from(selected),
+      activities: data.activities,
     };
-    navigation.navigate(ROUTES.AUTH.REGISTER_STEP7, { data });
-  }, [navigation, prevData, selected]);
+    navigation.navigate(ROUTES.AUTH.REGISTER_STEP7, { data: signupData });
+  }, [navigation, prevData]);
 
   return (
     <AuthSelectionTemplate
@@ -59,22 +41,40 @@ const RegisterStep6Screen: React.FC<Props> = ({ navigation, route }) => {
       currentStep={6}
       totalSteps={7}
       onBack={() => navigation.goBack()}
-      onContinue={handleContinue}
-      error={error}
-      onDismissError={() => setError('')}
+      onContinue={handleSubmit(onSubmit)}
+      error={errors.activities?.message}
     >
-      {ACTIVITIES.map((activity) => (
-        <SelectableCard
-          key={activity.id}
-          label={activity.label}
-          subtitle={activity.subtitle}
-          iconName={activity.icon}
-          isSelected={selected.has(activity.id)}
-          onPress={() => toggleActivity(activity.id)}
-        />
-      ))}
+      <Controller
+        control={control}
+        name="activities"
+        render={({ field: { onChange, value } }) => (
+          <>
+            {ACTIVITIES.map((activity) => {
+              const selected: string[] = value ?? [];
+              const isSelected = selected.includes(activity.id);
+              return (
+                <SelectableCard
+                  key={activity.id}
+                  label={activity.label}
+                  subtitle={activity.subtitle}
+                  iconName={activity.icon}
+                  isSelected={isSelected}
+                  onPress={() => {
+                    const next = isSelected
+                      ? selected.filter((id: string) => id !== activity.id)
+                      : [...selected, activity.id];
+                    onChange(next);
+                  }}
+                />
+              );
+            })}
+          </>
+        )}
+      />
     </AuthSelectionTemplate>
   );
 };
+
+
 
 export default memo(RegisterStep6Screen);

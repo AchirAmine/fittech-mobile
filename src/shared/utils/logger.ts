@@ -1,7 +1,3 @@
-/**
- * Custom Logger Utility
- * Only logs in development mode.
- */
 const logger = {
   log: (...args: unknown[]): void => {
     if (__DEV__) {

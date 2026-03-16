@@ -9,8 +9,7 @@
       "@shared/*": ["src/shared/*"],
       "@navigation/*": ["src/navigation/*"],
       "@store/*": ["src/store/*"],
-      "@appTypes/*": ["src/types/*"],
-      "@screens/*": ["src/screens/*"]
+      "@appTypes/*": ["src/types/*"]
     }
   }
 }

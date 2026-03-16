@@ -1,12 +1,16 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useCallback, memo, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { object, array, string, InferType } from 'yup';
+
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { useAppDispatch } from '@shared/hooks/useReduxHooks';
 
 import { getErrorMessage } from '@shared/constants/errorMessages';
-import { Input, NeonButton } from '@shared/components';
+import { Input } from '@shared/components';
 import { AuthSelectionTemplate, SelectableCard } from '@features/auth/components';
 import { register } from '@features/auth/store/authActions';
 import logger from '@shared/utils/logger';
@@ -14,68 +18,60 @@ import { HEALTH_CONCERNS } from '@shared/constants/healthConstants';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep7'>;
 
+const registerStep7Schema = object().shape({
+  healthConcerns: array().of(string().required()).min(1, 'Please select at least one option'),
+  customConcern: string().when('healthConcerns', {
+    is: (val: string[] | undefined) => val && val.includes('other'),
+    then: (schema) => schema.trim().required('Please describe your other health concern'),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+});
 
 const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
   const { data: prevData } = route.params;
   const dispatch = useAppDispatch();
-
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [customConcern, setCustomConcern] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
 
-  const toggleConcern = useCallback((id: string) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (id === 'none') {
-        if (next.has('none')) {
-          next.delete('none');
-        } else {
-          next.clear();
-          next.add('none');
-        }
+  const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+    resolver: yupResolver(registerStep7Schema),
+    defaultValues: {
+      healthConcerns: [] as string[],
+      customConcern: '',
+    },
+  });
+
+  const healthConcerns = watch('healthConcerns');
+
+  const handleToggleConcern = useCallback((id: string, currentValues: string[], onChange: (vals: string[]) => void) => {
+    let next: string[];
+    if (id === 'none') {
+      next = currentValues.includes('none') ? [] : ['none'];
+    } else {
+      const filtered = currentValues.filter(v => v !== 'none');
+      if (filtered.includes(id)) {
+        next = filtered.filter(v => v !== id);
       } else {
-        next.delete('none');
-        if (next.has(id)) {
-          next.delete(id);
-        } else {
-          next.add(id);
-        }
+        next = [...filtered, id];
       }
-      return next;
-    });
-    setError('');
+    }
+    onChange(next);
+    setApiError('');
   }, []);
 
-  const handleFinish = useCallback(async () => {
-    if (selected.size === 0) {
-      setError('Please select at least one option');
-      return;
-    }
-
-    const concernsList = Array.from(selected);
-    
-    // Check if 'other' is selected but empty
-    if (selected.has('other')) {
-      const trimmedCustom = customConcern.trim();
-      if (!trimmedCustom) {
-        setError('Please describe your other health concern');
-        return;
-      }
-      // Replace 'other' with the actual text or keep it and append? 
-      // Usually users want the text to replace or be added.
-      // Let's replace 'other' with the custom text for the payload.
-      const index = concernsList.indexOf('other');
-      if (index > -1) {
-        concernsList[index] = `Other: ${trimmedCustom}`;
-      }
-    }
+  const onSubmit = useCallback(async (formData: InferType<typeof registerStep7Schema>) => {
+    const finalConcerns = (formData.healthConcerns ?? []).map((id: string) => {
+      if (id === 'other') return `Other: ${formData.customConcern?.trim() ?? ''}`;
+      return id;
+    });
 
     const data: SignupData = {
       ...prevData,
-      healthConcerns: concernsList,
+      healthConcerns: finalConcerns,
     };
+
     setLoading(true);
+    setApiError('');
     try {
       const result = await dispatch(register({
         firstName: data.firstName,
@@ -92,24 +88,25 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
           heightUnit: data.heightUnit,
           weightValue: data.weightValue,
           weightUnit: data.weightUnit,
-          restrictions: [...(data.activities || []), ...(data.healthConcerns || [])].join(', '),
+          restrictions: [...(data.activities || []), ...(data.healthConcerns || [])].filter(Boolean).join(', '),
         },
       }));
+
       if (register.fulfilled.match(result)) {
         navigation.navigate(ROUTES.AUTH.OTP_VERIFICATION, {
           email: result.payload.email || data.email || '',
           mode: 'register',
         });
       } else {
-        setError(getErrorMessage(result.payload as { message?: string; code?: number }));
+        setApiError(getErrorMessage(result.payload as { message?: string; code?: number }));
       }
     } catch (err) {
       logger.error('Registration error:', err);
-      setError(getErrorMessage(err as { message?: string; code?: number }));
+      setApiError(getErrorMessage(err as { message?: string; code?: number }));
     } finally {
       setLoading(false);
     }
-  }, [dispatch, navigation, prevData, selected, customConcern]);
+  }, [dispatch, navigation, prevData]);
 
   return (
     <AuthSelectionTemplate
@@ -118,38 +115,56 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
       currentStep={7}
       totalSteps={7}
       onBack={() => navigation.goBack()}
-      onContinue={handleFinish}
+      onContinue={handleSubmit(onSubmit)}
       loading={loading}
       loadingMessage="Registering..."
-      error={error}
-      onDismissError={() => setError('')}
+      error={apiError || errors.healthConcerns?.message || errors.customConcern?.message}
+      onDismissError={() => {
+        setApiError('');
+        // We don't manually clear RHF errors here as they clear on change
+      }}
     >
-      {HEALTH_CONCERNS.map((option) => (
-        <View key={option.id}>
-          <SelectableCard
-            label={option.label}
-            iconName={option.icon}
-            isSelected={selected.has(option.id)}
-            onPress={() => toggleConcern(option.id)}
-          />
-          
-          {option.id === 'other' && selected.has('other') && (
-            <View style={styles.inputContainer}>
-              <Input
-                label="Describe your health concern"
-                placeholder="Details..."
-                value={customConcern}
-                onChangeText={(text) => {
-                  setCustomConcern(text);
-                  setError('');
-                }}
-                maxLength={100}
-                error={error && selected.has('other') ? error : undefined}
-              />
-            </View>
-          )}
-        </View>
-      ))}
+      <Controller
+        control={control}
+        name="healthConcerns"
+        render={({ field: { onChange, value } }) => (
+          <>
+            {HEALTH_CONCERNS.map((option) => (
+              <View key={option.id}>
+                <SelectableCard
+                  label={option.label}
+                  iconName={option.icon}
+                  isSelected={(value || []).includes(option.id)}
+                  onPress={() => handleToggleConcern(option.id, value || [], onChange)}
+                />
+                
+                {option.id === 'other' && (value || []).includes('other') && (
+                  <View style={styles.inputContainer}>
+                    <Controller
+                      control={control}
+                      name="customConcern"
+                      render={({ field: { onChange: onCustomChange, value: customValue, onBlur } }) => (
+                        <Input
+                          label="Describe your health concern"
+                          placeholder="Details..."
+                          value={customValue}
+                          onBlur={onBlur}
+                          onChangeText={(text) => {
+                            onCustomChange(text);
+                            setApiError('');
+                          }}
+                          maxLength={100}
+                          error={errors.customConcern?.message}
+                        />
+                      )}
+                    />
+                  </View>
+                )}
+              </View>
+            ))}
+          </>
+        )}
+      />
     </AuthSelectionTemplate>
   );
 };

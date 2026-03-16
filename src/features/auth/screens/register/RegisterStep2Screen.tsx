@@ -1,57 +1,64 @@
 import React, { useState, useCallback, memo } from 'react';
-import {
-  View, Image, StyleSheet,
-} from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { object, string, InferType } from 'yup';
+
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { useTheme } from '@shared/hooks/useTheme';
-import { NeonButton, Input, AppScreen } from '@shared/components';
-import {
-  StepHeading, PasswordRequirements, PasswordRule, RegisterStepHeader,
-} from '@features/auth/components';
+import { AppScreen, NeonButton, Input } from '@shared/components';
+import { StepHeading, RegisterStepHeader, PasswordRequirements, PasswordStrengthIndicator } from '@features/auth/components';
+import { PASSWORD_RULES } from '@shared/constants/authConstants';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep2'>;
 
-const PASSWORD_RULES: PasswordRule[] = [
-  { label: '8-20 characters', test: (pw) => pw.length >= 8 && pw.length <= 20 },
-  { label: 'Lower case letter', test: (pw) => /[a-z]/.test(pw) },
-  { label: 'Upper case letter', test: (pw) => /[A-Z]/.test(pw) },
-  { label: 'Number or special character', test: (pw) => /[\d!@#$%^&*(),.?":{}|<>]/.test(pw) },
-];
+const registerStep2Schema = object().shape({
+  email: string().trim().required('Email is required').email('Enter a valid email'),
+  password: string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters')
+    .test('pass-rules', 'Password does not meet all requirements', (value) => {
+      if (!value) return false;
+      return (
+        /[a-z]/.test(value) &&
+        /[A-Z]/.test(value) &&
+        /[\d!@#$%^&*(),.?":{}|<>]/.test(value)
+      );
+    }),
+  confirmPassword: string()
+    .required('Please confirm your password')
+    .test('pass-match', 'Passwords do not match', (value, context) => {
+      return value === context.parent.password;
+    }),
+});
 
 const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
-  useTheme();
+  const { colors } = useTheme();
   const { data: prevData } = route.params;
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const { control, handleSubmit, watch, formState: { errors } } = useForm({
+    resolver: yupResolver(registerStep2Schema),
+    defaultValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
+
+  const password = watch('password');
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const validate = useCallback(() => {
-    const newErrors: Record<string, string> = {};
-    if (!email.trim()) newErrors.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = 'Enter a valid email';
-    if (!password) newErrors.password = 'Password is required';
-    else if (PASSWORD_RULES.some((r) => !r.test(password))) newErrors.password = 'Password does not meet all requirements';
-    if (!confirmPassword) newErrors.confirmPassword = 'Please confirm your password';
-    else if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [email, password, confirmPassword]);
-
-  const handleContinue = useCallback(() => {
-    if (!validate()) return;
-    const data: SignupData = {
+  const onSubmit = useCallback((data: InferType<typeof registerStep2Schema>) => {
+    const signupData: SignupData = {
       ...prevData,
-      email: email.trim(),
-      password,
+      email: data.email.trim(),
+      password: data.password,
     };
-    navigation.navigate(ROUTES.AUTH.REGISTER_STEP3, { data });
-  }, [navigation, prevData, email, password, validate]);
+    navigation.navigate(ROUTES.AUTH.REGISTER_STEP3, { data: signupData });
+  }, [navigation, prevData]);
 
   return (
     <AppScreen
@@ -63,7 +70,7 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
         />
       }
       footer={
-        <NeonButton title="Continue" onPress={handleContinue} style={styles.continueBtn} />
+        <NeonButton title="Continue" onPress={handleSubmit(onSubmit)} style={styles.continueBtn} />
       }
     >
 
@@ -80,44 +87,63 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
 
 
       <View style={styles.form}>
-
-        <Input
-          label="Email"
-          icon="mail-outline"
-          placeholder="example@gmail.com"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          error={errors.email}
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Email"
+              icon="mail-outline"
+              placeholder="example@gmail.com"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              error={errors.email?.message}
+            />
+          )}
         />
 
-
-        <Input
-          label="Password"
-          icon="lock-closed-outline"
-          placeholder="Enter your password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={!showPass}
-          rightIcon={showPass ? 'eye-off-outline' : 'eye-outline'}
-          onRightIconPress={() => setShowPass((p) => !p)}
-          error={errors.password}
+        <Controller
+          control={control}
+          name="password"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Password"
+              icon="lock-closed-outline"
+              placeholder="Enter your password"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              secureTextEntry={!showPass}
+              rightIcon={showPass ? 'eye-off-outline' : 'eye-outline'}
+              onRightIconPress={() => setShowPass((p) => !p)}
+              error={errors.password?.message}
+            />
+          )}
         />
 
+        <PasswordStrengthIndicator password={password} />
 
-        <Input
-          label="Confirm Password"
-          icon="lock-closed-outline"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry={!showConfirm}
-          rightIcon={showConfirm ? 'eye-off-outline' : 'eye-outline'}
-          onRightIconPress={() => setShowConfirm((p) => !p)}
-          error={errors.confirmPassword}
+        <Controller
+          control={control}
+          name="confirmPassword"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label="Confirm Password"
+              icon="lock-closed-outline"
+              placeholder="Confirm Password"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              secureTextEntry={!showConfirm}
+              rightIcon={showConfirm ? 'eye-off-outline' : 'eye-outline'}
+              onRightIconPress={() => setShowConfirm((p) => !p)}
+              error={errors.confirmPassword?.message}
+            />
+          )}
         />
-
 
         <PasswordRequirements password={password} rules={PASSWORD_RULES} />
       </View>

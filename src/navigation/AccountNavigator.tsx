@@ -1,6 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AccountScreen } from '@screens/AccountScreen';
+import { AccountScreen } from '@features/account/screens/AccountScreen';
 import { ProfileScreen } from '@features/account/screens/ProfileScreen';
 import { HealthProfileScreen } from '@features/account/screens/HealthProfileScreen';
 

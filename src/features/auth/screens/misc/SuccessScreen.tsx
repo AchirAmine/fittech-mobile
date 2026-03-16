@@ -36,7 +36,7 @@ const SuccessScreen: React.FC<Props> = ({ navigation, route }) => {
     // Navigate to WELCOME or AUTH_CHOICE to ensure a clean start
     navigation.reset({
       index: 0,
-      routes: [{ name: ROUTES.AUTH.WELCOME as any }],
+      routes: [{ name: ROUTES.AUTH.WELCOME as keyof AuthStackParamList }],
     });
   }, [navigation]);
 

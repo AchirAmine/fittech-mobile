@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
@@ -16,7 +15,7 @@ import { useDispatch } from 'react-redux';
 import { logout } from '@features/auth/store/authSlice';
 
 export const AccountMenu = () => {
-  const { colors, isDark, toggleTheme, theme, setTheme } = useTheme();
+  const { colors, theme, setTheme } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
   const dispatch = useDispatch();
 
@@ -26,21 +25,21 @@ export const AccountMenu = () => {
     {
       id: 'profile',
       title: 'My Profile',
-      icon: 'person-outline',
+      icon: 'person-outline' as keyof typeof Ionicons.glyphMap,
       onPress: () => navigation.navigate('ProfileMain'),
     },
     {
       id: 'health_profile',
       title: 'Health Profile',
-      icon: 'medical-outline',
+      icon: 'medical-outline' as keyof typeof Ionicons.glyphMap,
       onPress: () => navigation.navigate('HealthProfile'),
     },
   ];
 
   const themeOptions = [
-    { id: 'light', label: 'Light', icon: 'sunny-outline' },
-    { id: 'dark', label: 'Dark', icon: 'moon-outline' },
-    { id: 'system', label: 'Auto', icon: 'settings-outline' },
+    { id: 'light', label: 'Light', icon: 'sunny-outline' as keyof typeof Ionicons.glyphMap },
+    { id: 'dark', label: 'Dark', icon: 'moon-outline' as keyof typeof Ionicons.glyphMap },
+    { id: 'system', label: 'Auto', icon: 'settings-outline' as keyof typeof Ionicons.glyphMap },
   ];
 
   return (
@@ -54,7 +53,7 @@ export const AccountMenu = () => {
         >
           <View style={styles.menuItemLeft}>
             <View style={[styles.iconContainer, { backgroundColor: colors.primary + '15' }]}>
-              <Ionicons name={item.icon as any} size={22} color={colors.primary} />
+              <Ionicons name={item.icon} size={22} color={colors.primary} />
             </View>
             <Text style={[styles.menuItemText, { color: colors.textPrimary }]}>{item.title}</Text>
           </View>
@@ -77,14 +76,14 @@ export const AccountMenu = () => {
             return (
               <TouchableOpacity
                 key={option.id}
-                onPress={() => setTheme(option.id as any)}
+                onPress={() => setTheme(option.id as 'light' | 'dark' | 'system')}
                 style={[
                   styles.themeOption,
                   isActive && { backgroundColor: colors.primary }
                 ]}
               >
                 <Ionicons 
-                  name={option.icon as any} 
+                  name={option.icon} 
                   size={18} 
                   color={isActive ? colors.white : colors.textSecondary} 
                 />

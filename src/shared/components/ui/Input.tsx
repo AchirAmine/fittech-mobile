@@ -75,10 +75,7 @@ export const Input: React.FC<InputProps> = memo(({
   
   const hasValue = Boolean(value) || isFocused;
 
-  // labelStyle contains Animated interpolations which are not strictly typed
-  // but are valid at runtime by react-native's Animated API
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const labelStyle: Record<string, any> = {
+  const labelStyle: Record<string, unknown> = {
     position: 'absolute',
     left: icon ? 48 : 16,
     top: animatedValue.interpolate({

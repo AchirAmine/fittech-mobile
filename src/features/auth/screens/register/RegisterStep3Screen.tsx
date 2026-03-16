@@ -1,16 +1,15 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useCallback, memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useForm, Controller } from 'react-hook-form';
+
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
-import { NeonButton, BackButton, AppScreen } from '@shared/components';
-import { StepIndicator, StepHeading, ValuePicker } from '@features/auth/components';
+import { AppScreen, NeonButton, BackButton } from '@shared/components';
+import { StepHeading, StepIndicator, ValuePicker } from '@features/auth/components';
+import { generateWeights } from '@features/auth/utils/registrationUtils';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep3'>;
-
-const generateWeights = () => {
-  return Array.from({ length: 221 }, (_, i) => 30 + i); // 30–250
-};
 
 const RegisterStep3Screen: React.FC<Props> = ({ navigation, route }) => {
   const { data: prevData } = route.params;
@@ -18,20 +17,21 @@ const RegisterStep3Screen: React.FC<Props> = ({ navigation, route }) => {
   const unit = 'kg';
   const weights = generateWeights();
   const defaultIndex = weights.indexOf(75);
-  const [selectedIndex, setSelectedIndex] = useState(defaultIndex >= 0 ? defaultIndex : 0);
 
-  const handleIndexChange = useCallback((index: number) => {
-    setSelectedIndex(index);
-  }, []);
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      selectedIndex: defaultIndex >= 0 ? defaultIndex : 0,
+    },
+  });
 
-  const handleContinue = useCallback(() => {
-    const data: SignupData = {
+  const onSubmit = useCallback((data: { selectedIndex: number }) => {
+    const signupData: SignupData = {
       ...prevData,
-      weightValue: weights[selectedIndex],
+      weightValue: weights[data.selectedIndex],
       weightUnit: unit,
     };
-    navigation.navigate(ROUTES.AUTH.REGISTER_STEP4, { data });
-  }, [navigation, prevData, weights, selectedIndex]);
+    navigation.navigate(ROUTES.AUTH.REGISTER_STEP4, { data: signupData });
+  }, [navigation, prevData, weights]);
 
   return (
     <AppScreen
@@ -45,18 +45,24 @@ const RegisterStep3Screen: React.FC<Props> = ({ navigation, route }) => {
         </View>
       }
       footer={
-        <NeonButton title="Continue" onPress={handleContinue} style={styles.continueBtn} />
+        <NeonButton title="Continue" onPress={handleSubmit(onSubmit)} style={styles.continueBtn} />
       }
     >
       <StepHeading title="What's your Weight ?" />
 
       <View style={styles.pickerWrapper}>
-        <ValuePicker
-          data={weights}
-          selectedIndex={selectedIndex}
-          onIndexChange={handleIndexChange}
-          unit={unit}
-          unitOverlayMarginLeft={35}
+        <Controller
+          control={control}
+          name="selectedIndex"
+          render={({ field: { onChange, value } }) => (
+            <ValuePicker
+              data={weights}
+              selectedIndex={value}
+              onIndexChange={onChange}
+              unit={unit}
+              unitOverlayMarginLeft={35}
+            />
+          )}
         />
       </View>
     </AppScreen>
@@ -73,7 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 16,
   },
-  pickerWrapper: { 
+  pickerWrapper: {
     flex: 1,
     justifyContent: 'center',
   },

@@ -29,8 +29,10 @@ export const AuthBottomSheet: React.FC<AuthBottomSheetProps> = ({
   const { colors } = useTheme();
 
   const isModal = variant === 'modal';
-  const containerBg = isModal && showOverlay ? colors.overlay : 'transparent';
-  const sheetStyle: ViewStyle = isModal ? { minHeight: minHeight as ViewStyle['minHeight'] } : styles.sheetFull;
+  const containerBg = isModal ? 'transparent' : 'transparent';
+  const sheetStyle: ViewStyle = isModal
+    ? { height: minHeight as ViewStyle['height'] }
+    : styles.sheetFull;
 
   const topArea = isModal && onDismiss ? (
     <Pressable style={styles.topArea} onPress={onDismiss} />
@@ -40,7 +42,11 @@ export const AuthBottomSheet: React.FC<AuthBottomSheetProps> = ({
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: containerBg }]}
+      style={[
+        styles.container,
+        { backgroundColor: containerBg },
+        isModal && styles.containerModal,
+      ]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       {topArea}
@@ -60,6 +66,7 @@ export const AuthBottomSheet: React.FC<AuthBottomSheetProps> = ({
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  containerModal: { justifyContent: 'flex-end' },
   topArea: { flex: 1 },
   topAreaSafe: { flex: 0.1 },
   sheet: {

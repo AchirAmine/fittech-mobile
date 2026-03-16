@@ -5,3 +5,4 @@ export * from './ProfileAvatar';
 export * from './MetricCard';
 export * from './GoalSelector';
 export * from './RestrictionSelector';
+export * from './SaveButton';

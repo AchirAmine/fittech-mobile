@@ -11,5 +11,6 @@ export const API_ENDPOINTS = {
   },
   MEMBER: {
     GET_ME: "/members/me",
+    UPDATE_ME: "/members/me",
   },
 } as const;

@@ -19,7 +19,7 @@ export const Modal: React.FC<ModalProps> = memo(({ visible, onClose, title, chil
     <RNModal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType="slide"
       onRequestClose={onClose}
     >
       <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
@@ -42,14 +42,15 @@ export const Modal: React.FC<ModalProps> = memo(({ visible, onClose, title, chil
 const styles = StyleSheet.create({
   overlay: {
     flex: 1, // Ensure overlay covers full screen
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: Theme.Spacing.lg,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)', // Fallback if overlay color fails
   },
   container: {
     width: '100%',
-    borderRadius: Theme.Radius.lg,
+    borderTopLeftRadius: Theme.Radius.lg,
+    borderTopRightRadius: Theme.Radius.lg,
     overflow: 'hidden',
+    paddingBottom: Theme.Spacing.xl,
   },
   header: {
     flexDirection: 'row',

@@ -1,6 +1,3 @@
-// Note: Colors are now managed dynamically via ThemeContext and useTheme hook.
-// Do not use these static colors in components.
-
 export const Spacing = {
   xs: 4,
   sm: 8,

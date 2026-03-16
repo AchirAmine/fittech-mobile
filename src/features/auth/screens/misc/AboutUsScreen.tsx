@@ -129,7 +129,7 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
               {FEATURES.map(feature => (
                 <View key={feature.id} style={[styles.featureCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <View style={[styles.featureIcon, { backgroundColor: hexToRGBA(colors.primary, 0.1) }]}>
-                    <Ionicons name={feature.icon as any} size={32} color={colors.primary} />
+                    <Ionicons name={feature.icon as keyof typeof Ionicons.glyphMap} size={32} color={colors.primary} />
                   </View>
                   <Text style={[styles.featureTitle, { color: colors.textPrimary }]}>{feature.title}</Text>
                   <Text style={[styles.featureDescription, { color: colors.textSecondary }]}>{feature.description}</Text>

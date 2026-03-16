@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Theme } from '@shared/constants/theme';
+import { ThemeColors } from '@shared/constants/colors';
 
 interface UseEditableHeaderProps {
-  colors: any;
+  colors: ThemeColors;
   onSave?: () => void;
   onCancel?: () => void;
   isUpdating?: boolean;

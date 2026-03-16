@@ -8,10 +8,7 @@ import {
   NeonButton,
   Logo,
   Input,
-  BackButton,
   AppScreen,
-  LoadingOverlay,
-  ErrorBanner,
 } from '@shared/components';
 import {
   AuthBottomSheet,
@@ -57,9 +54,15 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={styles.wrapper}>
-      <ErrorBanner message={apiError} onDismiss={() => setApiError(null)} />
-      <LoadingOverlay visible={loading} message="Sending verification code..." />
+    <AppScreen
+      isLoading={loading}
+      loadingMessage="Sending verification code..."
+      errorMessage={apiError}
+      onDismissError={() => setApiError(null)}
+      backgroundColor="transparent"
+      scrollable={false}
+      contentContainerStyle={{ paddingHorizontal: 0 }}
+    >
       <AuthBottomSheet variant="modal" onDismiss={() => navigation.goBack()}>
         <View style={styles.headerRow}>
           <View style={styles.logoCenter}>
@@ -101,12 +104,11 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
           />
         </View>
       </AuthBottomSheet>
-    </View>
+    </AppScreen>
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: { flex: 1 },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',

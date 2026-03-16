@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,46 +6,61 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { object, number, string, array, InferType } from 'yup';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-import { NeonButton } from '@shared/components/ui';
+import { Input } from '@shared/components/ui';
+import { GOALS, HEALTH_CONCERNS } from '@shared/constants/healthConstants';
 import { useGetAccount, useUpdateAccount } from '@features/account/hooks/useAccount';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { MetricCard, GoalSelector, RestrictionSelector } from '../components';
+import { MetricCard, GoalSelector, RestrictionSelector, SaveButton } from '../components';
+import { AppScreen } from '@shared/components';
+import { getErrorMessage } from '@shared/constants/errorMessages';
 import { useEditableHeader } from '../hooks/useEditableHeader';
 import { parseRestrictions, formatRestrictions } from '../utils/accountUtils';
 
-const healthSchema = yup.object().shape({
-  height: yup.number().required('Height is required').min(50).max(250),
-  weight: yup.number().required('Weight is required').min(20).max(300),
-  restrictions: yup.array().of(yup.string()).default([]),
-  goal: yup.string().required('Goal is required'),
+const healthSchema = object().shape({
+  height: number().required('Height is required').min(50).max(250),
+  weight: number().required('Weight is required').min(20).max(300),
+  restrictions: array().of(string()).default([]),
+  goal: string().required('Goal is required'),
+  otherGoalText: string().when('goal', {
+    is: 'other',
+    then: (schema) => schema.required('Please specify your goal'),
+    otherwise: (schema) => schema.optional(),
+  }),
+  otherRestrictionText: string().optional(),
 });
 
 export const HealthProfileScreen = () => {
   const { colors, isDark } = useTheme();
   
-  const { data: userData, isLoading: loading } = useGetAccount();
-  const { mutate: updateMe, isPending: updating } = useUpdateAccount();
+  const { data: userData, isLoading: loading, error: fetchError, refetch } = useGetAccount();
+  const { 
+    mutate: updateMe, 
+    isPending: updating,
+    error: updateError,
+    reset: resetMutation
+  } = useUpdateAccount();
   
   const { isEditing, setIsEditing } = useEditableHeader({ 
     colors,
     isUpdating: updating 
   });
 
-  const { control, handleSubmit, setValue, reset, watch } = useForm({
+  const { control, handleSubmit, setValue, reset, watch, formState: { errors } } = useForm({
     resolver: yupResolver(healthSchema),
     defaultValues: {
-      height: userData?.height || 170,
-      weight: userData?.weight || 70,
-      goal: userData?.fitnessObjective || '',
-      restrictions: parseRestrictions(userData?.medicalRestrictions),
+      height: 170,
+      weight: 70,
+      goal: '',
+      otherGoalText: '',
+      restrictions: [] as string[],
+      otherRestrictionText: '',
     },
   });
 
@@ -54,24 +69,49 @@ export const HealthProfileScreen = () => {
 
   useEffect(() => {
     if (userData) {
+      const goalExists = GOALS.some(g => g.id === userData.fitnessObjective);
+      const goalId = goalExists ? userData.fitnessObjective : (userData.fitnessObjective ? 'other' : '');
+      const otherGoalText = goalExists ? '' : (userData.fitnessObjective || '');
+
+      const rawRestrictions = parseRestrictions(userData.medicalRestrictions);
+      const standardIds = HEALTH_CONCERNS.map(c => c.id).filter(id => id !== 'other' && id !== 'none');
+      const selectedIds = rawRestrictions.filter(r => standardIds.includes(r));
+      const customRestrictions = rawRestrictions.filter(r => !standardIds.includes(r) && r !== 'none');
+      
+      const hasOther = customRestrictions.length > 0 || rawRestrictions.includes('other');
+      if (hasOther && !selectedIds.includes('other')) {
+        selectedIds.push('other');
+      }
+      
+      const otherText = customRestrictions.join(', ');
+
       reset({
         height: userData.height || 170,
         weight: userData.weight || 70,
-        restrictions: parseRestrictions(userData.medicalRestrictions),
-        goal: userData.fitnessObjective || '',
+        restrictions: selectedIds,
+        goal: goalId as string,
+        otherGoalText,
+        otherRestrictionText: otherText,
       });
     }
   }, [userData, reset]);
 
-  const onSubmit = (formData: any) => {
+  const onSubmit = (formData: InferType<typeof healthSchema>) => {
+    const finalGoal = formData.goal === 'other' ? formData.otherGoalText : formData.goal;
+    
+    let finalRestrictions = (formData.restrictions || []).filter((r): r is string => r !== undefined && r !== 'other');
+    if (formData.restrictions?.includes('other') && formData.otherRestrictionText) {
+      finalRestrictions.push(formData.otherRestrictionText);
+    }
+
     updateMe({
       healthProfile: {
         heightValue: formData.height,
         heightUnit: 'cm',
         weightValue: formData.weight,
         weightUnit: 'kg',
-        restrictions: formatRestrictions(formData.restrictions),
-        goals: [formData.goal],
+        restrictions: formatRestrictions(finalRestrictions),
+        goals: [finalGoal as string],
       },
     }, {
       onSuccess: () => {
@@ -95,112 +135,169 @@ export const HealthProfileScreen = () => {
     setValue('restrictions', without.includes(id) ? without.filter(r => r !== id) : [...without, id]);
   };
 
-  if (loading) {
-    return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
+  const handleDismissError = () => {
+    if (updateError) resetMutation();
+    if (fetchError) refetch();
+  };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+    <AppScreen
+      isLoading={loading}
+      errorMessage={getErrorMessage(fetchError || updateError)}
+      onDismissError={handleDismissError}
+      contentContainerStyle={styles.scrollContent}
+    >
+      <View style={styles.form}>
+        <Animated.View entering={FadeInDown.delay(200).duration(600)} style={styles.metricsRow}>
+          <Controller
+            control={control}
+            name="height"
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.halfWidth}>
+                <MetricCard
+                  label="Height"
+                  value={value}
+                  unit="cm"
+                  icon="resize-outline"
+                  onChange={val => onChange(Number(val) || 0)}
+                  colors={colors}
+                  isDark={isDark}
+                  isEditing={isEditing}
+                />
+              </View>
+            )}
+          />
+          <Controller
+            control={control}
+            name="weight"
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.halfWidth}>
+                <MetricCard
+                  label="Weight"
+                  value={value}
+                  unit="kg"
+                  icon="speedometer-outline"
+                  onChange={val => onChange(Number(val) || 0)}
+                  colors={colors}
+                  isDark={isDark}
+                  isEditing={isEditing}
+                />
+              </View>
+            )}
+          />
+        </Animated.View>
 
-          <Animated.View entering={FadeInDown.delay(200).duration(600)} style={styles.metricsRow}>
-            <Controller
-              control={control}
-              name="height"
-              render={({ field: { onChange, value } }) => (
-                <View style={styles.halfWidth}>
-                  <MetricCard
-                    label="Height"
-                    value={value}
-                    unit="cm"
-                    icon="resize-outline"
-                    onChange={val => onChange(Number(val) || 0)}
-                    colors={colors}
-                    isDark={isDark}
-                    isEditing={isEditing}
-                  />
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.primaryMid }]}>Main Fitness Goal</Text>
+          <GoalSelector
+            selectedGoal={selectedGoal}
+            isEditing={isEditing}
+            onSelect={id => setValue('goal', id)}
+            colors={colors}
+            isDark={isDark}
+          />
+          {selectedGoal === 'other' && (
+            <Animated.View entering={FadeInDown} style={styles.otherInput}>
+              {isEditing ? (
+                <Controller
+                  control={control}
+                  name="otherGoalText"
+                  render={({ field: { onChange, value } }) => (
+                    <Input
+                      label="Please specify your goal"
+                      value={value || ''}
+                      onChangeText={onChange}
+                      error={errors.otherGoalText?.message}
+                      icon="create-outline"
+                      labelBg={isDark ? colors.background : '#fff'}
+                    />
+                  )}
+                />
+              ) : (
+                <View style={[styles.customValueRow, { backgroundColor: colors.cardSecondary }]}>
+                  <Ionicons name="information-circle-outline" size={18} color={colors.primary} />
+                  <Text style={[styles.customValueText, { color: colors.textPrimary }]}>
+                    {watch('otherGoalText') || 'Not specified'}
+                  </Text>
                 </View>
               )}
-            />
-            <Controller
-              control={control}
-              name="weight"
-              render={({ field: { onChange, value } }) => (
-                <View style={styles.halfWidth}>
-                  <MetricCard
-                    label="Weight"
-                    value={value}
-                    unit="kg"
-                    icon="speedometer-outline"
-                    onChange={val => onChange(Number(val) || 0)}
-                    colors={colors}
-                    isDark={isDark}
-                    isEditing={isEditing}
-                  />
-                </View>
-              )}
-            />
-          </Animated.View>
-
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.primaryMid }]}>Main Fitness Goal</Text>
-            <GoalSelector
-              selectedGoal={selectedGoal}
-              isEditing={isEditing}
-              onSelect={id => setValue('goal', id)}
-              colors={colors}
-              isDark={isDark}
-            />
-          </View>
-
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.primaryMid }]}>Medical Restrictions</Text>
-            <RestrictionSelector
-              selectedRestrictions={selectedRestrictions}
-              isEditing={isEditing}
-              onToggle={onToggleRestriction}
-              colors={colors}
-              isDark={isDark}
-            />
-          </View>
-
-          {isEditing && (
-            <Animated.View entering={FadeInDown.duration(400)}>
-              <NeonButton
-                title="Save Changes"
-                onPress={handleSubmit(onSubmit)}
-                loading={updating}
-                style={styles.saveButton}
-              />
             </Animated.View>
           )}
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.primaryMid }]}>Medical Restrictions</Text>
+          <RestrictionSelector
+            selectedRestrictions={selectedRestrictions}
+            isEditing={isEditing}
+            onToggle={onToggleRestriction}
+            colors={colors}
+            isDark={isDark}
+          />
+          {selectedRestrictions?.includes('other') && (
+            <Animated.View entering={FadeInDown} style={styles.otherInput}>
+              {isEditing ? (
+                <Controller
+                  control={control}
+                  name="otherRestrictionText"
+                  render={({ field: { onChange, value } }) => (
+                    <Input
+                      label="Please specify your medical concerns"
+                      value={value || ''}
+                      onChangeText={onChange}
+                      icon="medical-outline"
+                      labelBg={isDark ? colors.background : '#fff'}
+                    />
+                  )}
+                />
+              ) : (
+                <View style={[styles.customValueRow, { backgroundColor: colors.cardSecondary }]}>
+                  <Ionicons name="medical-outline" size={18} color={colors.primary} />
+                  <Text style={[styles.customValueText, { color: colors.textPrimary }]}>
+                    {watch('otherRestrictionText') || 'Not specified'}
+                  </Text>
+                </View>
+              )}
+            </Animated.View>
+          )}
+        </View>
+
+        <SaveButton
+          isEditing={isEditing}
+          onPress={handleSubmit(onSubmit)}
+          isLoading={updating}
+        />
+      </View>
+    </AppScreen>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  scrollContent: { padding: 20, paddingBottom: 60 },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
+  form: { gap: 20, paddingTop: 20 },
   metricsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 28,
   },
   halfWidth: { width: '48%' },
-  section: { marginBottom: 28 },
+  section: { marginBottom: 8 },
+  otherInput: { marginTop: 12, paddingHorizontal: 2 },
+  customValueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 12,
+    gap: 10,
+    marginTop: 4,
+  },
+  customValueText: {
+    fontSize: 14,
+    fontFamily: Theme.Typography.fontFamily.medium,
+  },
   sectionTitle: {
     fontSize: 17,
     fontFamily: Theme.Typography.fontFamily.bold,
     marginBottom: 14,
     marginLeft: 2,
   },
-  saveButton: { marginTop: 8, height: 56 },
 });

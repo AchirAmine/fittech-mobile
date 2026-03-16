@@ -1,7 +1,6 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { ApiError } from '@appTypes/api.types';
 
-
 interface StoreShape {
   getState(): {
     auth: {
@@ -12,9 +11,18 @@ interface StoreShape {
   dispatch(action: unknown): unknown;
 }
 
+interface ApiErrorResponseData {
+  message?: string;
+  field?: string | null;
+  errors?: Record<string, string[]>;
+}
+
+const AXIOS_TIMEOUT = 10000;
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
 const axiosClient: AxiosInstance = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL,
-  timeout: 10000,
+  baseURL: API_URL,
+  timeout: AXIOS_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -25,12 +33,6 @@ let store: StoreShape | null = null;
 export const injectStore = (_store: StoreShape): void => {
   store = _store;
 };
-
-interface ApiErrorResponseData {
-  message?: string;
-  field?: string | null;
-}
-
 
 export const handleApiError = (error: AxiosError<ApiErrorResponseData>): ApiError => {
   const formattedError: ApiError = {
@@ -43,37 +45,37 @@ export const handleApiError = (error: AxiosError<ApiErrorResponseData>): ApiErro
     formattedError.message = error.response.data?.message || formattedError.message;
     formattedError.code = error.response.status;
     formattedError.field = error.response.data?.field || null;
-    formattedError.errors = (error.response.data as { errors?: Record<string, string[]> })?.errors;
+    formattedError.errors = error.response.data?.errors;
   } else if (error.request) {
-    if (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout')) {
-      formattedError.message = 'Request timed out. Please try again.';
+    const errorMsg = error.message?.toLowerCase() || '';
+    
+    if (error.code === 'ECONNABORTED' || errorMsg.includes('timeout')) {
+      formattedError.message = 'Request timed out. Please check your connection.';
       formattedError.code = 408;
+    } else if (errorMsg.includes('network error')) {
+      formattedError.message = 'Network error. Please check your internet connection.';
+      formattedError.code = 0;
     } else {
-      formattedError.message = 'No connection. Please check your internet and try again.';
+      formattedError.message = `Server unreachable (${error.code || 'UNKNOWN'}).`;
       formattedError.code = 0;
     }
-  } else if (error.message) {
+  } else {
     formattedError.message = error.message;
   }
 
   return formattedError;
 };
 
-
 axiosClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    if (store) {
-      const state = store.getState();
-      const token = state.auth.token;
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    const token = store?.getState().auth.token;
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error: AxiosError<ApiErrorResponseData>) => Promise.reject(handleApiError(error))
 );
-
 
 axiosClient.interceptors.response.use(
   (response: AxiosResponse) => response,
@@ -82,37 +84,37 @@ axiosClient.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry && store) {
       originalRequest._retry = true;
+      
       try {
-        const state = store.getState();
-        const refreshToken = state.auth.refreshToken;
+        const refreshToken = store.getState().auth.refreshToken;
+        if (!refreshToken) throw new Error('No refresh token');
 
-        if (refreshToken) {
-          const refreshResponse = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`, {
-            refreshToken,
-          });
+        const { data } = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
+        const { token, refreshToken: newRefreshToken, user } = data.data;
 
-          const { token, refreshToken: newRefreshToken, user } = refreshResponse.data as {
-            token: string;
-            refreshToken: string;
-            user: unknown;
-          };
+        store.dispatch({
+          type: 'auth/setCredentials',
+          payload: { token, refreshToken: newRefreshToken, user },
+        });
 
-          store.dispatch({
-            type: 'auth/setCredentials',
-            payload: { token, refreshToken: newRefreshToken, user },
-          });
-
-          if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-          }
-          return axiosClient(originalRequest);
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
         }
-      } catch (refreshError: unknown) {
+        
+        return axiosClient(originalRequest);
+      } catch (refreshError: any) {
         store.dispatch({ type: 'auth/logout' });
-        return Promise.reject(refreshError instanceof Error
-          ? { message: refreshError.message, code: 0, field: null }
-          : { message: 'Token refresh failed', code: 0, field: null }
-        );
+        
+        const is404 = refreshError.response?.status === 404;
+        const message = is404 
+          ? 'Session expired (Support required: Refresh endpoint missing)' 
+          : 'Session expired. Please log in again.';
+          
+        return Promise.reject({ 
+          message, 
+          code: 401, 
+          field: null 
+        });
       }
     }
 

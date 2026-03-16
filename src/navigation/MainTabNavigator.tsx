@@ -6,7 +6,7 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { ROUTES } from '@navigation/routes';
 import { MainTabParamList } from '@appTypes/navigation.types';
 
-import { HomeScreen } from '@screens/HomeScreen';
+import { HomeScreen } from '@features/home/screens/HomeScreen';
 import { AccountNavigator } from './AccountNavigator';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
