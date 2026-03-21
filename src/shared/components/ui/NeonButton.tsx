@@ -13,12 +13,13 @@ export interface NeonButtonProps {
   disabled?: boolean;
   loading?: boolean;
   icon?: React.ComponentProps<typeof Ionicons>['name'];
+  content?: React.ReactNode;
 }
 
-export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, textStyle, outlined, disabled, loading, icon }) => {
+export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, textStyle, outlined, disabled, loading, icon, content }) => {
   const { colors, isDark } = useTheme();
 
-  const content = loading ? (
+  const innerContent = loading ? (
     <ActivityIndicator color={outlined ? colors.success : colors.white} />
   ) : (
     <>
@@ -39,6 +40,7 @@ export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, t
       ]}>
         {title}
       </Text>
+      {content}
     </>
   );
 
@@ -56,7 +58,7 @@ export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, t
         activeOpacity={0.8}
         disabled={disabled}
       >
-        {content}
+        {innerContent}
       </TouchableOpacity>
     );
   }
@@ -71,7 +73,7 @@ export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, t
         style
       ]}
     >
-      {content}
+      {innerContent}
     </TouchableOpacity>
   );
 };

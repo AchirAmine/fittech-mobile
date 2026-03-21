@@ -1,5 +1,59 @@
 // Global Shared Types
 
+export interface OfferSport {
+  id: string;
+  sportType: string;
+  freeSessions: number;
+  coachSessions: number;
+}
+
+export interface Offer {
+  id: string;
+  title: string;
+  duration: number; // in months
+  price: number;
+  picture?: string;
+  sports: OfferSport[];
+}
+
+export interface Payment {
+  id: string;
+  amount: number;
+  method: 'ONLINE' | 'AT_CLUB';
+  status: 'PENDING' | 'COMPLETED' | 'FAILED';
+  paidAt?: string;
+  createdAt: string;
+}
+
+export interface Subscription {
+  id: string;
+  paymentMethod: 'ONLINE' | 'AT_CLUB';
+  status?: 'ACTIVE' | 'PENDING_PAYMENT' | 'EXPIRED' | 'CANCELLED';
+  startDate?: string;
+  endDate?: string;
+  createdAt: string;
+  offer: Offer;
+  payment?: Payment;
+}
+
+export interface PlanFeature {
+  label: string;
+  icon: string;
+  details: string[];
+}
+
+export interface SubscriptionPlan {
+  id: string;
+  title: string;
+  price: number;
+  currency: string;
+  billingCycle: 'monthly' | 'annual';
+  duration: number; // in days
+  badge?: string;
+  image: any;
+  features: PlanFeature[];
+}
+
 export interface User {
   id: string;
   email: string;

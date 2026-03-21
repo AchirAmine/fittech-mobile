@@ -11,7 +11,6 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
@@ -53,7 +52,6 @@ export const AppScreen: React.FC<AppScreenProps> = ({
   onDismissError,
 }) => {
   const { colors, isDark } = useTheme();
-  const insets = useSafeAreaInsets();
 
   const containerStyle = [
     styles.container,
@@ -84,7 +82,7 @@ export const AppScreen: React.FC<AppScreenProps> = ({
   return (
     <View style={containerStyle}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-      <View style={[styles.flex, { paddingTop: insets.top }]}>
+      <View style={styles.flex}>
         {header && <View style={styles.headerContainer}>{header}</View>}
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -94,7 +92,7 @@ export const AppScreen: React.FC<AppScreenProps> = ({
           {content}
         </KeyboardAvoidingView>
         {footer && (
-          <View style={[styles.footerContainer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+          <View style={[styles.footerContainer, { paddingBottom: 16 }]}>
             {footer}
           </View>
         )}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ROUTES } from '@navigation/routes';
 import {
   View,
   Text,
@@ -33,6 +34,12 @@ export const AccountMenu = () => {
       title: 'Health Profile',
       icon: 'medical-outline' as keyof typeof Ionicons.glyphMap,
       onPress: () => navigation.navigate('HealthProfile'),
+    },
+    {
+      id: 'offers',
+      title: 'Subscription Offers',
+      icon: 'star-outline' as keyof typeof Ionicons.glyphMap,
+      onPress: () => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS),
     },
   ];
 

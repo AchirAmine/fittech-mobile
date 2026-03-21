@@ -37,7 +37,13 @@ const authSlice = createSlice({
       state.isAuthenticated = !!token;
     },
     logout: (state) => {
+      queryClient.cancelQueries();
+      queryClient.removeQueries();
       queryClient.clear();
+      
+      import('@store/store').then(({ persistor }) => {
+        persistor.purge();
+      });
       
       state.user = null;
       state.token = null;

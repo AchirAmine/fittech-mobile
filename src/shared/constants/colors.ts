@@ -60,6 +60,9 @@ export interface ThemeColors {
   border:  string;
   shadow:  string;
 
+  soloBadgeBg: string;
+  courseBadgeBg: string;
+
   white:       string;
   black:       string;
   transparent: 'transparent';
@@ -88,6 +91,9 @@ export const LightColors: ThemeColors = {
   border:  Palette.neutral[100],
   shadow:  Palette.translucent.black(0.1),
 
+  soloBadgeBg: '#10B981',
+  courseBadgeBg: '#F97316',
+
   white:       Palette.neutral[0],
   black:       Palette.neutral[1000],
   transparent: 'transparent',
@@ -115,6 +121,9 @@ export const DarkColors: ThemeColors = {
 
   border:  Palette.neutral[850],
   shadow:  Palette.translucent.black(0.3),
+
+  soloBadgeBg: '#10B981',
+  courseBadgeBg: '#F97316',
 
   white:       Palette.neutral[0],
   black:       Palette.neutral[1000],

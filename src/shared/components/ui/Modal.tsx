@@ -10,9 +10,17 @@ export interface ModalProps {
   title?: string;
   children: React.ReactNode;
   contentStyle?: ViewStyle;
+  hideHeader?: boolean;
 }
 
-export const Modal: React.FC<ModalProps> = memo(({ visible, onClose, title, children, contentStyle }) => {
+export const Modal: React.FC<ModalProps> = memo(({ 
+  visible, 
+  onClose, 
+  title, 
+  children, 
+  contentStyle,
+  hideHeader = false 
+}) => {
   const { colors } = useTheme();
 
   return (
@@ -24,12 +32,14 @@ export const Modal: React.FC<ModalProps> = memo(({ visible, onClose, title, chil
     >
       <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
         <View style={[styles.container, { backgroundColor: colors.background }, contentStyle]}>
-          <View style={[styles.header, { borderBottomColor: colors.border }]}>
-            <Text style={[styles.title, { color: colors.textPrimary }]}>{title || ''}</Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-              <Ionicons name="close" size={24} color={colors.textSecondary} />
-            </TouchableOpacity>
-          </View>
+          {!hideHeader && (
+            <View style={[styles.header, { borderBottomColor: colors.border }]}>
+              <Text style={[styles.title, { color: colors.textPrimary }]}>{title || ''}</Text>
+              <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+                <Ionicons name="close" size={24} color={colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+          )}
           <View style={styles.content}>
             {children}
           </View>

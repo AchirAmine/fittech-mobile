@@ -22,5 +22,10 @@ export const ROUTES = {
     ACCOUNT: 'Account',
     PROFILE: 'Profile',
     HEALTH_PROFILE: 'HealthProfile',
+    SUBSCRIPTION_OFFERS: 'SubscriptionOffers',
+    PAYMENT_DETAILS: 'PaymentDetails',
+    MY_PLANS: 'MyPlans',
+    PLAN_DETAILS: 'PlanDetails',
+    MEMBERSHIP: 'Membership',
   },
 } as const;

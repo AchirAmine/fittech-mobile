@@ -1,4 +1,6 @@
 // Navigation Types
+import { ROUTES } from '@navigation/routes';
+import { SubscriptionPlan } from './index';
 
 export interface RegisterFormData {
   firstName: string;
@@ -66,8 +68,21 @@ export type AuthStackParamList = {
   AuthChoice: undefined;
 };
 
+export type MembershipStackParamList = {
+  [ROUTES.MAIN.MY_PLANS]: undefined;
+  [ROUTES.MAIN.PLAN_DETAILS]: { planId: string; planName?: string };
+};
+
+export type HomeStackParamList = {
+  HomeMain: undefined;
+  ProfileMain: undefined;
+  [ROUTES.MAIN.SUBSCRIPTION_OFFERS]: undefined;
+  [ROUTES.MAIN.PAYMENT_DETAILS]: { plan: SubscriptionPlan };
+};
+
 export type MainTabParamList = {
-  Home: undefined;
-  Account: undefined;
+  [ROUTES.MAIN.HOME]: undefined; 
+  [ROUTES.MAIN.MEMBERSHIP]: undefined;
+  [ROUTES.MAIN.ACCOUNT]: undefined;
 };
 

@@ -1,29 +1,245 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
+import { AppScreen } from '@shared/components';
+import { useNavigation } from '@react-navigation/native';
+import { ROUTES } from '@navigation/routes';
+import { HomeInactivePlan } from '../components/HomeInactivePlan';
+import { HomeSection } from '../components/HomeSection';
+import { SportChip } from '../components/SportChip';
+import { FeatureCard } from '../components/FeatureCard';
+import { hexToRGBA } from '@shared/constants/colors';
+import { useGetAccount } from '@features/account/hooks/useAccount';
+import { useGetMySubscriptions } from '@features/membership/hooks/useMembership';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { HomeStackParamList } from '@appTypes/navigation.types';
+import { HomeActivePlan } from '../components/HomeActivePlan';
 
 export const HomeScreen = () => {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
+  const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
+  const { data: user } = useGetAccount();
+  const { data: subscriptions } = useGetMySubscriptions();
+
+  const activeSubscription = subscriptions?.find(s => s.status === 'ACTIVE');
+  const hasActivePlan = !!activeSubscription;
+
+  const sports = [
+    { id: '1', title: 'Boxing', emoji: '🥊' },
+    { id: '2', title: 'Gym', emoji: '🏋️' },
+    { id: '3', title: 'Swimming', emoji: '🏊' },
+    { id: '4', title: 'Yoga', emoji: '🧘' },
+  ];
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <View style={styles.headerLeft}>
+          <Text style={[styles.greetingLabel, { color: colors.textSecondary }]}>Hello,</Text>
+          <Text style={[styles.userName, { color: colors.textPrimary }]}>
+            {user?.firstName || 'Guest'}
+          </Text>
+        </View>
+      ),
+      headerRight: () => (
+        <View style={styles.headerRight}>
+          <TouchableOpacity style={styles.notificationBtn} activeOpacity={0.7}>
+            <Ionicons name="notifications-outline" size={24} color={colors.textPrimary} />
+            <View style={[styles.notificationBadge, { borderColor: colors.card }]}>
+              <View style={[styles.notificationDot, { backgroundColor: colors.error }]} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.avatarContainer, { backgroundColor: colors.cardSecondary }]} 
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('ProfileMain')}
+          >
+            {user?.profilePicture ? (
+              <Image source={user.profilePicture as any} style={styles.avatar} resizeMode="cover" />
+            ) : (
+              <Ionicons name="person" size={20} color={colors.textSecondary} />
+            )}
+          </TouchableOpacity>
+        </View>
+      ),
+      headerTitle: '',
+      headerShadowVisible: false,
+      headerStyle: {
+        backgroundColor: colors.background,
+      },
+    });
+  }, [navigation, user, colors]);
+
+  const features = [
+    { 
+      id: '1', 
+      title: 'Expert Coaches', 
+      description: 'Train with champions and certified professionals.',
+      icon: 'star',
+      iconBg: isDark ? hexToRGBA(colors.warning, 0.15) : hexToRGBA(colors.warning, 0.1),
+      iconColor: colors.warning
+    },
+    { 
+      id: '2', 
+      title: 'Clean Environment', 
+      description: 'Hygienic and well-maintained facilities.',
+      icon: 'sparkles',
+      iconBg: isDark ? hexToRGBA(colors.info, 0.15) : hexToRGBA(colors.info, 0.1),
+      iconColor: colors.info
+    },
+    { 
+      id: '3', 
+      title: 'Premium Equipment', 
+      description: 'State-of-the-art machines and gear.',
+      icon: 'barbell',
+      iconBg: isDark ? hexToRGBA(colors.primaryMid, 0.15) : hexToRGBA(colors.primaryMid, 0.1),
+      iconColor: colors.primaryMid
+    },
+  ];
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, { color: colors.textPrimary }]}>Dashboard</Text>
-      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Welcome to FitTech!</Text>
-    </View>
+    <AppScreen errorMessage={null}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Active Plan or Banner */}
+        {hasActivePlan ? (
+          <HomeActivePlan 
+            title={activeSubscription.offer.title}
+            endDate={activeSubscription.endDate}
+            onPress={() => navigation.navigate(ROUTES.MAIN.MEMBERSHIP as any)}
+          />
+        ) : (
+          <HomeInactivePlan 
+            onBrowsePlans={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)} 
+          />
+        )}
+
+        {/* Our Sports Section */}
+        <HomeSection title="OUR SPORTS" titleColor={colors.primary}>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.sportsScrollContent}
+          >
+            {sports.map((sport) => (
+              <SportChip 
+                key={sport.id} 
+                title={sport.title} 
+                emoji={sport.emoji} 
+              />
+            ))}
+          </ScrollView>
+        </HomeSection>
+
+        {/* Why FitTech Section */}
+        <HomeSection title="WHY FITTECH?" titleColor={colors.primary}>
+          <View style={styles.featuresContainer}>
+            {features.map((feature) => (
+              <FeatureCard 
+                key={feature.id}
+                title={feature.title}
+                description={feature.description}
+                icon={feature.icon}
+                iconBg={feature.iconBg}
+                iconColor={feature.iconColor}
+              />
+            ))}
+          </View>
+        </HomeSection>
+      </ScrollView>
+    </AppScreen>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  headerLeft: {
+    paddingLeft: 4,
+  },
+  greetingLabel: {
+    fontSize: 13,
+    fontFamily: Theme.Typography.fontFamily.medium,
+    opacity: 0.8,
+  },
+  userName: {
+    fontSize: 18,
+    fontFamily: Theme.Typography.fontFamily.bold,
+  },
+  greeting: {
+    fontSize: 20,
+    fontFamily: Theme.Typography.fontFamily.bold,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  notificationBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
+  notificationDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
   },
-  subtitle: {
-    fontSize: 16,
+  avatarContainer: {
+    marginLeft: 4,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  scrollContent: {
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+  activePlanSummary: {
+    padding: 16,
+    borderRadius: 20,
+    marginBottom: 20,
+  },
+  activePlanText: {
+    fontSize: 18,
+    fontFamily: Theme.Typography.fontFamily.bold,
+  },
+  activePlanFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  sportsScrollContent: {
+    gap: 12,
+    paddingRight: 16, // Extra space at the end of scroll
+  },
+  featuresContainer: {
+    gap: 16,
   },
 });
