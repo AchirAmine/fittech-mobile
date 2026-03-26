@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
-import { AppScreen } from '@shared/components';
+import { AppScreen, Loader } from '@shared/components';
+import { useAppSelector } from '@shared/hooks/useReduxHooks';
 import { useNavigation } from '@react-navigation/native';
 import { ROUTES } from '@navigation/routes';
 import { HomeInactivePlan } from '../components/HomeInactivePlan';
@@ -16,12 +17,16 @@ import { useGetMySubscriptions } from '@features/membership/hooks/useMembership'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { HomeActivePlan } from '../components/HomeActivePlan';
+import QuickActionCard from '../components/QuickActionCard';
 
 export const HomeScreen = () => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
-  const { data: user } = useGetAccount();
-  const { data: subscriptions } = useGetMySubscriptions();
+  const authUser = useAppSelector((state) => state.auth.user);
+  const { data: accountUser } = useGetAccount();
+  const { data: subscriptions, isLoading: isSubscriptionsLoading } = useGetMySubscriptions();
+
+  const user = accountUser || authUser;
 
   const activeSubscription = subscriptions?.find(s => s.status === 'ACTIVE');
   const hasActivePlan = !!activeSubscription;
@@ -100,56 +105,85 @@ export const HomeScreen = () => {
   ];
 
   return (
-    <AppScreen errorMessage={null}>
+    <AppScreen safeArea={false}>
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Active Plan or Banner */}
-        {hasActivePlan ? (
-          <HomeActivePlan 
-            title={activeSubscription.offer.title}
-            endDate={activeSubscription.endDate}
-            onPress={() => navigation.navigate(ROUTES.MAIN.MEMBERSHIP as any)}
-          />
-        ) : (
-          <HomeInactivePlan 
-            onBrowsePlans={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)} 
-          />
-        )}
-
-        {/* Our Sports Section */}
-        <HomeSection title="OUR SPORTS" titleColor={colors.primary}>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.sportsScrollContent}
-          >
-            {sports.map((sport) => (
-              <SportChip 
-                key={sport.id} 
-                title={sport.title} 
-                emoji={sport.emoji} 
+        <View style={styles.mainContainer}>
+          {/* DISCOVERY AREA: Active Plan or Banner */}
+          <View style={styles.discoverySection}>
+            {isSubscriptionsLoading ? (
+              <View style={[styles.activePlanSummary, { backgroundColor: colors.card, height: 160 }]}>
+                <Loader />
+              </View>
+            ) : hasActivePlan ? (
+              <HomeActivePlan 
+                title={activeSubscription.offer.title}
+                endDate={activeSubscription.endDate}
+                onPress={() => navigation.navigate(ROUTES.MAIN.MEMBERSHIP as any)}
               />
-            ))}
-          </ScrollView>
-        </HomeSection>
-
-        {/* Why FitTech Section */}
-        <HomeSection title="WHY FITTECH?" titleColor={colors.primary}>
-          <View style={styles.featuresContainer}>
-            {features.map((feature) => (
-              <FeatureCard 
-                key={feature.id}
-                title={feature.title}
-                description={feature.description}
-                icon={feature.icon}
-                iconBg={feature.iconBg}
-                iconColor={feature.iconColor}
+            ) : (
+              <HomeInactivePlan 
+                onBrowsePlans={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)} 
               />
-            ))}
+            )}
           </View>
-        </HomeSection>
+
+          {/* CORE ACTIONS */}
+          <HomeSection title="QUICK ACTIONS" titleColor={isDark ? colors.textSecondary : '#666'}>
+            <View style={styles.quickActionRow}>
+              <QuickActionCard 
+                title="Planning" 
+                icon="calendar" 
+                iconColor="#A3FE1C" 
+                iconBg={isDark ? hexToRGBA('#A3FE1C', 0.1) : '#F4FCDE'}
+                onPress={() => navigation.navigate(ROUTES.MAIN.PLANNING as any)}
+              />
+              <QuickActionCard 
+                title="Coaches" 
+                icon="people" 
+                iconColor="#FF911A" 
+                iconBg={isDark ? hexToRGBA('#FF911A', 0.1) : '#FFF3E5'}
+              />
+            </View>
+          </HomeSection>
+
+          {/* SPORTS SELECTION */}
+          <HomeSection title="EXPLORE OUR SPORTS" titleColor={colors.primary}>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.sportsScrollContent}
+              decelerationRate="fast"
+              snapToInterval={120}
+            >
+              {sports.map((sport) => (
+                <SportChip 
+                  key={sport.id} 
+                  title={sport.title} 
+                  emoji={sport.emoji} 
+                />
+              ))}
+            </ScrollView>
+          </HomeSection>
+
+          {/* COMMUNITY & FEATURES */}
+          <HomeSection title="WHY CHOOSE FITTECH" titleColor={colors.primary}>
+            <View style={styles.featuresContainer}>
+              {features.map((feature) => (
+                <FeatureCard 
+                  key={feature.id}
+                  title={feature.title}
+                  description={feature.description}
+                  icon={feature.icon}
+                  iconBg={feature.iconBg}
+                  iconColor={feature.iconColor}
+                />
+              ))}
+            </View>
+          </HomeSection>
+        </View>
       </ScrollView>
     </AppScreen>
   );
@@ -218,8 +252,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   scrollContent: {
-    paddingTop: 20,
     paddingBottom: 40,
+  },
+  mainContainer: {
+    paddingTop: 10,
+  },
+  discoverySection: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
   },
   activePlanSummary: {
     padding: 16,
@@ -240,6 +280,57 @@ const styles = StyleSheet.create({
     paddingRight: 16, // Extra space at the end of scroll
   },
   featuresContainer: {
+    gap: 16,
+  },
+  scheduleCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 20,
+    marginBottom: 20,
+    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  scheduleTextContainer: {
+    flex: 1,
+    marginLeft: 16,
+  },
+  scheduleTitle: {
+    fontFamily: Theme.Typography.fontFamily.bold,
+    fontSize: 16,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  coachText: {
+    fontFamily: Theme.Typography.fontFamily.medium,
+    fontSize: 14,
+    opacity: 0.7,
+  },
+  scheduleSub: {
+    fontFamily: Theme.Typography.fontFamily.medium,
+    fontSize: 13,
+  },
+  scheduleIconBg: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scheduleArrow: {
+    marginLeft: 8,
+  },
+  quickActionGrid: {
+    gap: 16,
+    marginBottom: 20,
+  },
+  quickActionRow: {
+    flexDirection: 'row',
     gap: 16,
   },
 });

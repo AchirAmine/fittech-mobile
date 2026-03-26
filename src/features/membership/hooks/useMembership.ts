@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { membershipService } from '../services/membershipService';
 import { Offer, Subscription } from '@appTypes/index';
-import { enrichSubscriptions } from '../utils/subscriptionUtils';
+
 
 export const membershipKeys = {
   all: ['membership'] as const,
@@ -20,8 +20,6 @@ export const useGetMySubscriptions = () => {
   return useQuery({
     queryKey: membershipKeys.mySubscriptions(),
     queryFn: membershipService.getMySubscriptions,
-    select: (subscriptions: Subscription[]) =>
-      enrichSubscriptions(subscriptions),
   });
 };
 

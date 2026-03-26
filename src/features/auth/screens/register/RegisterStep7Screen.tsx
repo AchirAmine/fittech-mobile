@@ -1,5 +1,5 @@
 import React, { useCallback, memo, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,8 +10,7 @@ import { ROUTES } from '@navigation/routes';
 import { useAppDispatch } from '@shared/hooks/useReduxHooks';
 
 import { getErrorMessage } from '@shared/constants/errorMessages';
-import { Input } from '@shared/components';
-import { AuthSelectionTemplate, SelectableCard } from '@features/auth/components';
+import { AuthSelectionTemplate, SelectableCard, OtherOptionInput } from '@features/auth/components';
 import { register } from '@features/auth/store/authActions';
 import logger from '@shared/utils/logger';
 import { HEALTH_CONCERNS } from '@shared/constants/healthConstants';
@@ -130,50 +129,31 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
         render={({ field: { onChange, value } }) => (
           <>
             {HEALTH_CONCERNS.map((option) => (
-              <View key={option.id}>
-                <SelectableCard
-                  label={option.label}
-                  iconName={option.icon}
-                  isSelected={(value || []).includes(option.id)}
-                  onPress={() => handleToggleConcern(option.id, value || [], onChange)}
-                />
-                
-                {option.id === 'other' && (value || []).includes('other') && (
-                  <View style={styles.inputContainer}>
-                    <Controller
-                      control={control}
-                      name="customConcern"
-                      render={({ field: { onChange: onCustomChange, value: customValue, onBlur } }) => (
-                        <Input
-                          label="Describe your health concern"
-                          placeholder="Details..."
-                          value={customValue}
-                          onBlur={onBlur}
-                          onChangeText={(text) => {
-                            onCustomChange(text);
-                            setApiError('');
-                          }}
-                          maxLength={100}
-                          error={errors.customConcern?.message}
-                        />
-                      )}
-                    />
-                  </View>
-                )}
-              </View>
+              <SelectableCard
+                key={option.id}
+                label={option.label}
+                iconName={option.icon}
+                isSelected={(value || []).includes(option.id)}
+                onPress={() => handleToggleConcern(option.id, value || [], onChange)}
+              />
             ))}
           </>
         )}
       />
+
+      {(healthConcerns || []).includes('other') && (
+        <OtherOptionInput
+          control={control}
+          name="customConcern"
+          label="Describe your health concern"
+          placeholder="Details..."
+          error={errors.customConcern?.message}
+          onChangeText={() => setApiError('')}
+        />
+      )}
     </AuthSelectionTemplate>
   );
 };
 
-const styles = StyleSheet.create({
-  inputContainer: {
-    marginTop: 8,
-    marginBottom: 8,
-  },
-});
-
 export default memo(RegisterStep7Screen);
+

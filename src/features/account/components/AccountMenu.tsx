@@ -14,6 +14,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProfileStackParamList } from '@navigation/AccountNavigator';
 import { useDispatch } from 'react-redux';
 import { logout } from '@features/auth/store/authSlice';
+import { Palette } from '@shared/constants/colors';
 
 export const AccountMenu = () => {
   const { colors, theme, setTheme } = useTheme();
@@ -46,6 +47,7 @@ export const AccountMenu = () => {
   const themeOptions = [
     { id: 'light', label: 'Light', icon: 'sunny-outline' as keyof typeof Ionicons.glyphMap },
     { id: 'dark', label: 'Dark', icon: 'moon-outline' as keyof typeof Ionicons.glyphMap },
+    { id: 'rose', label: 'Rose', icon: 'heart-outline' as keyof typeof Ionicons.glyphMap },
     { id: 'system', label: 'Auto', icon: 'settings-outline' as keyof typeof Ionicons.glyphMap },
   ];
 
@@ -83,7 +85,7 @@ export const AccountMenu = () => {
             return (
               <TouchableOpacity
                 key={option.id}
-                onPress={() => setTheme(option.id as 'light' | 'dark' | 'system')}
+                onPress={() => setTheme(option.id as 'light' | 'dark' | 'system' | 'rose')}
                 style={[
                   styles.themeOption,
                   isActive && { backgroundColor: colors.primary }
@@ -91,7 +93,7 @@ export const AccountMenu = () => {
               >
                 <Ionicons 
                   name={option.icon} 
-                  size={18} 
+                  size={16} 
                   color={isActive ? colors.white : colors.textSecondary} 
                 />
                 <Text style={[
@@ -165,7 +167,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 4,
     borderWidth: 1,
-    gap: 4,
+    gap: 2,
   },
   themeOption: {
     flex: 1,
@@ -174,10 +176,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 10,
     borderRadius: 12,
-    gap: 8,
+    gap: 4,
   },
   themeOptionLabel: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: Theme.Typography.fontFamily.medium,
   },
 });

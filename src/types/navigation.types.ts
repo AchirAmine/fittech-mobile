@@ -1,4 +1,3 @@
-// Navigation Types
 import { ROUTES } from '@navigation/routes';
 import { SubscriptionPlan } from './index';
 
@@ -24,7 +23,6 @@ export interface RegisterFormData {
   };
 }
 
-// Shared data object passed step-to-step through the multi-step signup flow
 export interface SignupData {
   firstName?: string;
   lastName?: string;
@@ -71,6 +69,13 @@ export type AuthStackParamList = {
 export type MembershipStackParamList = {
   [ROUTES.MAIN.MY_PLANS]: undefined;
   [ROUTES.MAIN.PLAN_DETAILS]: { planId: string; planName?: string };
+  [ROUTES.MAIN.SUBSCRIPTION_OFFERS]: undefined;
+  [ROUTES.MAIN.PAYMENT_DETAILS]: { plan: SubscriptionPlan };
+};
+
+export type CoursesStackParamList = {
+  [ROUTES.MAIN.COURSES]: undefined;
+  [ROUTES.MAIN.COURSE_DETAILS]: { courseId: string; courseTitle?: string; category?: string };
 };
 
 export type HomeStackParamList = {
@@ -78,10 +83,12 @@ export type HomeStackParamList = {
   ProfileMain: undefined;
   [ROUTES.MAIN.SUBSCRIPTION_OFFERS]: undefined;
   [ROUTES.MAIN.PAYMENT_DETAILS]: { plan: SubscriptionPlan };
+  [ROUTES.MAIN.PLANNING]: undefined;
 };
 
 export type MainTabParamList = {
   [ROUTES.MAIN.HOME]: undefined; 
+  [ROUTES.MAIN.COURSES]: undefined;
   [ROUTES.MAIN.MEMBERSHIP]: undefined;
   [ROUTES.MAIN.ACCOUNT]: undefined;
 };

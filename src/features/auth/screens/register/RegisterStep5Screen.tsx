@@ -1,5 +1,4 @@
 import React, { useCallback, memo } from 'react';
-import { View, StyleSheet } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,8 +6,7 @@ import { object, string, InferType } from 'yup';
 
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
-import { Input } from '@shared/components';
-import { AuthSelectionTemplate, SelectableCard } from '@features/auth/components';
+import { AuthSelectionTemplate, SelectableCard, OtherOptionInput } from '@features/auth/components';
 import { GOALS } from '@shared/constants/healthConstants';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep5'>;
@@ -76,31 +74,17 @@ const RegisterStep5Screen: React.FC<Props> = ({ navigation, route }) => {
       />
 
       {selectedGoal === 'other' && (
-        <View style={styles.inputContainer}>
-          <Controller
-            control={control}
-            name="customGoal"
-            render={({ field: { onChange, value } }) => (
-              <Input
-                label="Enter your goal"
-                placeholder="E.g. Build endurance"
-                value={value}
-                onChangeText={onChange}
-                maxLength={100}
-                error={errors.customGoal?.message}
-              />
-            )}
-          />
-        </View>
+        <OtherOptionInput
+          control={control}
+          name="customGoal"
+          label="Enter your goal"
+          placeholder="E.g. Build endurance"
+          error={errors.customGoal?.message}
+        />
       )}
     </AuthSelectionTemplate>
   );
 };
 
-const styles = StyleSheet.create({
-  inputContainer: {
-    marginTop: 12,
-  },
-});
-
 export default memo(RegisterStep5Screen);
+

@@ -19,6 +19,9 @@ export const ROUTES = {
   },
   MAIN: {
     HOME: 'Home',
+    PLANNING: 'Planning',
+    COURSES: 'Courses',
+    COURSES_MAIN: 'CoursesMain',
     ACCOUNT: 'Account',
     PROFILE: 'Profile',
     HEALTH_PROFILE: 'HealthProfile',
@@ -27,5 +30,11 @@ export const ROUTES = {
     MY_PLANS: 'MyPlans',
     PLAN_DETAILS: 'PlanDetails',
     MEMBERSHIP: 'Membership',
+    COURSE_DETAILS: 'CourseDetails',
   },
 } as const;
+
+export type CoursesStackParamList = {
+  [ROUTES.MAIN.COURSES_MAIN]: undefined;
+  [ROUTES.MAIN.COURSE_DETAILS]: { courseId: string; courseTitle?: string; category?: string };
+};

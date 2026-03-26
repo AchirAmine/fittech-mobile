@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ROUTES } from '@navigation/routes';
 import { useNavigation } from '@react-navigation/native';
@@ -22,67 +22,54 @@ export const MyPlansScreen = () => {
     navigation.navigate(ROUTES.MAIN.PLAN_DETAILS, { planId, planName });
   };
 
-  const activeSubscriptions = (subscriptions || []).filter(s => s.status === 'ACTIVE');
+  const activeSubscriptions = (subscriptions || []).filter((s: Subscription) => s.status === 'ACTIVE');
 
   return (
     <AppScreen 
+      safeArea={false}
       errorMessage={isError ? (error as any)?.message || 'Failed to load your plans' : null} 
       isLoading={isLoading}
       backgroundColor={colors.background}
+      contentContainerStyle={styles.scrollContent}
     >
-      <View style={styles.header}>
-        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Active Plans</Text>
-      </View>
+      {activeSubscriptions.length > 0 ? (
+        activeSubscriptions.map((sub: Subscription) => (
+          <ActivePlanCard
+            key={sub.id}
+            title={sub.offer.title}
+            subtitle={`${(sub.offer.sports || []).map(s => s.sportType).join(' & ')}`}
+            image={sub.offer.picture ? { uri: `${process.env.EXPO_PUBLIC_API_URL?.split('/api')[0]}/${sub.offer.picture}` } : undefined}
+            value={sub.endDate ? Math.ceil((new Date(sub.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)).toString() : '0'}
+            unit="DAYS REMAINING"
+            onPress={() => handleCheck(sub.id, sub.offer.title)}
+          />
+        ))
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No active plans found.</Text>
+        </View>
+      )}
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {activeSubscriptions.length > 0 ? (
-          activeSubscriptions.map((sub: Subscription) => (
-            <ActivePlanCard
-              key={sub.id}
-              title={sub.offer.title}
-              subtitle={`${(sub.offer.sports || []).map(s => s.sportType).join(' & ')}`}
-              image={sub.offer.picture ? { uri: `${process.env.EXPO_PUBLIC_API_URL?.split('/api')[0]}/${sub.offer.picture}` } : require('../../../../assets/images/boxing-swim.png')}
-              value={sub.endDate ? Math.ceil((new Date(sub.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)).toString() : '0'}
-              unit="DAYS REMAINING"
-              onPress={() => handleCheck(sub.id, sub.offer.title)}
-            />
-          ))
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No active plans found.</Text>
-          </View>
-        )}
-
-        {/* Add a Plan Action */}
-        <TouchableOpacity 
-          style={[styles.addPlanCard, { backgroundColor: isDark ? colors.card : colors.cardSecondary }]}
-          activeOpacity={0.7}
-          onPress={() => navigation.navigate(ROUTES.MAIN.HOME as any, { screen: ROUTES.MAIN.SUBSCRIPTION_OFFERS })}
-        >
-          <View style={[styles.addIconCircle, { backgroundColor: colors.primaryMid }]}>
-            <Ionicons name="add" size={28} color={colors.white} />
-          </View>
-          <View style={styles.addPlanTextContent}>
-            <Text style={[styles.addPlanTitle, { color: colors.textPrimary }]}>Add a Plan</Text>
-            <Text style={[styles.addPlanSubtitle, { color: colors.textSecondary }]}>Explore available packages</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={24} color={colors.border} />
-        </TouchableOpacity>
-      </ScrollView>
+      {/* Add a Plan Action */}
+      <TouchableOpacity 
+        style={[styles.addPlanCard, { backgroundColor: isDark ? colors.card : colors.cardSecondary }]}
+        activeOpacity={0.7}
+        onPress={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)}
+      >
+        <View style={[styles.addIconCircle, { backgroundColor: colors.primaryMid }]}>
+          <Ionicons name="add" size={28} color={colors.white} />
+        </View>
+        <View style={styles.addPlanTextContent}>
+          <Text style={[styles.addPlanTitle, { color: colors.textPrimary }]}>Add a Plan</Text>
+          <Text style={[styles.addPlanSubtitle, { color: colors.textSecondary }]}>Explore available packages</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={24} color={colors.border} />
+      </TouchableOpacity>
     </AppScreen>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
-    paddingHorizontal: 20,
-    marginTop: 10,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontFamily: Theme.Typography.fontFamily.bold,
-  },
   scrollContent: {
     paddingBottom: 30,
     gap: 20,

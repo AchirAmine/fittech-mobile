@@ -30,7 +30,7 @@ export const HEALTH_CONCERNS: HealthConcernOption[] = [
   { id: 'joint',    label: 'Joint problems',    icon: 'body-outline',  color: '#FF9500' },
   { id: 'asthma',   label: 'Asthma',            icon: 'pulse-outline', color: '#5856D6' },
   { id: 'none',     label: 'None of the above', icon: 'ban-outline',   color: '#8E8E93' },
-  { id: 'other',    label: 'Other concerns',    icon: 'medical-outline', color: '#00C897' },
+  { id: 'other',    label: 'Other',             icon: 'create-outline', color: '#8E8E93' },
 ];
 
 export interface ActivityOption {

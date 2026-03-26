@@ -6,6 +6,7 @@ import { SubscriptionScreen } from '@features/membership/screens/SubscriptionScr
 import { PaymentDetailsScreen } from '@features/membership/screens/PaymentDetailsScreen';
 import { ROUTES } from '@navigation/routes';
 import { HomeStackParamList } from '@appTypes/navigation.types';
+import PlanningScreen from '@features/planning/screens/PlanningScreen';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 
@@ -47,6 +48,11 @@ export const HomeNavigator = () => {
         name={ROUTES.MAIN.PAYMENT_DETAILS} 
         component={PaymentDetailsScreen} 
         options={{ title: 'Payment Details' }}
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.PLANNING as any} 
+        component={PlanningScreen} 
+        options={{ title: 'Planning' }}
       />
     </Stack.Navigator>
   );

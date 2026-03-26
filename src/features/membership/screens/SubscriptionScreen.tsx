@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -32,13 +32,17 @@ export const SubscriptionScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const indicatorAnim = useRef(new Animated.Value(0)).current;
 
-  const transformedPlans = (offers || []).map(transformOffer);
+  const transformedPlans = useMemo(() => {
+    return (offers || []).map(transformOffer);
+  }, [offers]);
 
-  const filteredPlans = transformedPlans.filter(plan => {
-    if (activeTab === 'All Plans') return true;
-    if (activeTab === 'Monthly') return plan.billingCycle === 'monthly';
-    return plan.billingCycle === 'annual';
-  });
+  const filteredPlans = useMemo(() => {
+    return transformedPlans.filter(plan => {
+      if (activeTab === 'All Plans') return true;
+      if (activeTab === 'Monthly') return plan.billingCycle === 'monthly';
+      return plan.billingCycle === 'annual';
+    });
+  }, [transformedPlans, activeTab]);
 
   const handleTabPress = (tab: TabType, index: number) => {
     setActiveTab(tab);

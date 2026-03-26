@@ -9,3 +9,4 @@ export * from './registration/ValuePicker';
 export * from './registration/AuthSelectionTemplate';
 export * from './base/AuthHeader';
 export * from './registration/PasswordStrengthIndicator';
+export * from './registration/OtherOptionInput';

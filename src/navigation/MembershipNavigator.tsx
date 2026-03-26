@@ -4,6 +4,8 @@ import { ROUTES } from '@navigation/routes';
 import { MembershipStackParamList } from '@appTypes/navigation.types';
 import { MyPlansScreen } from '@features/membership/screens/MyPlansScreen';
 import { PlanDetailsScreen } from '@features/membership/screens/PlanDetailsScreen';
+import { SubscriptionScreen } from '@features/membership/screens/SubscriptionScreen';
+import { PaymentDetailsScreen } from '@features/membership/screens/PaymentDetailsScreen';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 
@@ -39,6 +41,16 @@ export const MembershipNavigator = () => {
           title: route.params?.planName?.toUpperCase() || 'PLAN DETAILS',
           headerBackVisible: true,
         })}
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.SUBSCRIPTION_OFFERS} 
+        component={SubscriptionScreen} 
+        options={{ title: 'Explore Plans' }}
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.PAYMENT_DETAILS} 
+        component={PaymentDetailsScreen} 
+        options={{ title: 'Payment Details' }}
       />
     </Stack.Navigator>
   );

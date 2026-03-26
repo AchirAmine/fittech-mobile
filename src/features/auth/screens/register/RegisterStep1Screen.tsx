@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, Alert, Linking, Platform, Text } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,15 +14,21 @@ import { useTheme } from '@shared/hooks/useTheme';
 import logger from '@shared/utils/logger';
 import { Theme } from '@shared/constants/theme';
 import { GENDER_OPTIONS } from '@shared/constants/authConstants';
-import { AppScreen, Input, NeonButton, BackButton } from '@shared/components';
+import { AppScreen, Input, NeonButton } from '@shared/components';
 import { StepHeading, RegisterStepHeader } from '@features/auth/components';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep1'>;
 
 const registerStep1Schema = object().shape({
-  firstName: string().trim().required('First name is required'),
-  lastName: string().trim().required('Last name is required'),
-  phone: string().trim().required('Phone number is required'),
+  firstName: string().trim()
+    .required('First name is required')
+    .matches(/^[a-zA-Z\s]+$/, 'Only letters and spaces allowed'),
+  lastName: string().trim()
+    .required('Last name is required')
+    .matches(/^[a-zA-Z\s]+$/, 'Only letters and spaces allowed'),
+  phone: string().trim()
+    .required('Phone number is required')
+    .matches(/^0[567][0-9]{8}$/, 'Must start with 05, 06, or 07 followed by 8 digits'),
   dateOfBirth: string().trim().required('Date of birth is required')
     .test('is-valid-date', 'Invalid date', (value) => {
       if (!value) return false;
@@ -66,7 +72,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
 
   const photoUri = watch('photo');
   const dateOfBirth = watch('dateOfBirth');
-  const gender = watch('gender');
 
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -131,12 +136,8 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
 
   const onSubmit = useCallback((data: InferType<typeof registerStep1Schema>) => {
     const signupData: SignupData = {
-      firstName: data.firstName.trim(),
-      lastName: data.lastName.trim(),
-      phone: data.phone.trim(),
-      dateOfBirth: data.dateOfBirth.trim(),
+      ...data,
       gender: data.gender as 'male' | 'female',
-      photo: data.photo,
     };
     navigation.navigate(ROUTES.AUTH.REGISTER_STEP2, { data: signupData });
   }, [navigation]);
@@ -168,7 +169,7 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
             <Image source={{ uri: photoUri }} style={styles.avatar} />
           ) : (
             <View style={[styles.avatarPlaceholder, { backgroundColor: colors.cardSecondary }]}>
-              <Ionicons name="person" size={80 * 0.6} color={colors.primaryMid} />
+              <Ionicons name="person" size={48} color={colors.primaryMid} />
             </View>
           )}
         </View>
@@ -181,7 +182,7 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
             },
           ]}
         >
-          <Ionicons name="camera-outline" size={80 * 0.18} color={colors.white} />
+          <Ionicons name="camera-outline" size={14} color={colors.white} />
         </View>
       </TouchableOpacity>
 
@@ -391,4 +392,4 @@ const styles = StyleSheet.create({
   continueBtn: { marginTop: 32 },
 });
 
-export default memo(RegisterStep1Screen);
+export default RegisterStep1Screen;

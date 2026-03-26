@@ -5,10 +5,13 @@ import { useTheme } from '@shared/hooks/useTheme';
 
 import { ROUTES } from '@navigation/routes';
 import { MainTabParamList } from '@appTypes/navigation.types';
+import { Theme } from '../shared/constants/theme';
 
 import { HomeNavigator } from './HomeNavigator';
 import { MembershipNavigator } from './MembershipNavigator';
 import { AccountNavigator } from './AccountNavigator';
+import { CoursesNavigator } from './CoursesNavigator';
+import PlanningScreen from '@features/planning/screens/PlanningScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -23,15 +26,22 @@ export const MainTabNavigator = () => {
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.textPrimary,
         headerTitleAlign: 'center',
-        tabBarStyle: { backgroundColor: colors.card },
+        headerTitleStyle: {
+          fontFamily: Theme.Typography.fontFamily.bold,
+          fontSize: 20,
+        },
+        headerShadowVisible: false,
+        tabBarStyle: { backgroundColor: colors.card, borderTopWidth: 0, elevation: 5 },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap = 'home';
           if (route.name === ROUTES.MAIN.HOME) {
             iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === ROUTES.MAIN.MEMBERSHIP) {
+          } else if (route.name === ROUTES.MAIN.COURSES) {
             iconName = focused ? 'calendar' : 'calendar-outline';
+          } else if (route.name === ROUTES.MAIN.MEMBERSHIP) {
+            iconName = focused ? 'card' : 'card-outline';
           } else if (route.name === ROUTES.MAIN.ACCOUNT) {
             iconName = focused ? 'person' : 'person-outline';
           }
@@ -46,6 +56,15 @@ export const MainTabNavigator = () => {
           tabBarLabel: 'Home',
           headerShown: false 
         }}
+      />
+      <Tab.Screen 
+        name={ROUTES.MAIN.COURSES} 
+        component={CoursesNavigator} 
+        options={{ 
+          tabBarLabel: 'Courses',
+          title: 'Courses',
+          headerShown: false
+        }} 
       />
       <Tab.Screen 
         name={ROUTES.MAIN.MEMBERSHIP} 

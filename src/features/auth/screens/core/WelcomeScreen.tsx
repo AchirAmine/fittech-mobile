@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   Dimensions,
   Image,
   ScrollView,
@@ -35,7 +34,6 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
-          {/* Central Illustration Area */}
           <View style={styles.illustrationContainer}>
             <Image 
               source={require('@features/auth/assets/welcome-illustration.png')} 
@@ -44,10 +42,9 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
             />
           </View>
   
-          {/* Text Segment */}
           <View style={styles.footerContainer}>
-            <Text style={styles.headline}>
-              The best Fitness app{'\n'}of the century
+            <Text style={[styles.headline, { color: colors.textPrimary }]}>
+              The best Fitness app of the century
             </Text>
             <Text style={[styles.description, { color: colors.textSecondary }]}>
               Your place to train, connect with coaches, track your progress, and stay motivated on your fitness journey.

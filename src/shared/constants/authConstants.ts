@@ -15,6 +15,6 @@ export const GENDER_OPTIONS: GenderOption[] = [
 export const PASSWORD_RULES: PasswordRule[] = [
   { label: 'At least 8 characters',        test: (pw) => pw.length >= 8 },
   { label: 'One uppercase letter (A–Z)',   test: (pw) => /[A-Z]/.test(pw) },
-  { label: 'One lowercase letter (a–z)',   test: (pw) => /[a-z]/.test(pw) },
-  { label: 'One number or special char',   test: (pw) => /[\d!@#$%^&*(),.?":{}|<>]/.test(pw) },
+  { label: 'One number (0-9)',             test: (pw) => /[0-9]/.test(pw) },
+  { label: 'One special char (!@#$...)',   test: (pw) => /[^a-zA-Z0-9]/.test(pw) },
 ];

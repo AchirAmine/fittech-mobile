@@ -36,11 +36,20 @@ export const getErrorMessage = (error: unknown): string => {
       return ERROR_MESSAGES.NOT_FOUND;
     case 400:
     case 422:
-      const fieldErrors = err.errors;
-      if (fieldErrors) {
-        const firstField = Object.keys(fieldErrors)[0];
-        const firstMsg = fieldErrors[firstField]?.[0];
-        if (firstField && firstMsg) return `${firstField}: ${firstMsg}`;
+      let fieldErrors = err.errors as any;
+      
+      if (fieldErrors && fieldErrors.fieldErrors) {
+        fieldErrors = fieldErrors.fieldErrors;
+      }
+      
+      if (fieldErrors && typeof fieldErrors === 'object') {
+        const fields = Object.keys(fieldErrors);
+        for (const field of fields) {
+           const msgs = fieldErrors[field];
+           if (Array.isArray(msgs) && msgs.length > 0) {
+             return `${field}: ${msgs[0]}`;
+           }
+        }
       }
       return ERROR_MESSAGES.VALIDATION;
     case 409:

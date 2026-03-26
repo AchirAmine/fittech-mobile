@@ -22,9 +22,9 @@ const registerStep2Schema = object().shape({
     .test('pass-rules', 'Password does not meet all requirements', (value) => {
       if (!value) return false;
       return (
-        /[a-z]/.test(value) &&
         /[A-Z]/.test(value) &&
-        /[\d!@#$%^&*(),.?":{}|<>]/.test(value)
+        /[0-9]/.test(value) &&
+        /[^a-zA-Z0-9]/.test(value)
       );
     }),
   confirmPassword: string()

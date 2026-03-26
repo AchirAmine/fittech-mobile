@@ -11,6 +11,7 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
@@ -35,6 +36,7 @@ interface AppScreenProps {
   loadingMessage?: string;
   errorMessage?: string | null;
   onDismissError?: () => void;
+  safeArea?: boolean;
 }
 
 export const AppScreen: React.FC<AppScreenProps> = ({
@@ -50,8 +52,10 @@ export const AppScreen: React.FC<AppScreenProps> = ({
   loadingMessage = 'Please wait...',
   errorMessage,
   onDismissError,
+  safeArea = true,
 }) => {
   const { colors, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const containerStyle = [
     styles.container,
@@ -62,18 +66,29 @@ export const AppScreen: React.FC<AppScreenProps> = ({
   const content = scrollable ? (
     <ScrollView
       style={styles.flex}
-      contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
+      contentContainerStyle={[
+        styles.scrollContent, 
+        !header && safeArea && { paddingTop: insets.top + (styles.scrollContent.paddingHorizontal as number || 0) }
+      ]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
-      <Animated.View entering={FadeInDown.duration(400).springify()}>
+      <Animated.View 
+        entering={FadeInDown.duration(400).springify()}
+        style={[styles.flex, contentContainerStyle]}
+      >
         {children}
       </Animated.View>
     </ScrollView>
   ) : (
     <Animated.View 
       entering={FadeInDown.duration(400).springify()}
-      style={[styles.flex, styles.nonScrollContent, contentContainerStyle]}
+      style={[
+        styles.flex, 
+        styles.nonScrollContent, 
+        contentContainerStyle,
+        !header && safeArea && { paddingTop: insets.top }
+      ]}
     >
       {children}
     </Animated.View>
@@ -83,7 +98,14 @@ export const AppScreen: React.FC<AppScreenProps> = ({
     <View style={containerStyle}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <View style={styles.flex}>
-        {header && <View style={styles.headerContainer}>{header}</View>}
+        {header && (
+          <View style={[
+            styles.headerContainer, 
+            safeArea && { paddingTop: Math.max(insets.top, 16) }
+          ]}>
+            {header}
+          </View>
+        )}
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.flex}
@@ -92,7 +114,10 @@ export const AppScreen: React.FC<AppScreenProps> = ({
           {content}
         </KeyboardAvoidingView>
         {footer && (
-          <View style={[styles.footerContainer, { paddingBottom: 16 }]}>
+          <View style={[
+            styles.footerContainer, 
+            { paddingBottom: safeArea ? Math.max(insets.bottom, 16) : 16 }
+          ]}>
             {footer}
           </View>
         )}
@@ -116,7 +141,7 @@ export const AppScreen: React.FC<AppScreenProps> = ({
 
       {isLoading && (
         <View style={[styles.loadingOverlay, { backgroundColor: hexToRGBA(colors.background, 0.7) }]}>
-          <Loader />
+          <Loader inline />
           <Text style={[styles.loadingText, { color: colors.textPrimary }]}>{loadingMessage}</Text>
         </View>
       )}
