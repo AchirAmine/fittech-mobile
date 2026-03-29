@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-import { Course } from '../../mocks/coursesMockData';
+import { Course } from '@appTypes/course';
 
 interface Props {
   course: Course;

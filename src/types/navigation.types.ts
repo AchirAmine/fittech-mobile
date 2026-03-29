@@ -44,7 +44,6 @@ export interface SignupData {
 export type AuthStackParamList = {
   Splash: undefined;
   Login: undefined;
-  // Multi-step signup
   RegisterStep1: undefined;
   RegisterStep2: { data: SignupData };
   RegisterStep3: { data: SignupData };
@@ -52,7 +51,6 @@ export type AuthStackParamList = {
   RegisterStep5: { data: SignupData };
   RegisterStep6: { data: SignupData };
   RegisterStep7: { data: SignupData };
-  // Existing auth screens
   ForgotPassword: undefined;
   OTPVerification: { email: string; mode: 'register' | 'reset' };
   ResetPassword: { email: string };

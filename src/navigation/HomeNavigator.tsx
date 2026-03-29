@@ -32,7 +32,7 @@ export const HomeNavigator = () => {
       <Stack.Screen 
         name="HomeMain" 
         component={HomeScreen} 
-        options={{ headerShown: true }} // Header will be customized in HomeScreen
+        options={{ headerShown: true }} 
       />
       <Stack.Screen 
         name="ProfileMain" 

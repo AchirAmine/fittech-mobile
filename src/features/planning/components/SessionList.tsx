@@ -5,7 +5,7 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import SessionItem from './SessionItem';
-import { Session } from '../data/planningMockData';
+import { Session } from '@appTypes/planning';
 
 interface Props {
   sessions: Session[];

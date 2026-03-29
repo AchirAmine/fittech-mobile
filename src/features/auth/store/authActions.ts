@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { authService } from "@features/auth/services/authService";
+import { accountService } from "@features/account/services/accountService";
 import { User } from "@appTypes/index";
 
 export const login = createAsyncThunk<
@@ -8,7 +9,18 @@ export const login = createAsyncThunk<
 >("auth/login", async ({ email, password }, { rejectWithValue }) => {
   try {
     const response = await authService.login(email, password);
-    return response.data.data;
+    const { token, refreshToken, user: basicUser } = response.data.data;
+    
+    try {
+      const fullProfile = await accountService.getMe();
+      return {
+        token,
+        refreshToken,
+        user: { ...basicUser, ...fullProfile }
+      };
+    } catch (profileError) {
+      return { token, refreshToken, user: basicUser };
+    }
   } catch (error) {
     return rejectWithValue(error);
   }

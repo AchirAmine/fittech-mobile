@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-import { Course } from '../mocks/coursesMockData';
+import { Course } from '@appTypes/course';
 
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -31,6 +31,7 @@ const CourseCard: React.FC<Props> = ({ course }) => {
     switch (status) {
       case 'OPEN': return colors.primary;
       case 'RESERVED': return colors.success;
+      case 'WAITLISTED': return colors.success;
       case 'FULL': return colors.error;
       default: return colors.textSecondary;
     }
@@ -39,13 +40,14 @@ const CourseCard: React.FC<Props> = ({ course }) => {
   const enrollmentProgress = (course.enrolled / course.maxSlots) * 100;
   const isFull = course.status === 'FULL';
   const isReserved = course.status === 'RESERVED';
+  const isWaitlisted = course.status === 'WAITLISTED';
   
   // Base colors follow the Planning/SessionItem style (Primary Blue)
   const cardBg = isDark ? hexToRGBA(colors.primary, 0.15) : hexToRGBA(colors.primary, 0.08);
   const cardBorderColor = hexToRGBA(colors.primary, 0.3);
   
   // Status-specific accent
-  const accentColor = isFull ? colors.error : (isReserved ? colors.success : colors.primary);
+  const accentColor = isFull ? colors.error : (isReserved || isWaitlisted ? colors.success : colors.primary);
 
   return (
     <TouchableOpacity 

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-import { Course } from '../../mocks/coursesMockData';
+import { Course } from '@appTypes/course';
 
 interface Props {
   course: Course;

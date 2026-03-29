@@ -120,7 +120,6 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
       error={apiError || errors.healthConcerns?.message || errors.customConcern?.message}
       onDismissError={() => {
         setApiError('');
-        // We don't manually clear RHF errors here as they clear on change
       }}
     >
       <Controller

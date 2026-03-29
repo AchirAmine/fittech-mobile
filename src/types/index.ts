@@ -48,7 +48,7 @@ export interface SubscriptionPlan {
   price: number;
   currency: string;
   billingCycle: 'monthly' | 'annual';
-  duration: number; // in days
+  duration: number;
   badge?: string;
   image: any;
   features: PlanFeature[];
@@ -62,7 +62,7 @@ export interface User {
   displayName?: string;
   photoUrl?: string;
   photoLocalUri?: string | null;
-  profilePicture?: { uri: string } | number;
+  profilePicture?: { uri: string } | number | string;
   gender?: 'male' | 'female' | string;
   phone?: string;
   memberSince?: string;

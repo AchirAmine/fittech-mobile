@@ -27,13 +27,11 @@ const SplashScreen: React.FC<Props> = ({ navigation }) => {
   const textY = useSharedValue<number>(30);
 
   useEffect(() => {
-    // Animate in
     opacity.value = withTiming(1, { duration: 1000 });
     scale.value = withTiming(1, { duration: 1200, easing: Easing.out(Easing.exp) });
     textOpacity.value = withDelay(600, withTiming(1, { duration: 800 }));
     textY.value = withDelay(600, withTiming(0, { duration: 800 }));
 
-    // Navigate to Welcome after delay
     const timer = setTimeout(() => {
       navigation?.replace(ROUTES.AUTH.WELCOME);
     }, 2500);

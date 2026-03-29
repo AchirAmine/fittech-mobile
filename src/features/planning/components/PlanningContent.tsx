@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import SessionList from './SessionList';
-import { Session } from '../data/planningMockData';
+import { Session } from '@appTypes/planning';
 
 interface Props {
   sessions: Session[];

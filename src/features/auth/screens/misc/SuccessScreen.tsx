@@ -33,7 +33,6 @@ const SuccessScreen: React.FC<Props> = ({ navigation, route }) => {
   }));
 
   const navigateToHome = useCallback(() => {
-    // Navigate to WELCOME or AUTH_CHOICE to ensure a clean start
     navigation.reset({
       index: 0,
       routes: [{ name: ROUTES.AUTH.WELCOME as keyof AuthStackParamList }],

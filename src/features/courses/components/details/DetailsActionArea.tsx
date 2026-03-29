@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'rea
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-import { Course } from '../../mocks/coursesMockData';
+import { Course } from '@appTypes/course';
 import { useReserveCourse, useCancelReservation, useJoinWaitingList } from '../../hooks/useCourses';
 import { StatusModal, StatusModalType } from '@shared/components/ui/StatusModal';
 
@@ -14,7 +14,6 @@ interface Props {
 const DetailsActionArea: React.FC<Props> = ({ course }) => {
   const { colors, isDark } = useTheme();
   
-  // Modal State
   const [modalConfig, setModalConfig] = React.useState<{
     visible: boolean;
     type: StatusModalType;
@@ -53,6 +52,13 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
           'Booking Confirmed!',
           'Your spot is secured. You can cancel your reservation up to 2 hours before the session starts.'
         );
+      },
+      onError: (error: any) => {
+        showModal(
+          'error',
+          'Booking Failed',
+          error?.message || 'Something went wrong while reserving this course. Please try again.'
+        );
       }
     });
   };
@@ -65,6 +71,13 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
           'Waitlist Joined',
           "You're on the list! We'll notify you immediately if a spot becomes available."
         );
+      },
+      onError: (error: any) => {
+        showModal(
+          'error',
+          'Waitlist Failed',
+          error?.message || 'Failed to join the waitlist. Please try again.'
+        );
       }
     });
   };
@@ -75,7 +88,22 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
       'Cancel Reservation?',
       'Are you sure you want to cancel? This action cannot be undone.',
       () => {
-        cancel(course.id);
+        cancel(course.id, {
+          onSuccess: () => {
+            showModal(
+              'success',
+              'Reservation Cancelled',
+              'Your reservation has been successfully cancelled.'
+            );
+          },
+          onError: (error: any) => {
+            showModal(
+              'error',
+              'Cancellation Failed',
+              error?.message || 'Failed to cancel reservation. Please try again.'
+            );
+          }
+        });
         hideModal();
       }
     );
@@ -112,6 +140,20 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
           confirmText={modalConfig.type === 'confirm' ? 'Yes, Cancel' : 'Got it'}
           cancelText="No, Keep it"
         />
+      </View>
+    );
+  }
+
+  if (course.status === 'WAITLISTED') {
+    return (
+      <View style={[styles.waitingListCard, { backgroundColor: isDark ? hexToRGBA(colors.success, 0.1) : hexToRGBA(colors.success, 0.05), borderColor: colors.success, borderWidth: 1 }]}>
+        <Text style={[styles.waitingListTitle, { color: colors.success }]}>You're on the list! 🎉</Text>
+        <Text style={[styles.waitingListSubtitle, { color: colors.textSecondary }]}>
+          We'll notify you immediately if a spot becomes available for this session.
+        </Text>
+        <View style={[styles.reserveButton, { backgroundColor: colors.success, opacity: 0.9, marginTop: 16 }]}>
+          <Text style={styles.reserveButtonText}>WAITING LIST JOINED</Text>
+        </View>
       </View>
     );
   }

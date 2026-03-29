@@ -6,11 +6,11 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { useTheme } from '@shared/hooks/useTheme';
 
-import { AppScreen } from '@shared/components/layout';
+import { AppScreen, ErrorBanner } from '@shared/components/layout';
 import CategoryFilters from '@shared/components/ui/CategoryFilters';
 import WeeklyCalendar from '../components/WeeklyCalendar';
 import PlanningContent from '../components/PlanningContent';
-import { MOCK_CATEGORIES } from '../data/planningMockData';
+import { PLANNING_CATEGORIES } from '@appTypes/planning';
 import { usePlanningSessions } from '../hooks/usePlanning';
 
 import { ROUTES } from '@navigation/routes';
@@ -20,11 +20,11 @@ type Props = NativeStackScreenProps<HomeStackParamList, typeof ROUTES.MAIN.PLANN
 const PlanningScreen: React.FC<Props> = ({ navigation }) => {
   const { colors, isDark } = useTheme();
   
-  const [selectedCategory, setSelectedCategory] = useState(MOCK_CATEGORIES[0].id);
+  const [selectedCategory, setSelectedCategory] = useState(PLANNING_CATEGORIES[0].id);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const { data: filteredSessions = [], isLoading } = usePlanningSessions(currentDate, selectedCategory);
+  const { data: filteredSessions = [], isLoading, isError, error } = usePlanningSessions(currentDate, selectedCategory);
 
   const handleDateChange = useCallback((event: DateTimePickerEvent, selectedDate?: Date) => {
     if (Platform.OS === 'android') {
@@ -51,9 +51,15 @@ const PlanningScreen: React.FC<Props> = ({ navigation }) => {
           onChange={handleDateChange}
         />
       )}
+
+      {isError && (
+        <ErrorBanner 
+          message={error instanceof Error ? error.message : 'Failed to load sessions. Please try again.'} 
+        />
+      )}
       
       <CategoryFilters 
-        categories={MOCK_CATEGORIES}
+        categories={PLANNING_CATEGORIES}
         selectedId={selectedCategory}
         onSelect={setSelectedCategory}
       />

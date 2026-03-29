@@ -20,8 +20,6 @@ export const handleFulfilled = (state: RequestState): void => {
   state.error = null;
 };
 
-// RTK's rejected action has `payload: unknown` when using rejectWithValue,
-// so we accept unknown and narrow it safely.
 export const handleRejected = (
   state: RequestState,
   action: { payload?: unknown; error: { message?: string } }

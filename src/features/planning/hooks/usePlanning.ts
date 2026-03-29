@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { planningApi } from '../api/planningApi';
+import { planningService } from '../services/planningService';
+import { useAppSelector } from '@shared/hooks/useReduxHooks';
 
-/**
- * Hook to fetch sessions for a specific date and category.
- */
 export const usePlanningSessions = (date: Date, category: string = 'all') => {
+  const user = useAppSelector((state) => state.auth.user);
+  const gender = user?.gender;
+
   return useQuery({
-    queryKey: ['sessions', date.toDateString(), category],
-    queryFn: () => planningApi.getSessions(date, category),
+    queryKey: ['sessions', date.toDateString(), category, gender],
+    queryFn: () => planningService.getSessions(date, category, gender),
     staleTime: 5 * 60 * 1000,
   });
 };

@@ -12,34 +12,29 @@ npm start
 
 ---
 
-## Environment Variables
+---
 
-Create a `.env` file in the project root (one already exists as a template):
+## Local Network Troubleshooting (Expo Go)
 
-```env
-# FitTech Backend API Configuration
-EXPO_PUBLIC_API_URL=https://YOUR_BACKEND_URL/api/v1
-```
+If you are using **Expo Go** on a physical device or a separate emulator, you may encounter `Request timed out` errors. Follow these steps to resolve them:
 
-> **Important:** The `EXPO_PUBLIC_` prefix is required by Expo to expose variables to the JavaScript bundle.
+### 1. Match the API URL to your setup
+Update your `.env` file based on your environment:
 
-### Variables Reference
+- **Android Emulator**: `http://10.0.2.2:3000/api`
+- **iOS Simulator**: `http://localhost:3000/api`
+- **Physical Device (Same Wi-Fi)**: `http://[YOUR_COMPUTER_IP]:3000/api` (e.g., `192.168.1.50`)
 
-| Variable | Required | Description |
-|---|---|---|
-| `EXPO_PUBLIC_API_URL` | ✅ Yes | Full base URL of your backend REST API (no trailing slash) |
+### 2. Check your Firewall
+Your computer's firewall often blocks incoming connections on port `3000`. 
+- **Windows**: Allow "Node.js JavaScript Runtime" through the Windows Defender Firewall.
+- **Mac**: Check System Settings > Network > Firewall and ensure it's not blocking incoming connections for your development tools.
 
-### Example Values
-
-```env
-# Local development
-EXPO_PUBLIC_API_URL=http://localhost:3000/api/v1
-
-# Production
-EXPO_PUBLIC_API_URL=https://api.yourapp.com/api/v1
-```
+### 3. Backend "Listen" Configuration
+The backend is configured to listen on `0.0.0.0`, which means it accepts connections from any device on your local network. Ensure your backend is running before starting Expo.
 
 ---
+
 
 ## JWT Token Flow
 

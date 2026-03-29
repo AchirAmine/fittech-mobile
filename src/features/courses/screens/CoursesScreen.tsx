@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
-import { AppScreen } from '@shared/components/layout';
+import { AppScreen, ErrorBanner } from '@shared/components/layout';
 import CategoryFilters, { Category } from '@shared/components/ui/CategoryFilters';
 import { useCourses } from '../hooks/useCourses';
 import CourseList from '../components/CourseList';
@@ -11,15 +11,13 @@ const COURSE_CATEGORIES: Category[] = [
   { id: 'MyCourses', label: 'My Courses', emoji: '🗓️' },
   { id: 'Gym', label: 'Gym', emoji: '🏋️' },
   { id: 'Swimming', label: 'Swimming', emoji: '🏊' },
-  { id: 'Boxing', label: 'Boxing', emoji: '🥊' },
-  { id: 'Yoga', label: 'Yoga', emoji: '🧘' },
 ];
 
 const CoursesScreen = () => {
   const { colors, isDark } = useTheme();
   const [activeCategory, setActiveCategory] = useState<string>('All');
 
-  const { data: filteredCourses = [], isLoading, isError } = useCourses(activeCategory);
+  const { data: filteredCourses = [], isLoading, isError, error } = useCourses(activeCategory);
 
   return (
     <AppScreen 
@@ -27,6 +25,11 @@ const CoursesScreen = () => {
       backgroundColor={isDark ? colors.background : '#F8F9FB'}
       contentContainerStyle={styles.scrollContent}
     >
+      {isError && (
+        <ErrorBanner 
+          message={error instanceof Error ? error.message : 'Failed to load courses. Please try again.'} 
+        />
+      )}
       {/* Shared Category Filters */}
       <CategoryFilters 
         categories={COURSE_CATEGORIES}

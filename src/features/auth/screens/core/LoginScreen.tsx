@@ -45,7 +45,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
         navigation.navigate(ROUTES.AUTH.SUCCESS, { type: 'login' });
       }
     } catch (err: unknown) {
-      // Error is handled by the extraReducers and displayed via ErrorBanner
     }
   }, [dispatch, navigation]);
 

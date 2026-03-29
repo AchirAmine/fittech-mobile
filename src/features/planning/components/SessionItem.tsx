@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-import { Session } from '../data/planningMockData';
+import { Session } from '@appTypes/planning';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@appTypes/navigation.types';
@@ -48,6 +48,7 @@ const SessionItem: React.FC<Props> = ({ session }) => {
       case 'FULL': return colors.error;
       case 'OPEN': return colors.primary;
       case 'RESERVED': return colors.success;
+      case 'WAITLISTED': return '#FFAB00'; // Amber/Warning color
       default: return colors.primary;
     }
   };
