@@ -48,6 +48,7 @@ export const AccountMenu = () => {
     { id: 'light', label: 'Light', icon: 'sunny-outline' as keyof typeof Ionicons.glyphMap },
     { id: 'dark', label: 'Dark', icon: 'moon-outline' as keyof typeof Ionicons.glyphMap },
     { id: 'rose', label: 'Rose', icon: 'heart-outline' as keyof typeof Ionicons.glyphMap },
+    { id: 'purple', label: 'Purple', icon: 'leaf-outline' as keyof typeof Ionicons.glyphMap },
     { id: 'system', label: 'Auto', icon: 'settings-outline' as keyof typeof Ionicons.glyphMap },
   ];
 
@@ -85,7 +86,7 @@ export const AccountMenu = () => {
             return (
               <TouchableOpacity
                 key={option.id}
-                onPress={() => setTheme(option.id as 'light' | 'dark' | 'system' | 'rose')}
+                onPress={() => setTheme(option.id as 'light' | 'dark' | 'system' | 'rose' | 'purple')}
                 style={[
                   styles.themeOption,
                   isActive && { backgroundColor: colors.primary }

@@ -1,14 +1,14 @@
 import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LightColors, DarkColors, RoseColors, ColorTheme } from '@shared/constants/colors';
+import { LightColors, DarkColors, RoseColors, PurpleColors, ColorTheme } from '@shared/constants/colors';
 import logger from '@shared/utils/logger';
 
-type ThemeType = 'light' | 'dark' | 'rose' | 'system';
+type ThemeType = 'light' | 'dark' | 'rose' | 'purple' | 'system';
 
 interface ThemeContextType {
-  theme: ThemeType; // Current preference
-  resolvedTheme: 'light' | 'dark' | 'rose'; // Actual active theme
+  theme: ThemeType;
+  resolvedTheme: 'light' | 'dark' | 'rose' | 'purple'; 
   colors: ColorTheme;
   isDark: boolean;
   toggleTheme: () => void;
@@ -23,12 +23,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const systemColorScheme = useColorScheme();
   const [themePreference, setThemePreference] = useState<ThemeType>('system');
 
-  // Load saved theme on mount
   useEffect(() => {
     const loadTheme = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
-        if (['light', 'dark', 'rose', 'system'].includes(savedTheme || '')) {
+        if (['light', 'dark', 'rose', 'purple', 'system'].includes(savedTheme || '')) {
           setThemePreference(savedTheme as ThemeType);
         }
       } catch (error) {
@@ -48,16 +47,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const toggleTheme = useCallback(() => {
-    // Basic toggle logic: light -> dark -> rose -> light
     let nextTheme: ThemeType;
     if (themePreference === 'light') nextTheme = 'dark';
     else if (themePreference === 'dark') nextTheme = 'rose';
+    else if (themePreference === 'rose') nextTheme = 'purple';
     else nextTheme = 'light';
     
     setTheme(nextTheme);
   }, [themePreference, setTheme]);
 
-  const resolvedTheme = useMemo((): 'light' | 'dark' | 'rose' => {
+  const resolvedTheme = useMemo((): 'light' | 'dark' | 'rose' | 'purple' => {
     if (themePreference === 'system') {
       return systemColorScheme || 'light';
     }
@@ -65,6 +64,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [themePreference, systemColorScheme]);
 
   const colors = useMemo(() => {
+    if (resolvedTheme === 'purple') return PurpleColors;
     if (resolvedTheme === 'rose') return RoseColors;
     return resolvedTheme === 'dark' ? DarkColors : LightColors;
   }, [resolvedTheme]);

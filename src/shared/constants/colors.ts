@@ -38,13 +38,22 @@ export const Palette = {
   },
 
   rose: {
-    100: '#FFF0F5', // LavenderBlush
-    200: '#FFD1DC', // Pastel Pink
-    300: '#FFB6C1', // LightPink
-    400: '#FF8DA1', // Soft Rose
-    500: '#FF69B4', // HotPink (Premium shade)
-    700: '#DB7093', // PaleVioletRed
-    900: '#880E4F', // Pink 900
+    100: '#FFF0F5', 
+    200: '#FFD1DC', 
+    300: '#FFB6C1', 
+    400: '#FF8DA1', 
+    500: '#FF69B4', 
+    700: '#DB7093', 
+    900: '#880E4F', 
+  },
+  purple: {
+    100: '#F3E5F5',
+    200: '#E1BEE7',
+    300: '#CE93D8',
+    400: '#BA68C8',
+    500: '#9C27B0',
+    700: '#7B1FA2',
+    900: '#4A148C',
   }
 } as const;
 
@@ -143,7 +152,7 @@ export const DarkColors: ThemeColors = {
 
 export const RoseColors: ThemeColors = {
   ...LightColors,
-  background:    '#FFF9FA', // Very light rose tint
+  background:    '#FFF9FA', 
   cardSecondary: Palette.rose[100],
 
   primary:      Palette.rose[700],
@@ -152,9 +161,25 @@ export const RoseColors: ThemeColors = {
   primaryDark:  Palette.rose[900],
 
   soloBadgeBg:  Palette.rose[500],
-  courseBadgeBg: '#F97316', // Keep orange for variety or change to Rose 300? I'll keep it for now.
+  courseBadgeBg: '#F97316', 
   
-  success:      Palette.rose[400], // Rose success for a feminine feel
+  success:      Palette.rose[400], 
+};
+
+export const PurpleColors: ThemeColors = {
+  ...LightColors,
+  background:    '#FDFBFF', 
+  cardSecondary: Palette.purple[100],
+
+  primary:      Palette.purple[700],
+  primaryMid:   Palette.purple[500],
+  primaryLight: Palette.purple[300],
+  primaryDark:  Palette.purple[900],
+
+  soloBadgeBg:  Palette.purple[500],
+  courseBadgeBg: '#F97316', 
+  
+  success:      Palette.purple[400], 
 };
 
 export const hexToRGBA = (hex: string, opacity: number): string => {
