@@ -258,7 +258,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   discoverySection: {
-    paddingHorizontal: 20,
     marginBottom: 10,
   },
   activePlanSummary: {

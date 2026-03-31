@@ -12,7 +12,6 @@ import {
 } from '@shared/components';
 import {
   PasswordStrengthIndicator,
-  AuthBottomSheet,
   IllustrationPlaceholder,
   AuthHeader,
 } from '@features/auth/components';
@@ -72,11 +71,10 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
       loadingMessage="Resetting password..."
       errorMessage={apiError}
       onDismissError={() => setApiError(null)}
-      backgroundColor="transparent"
-      scrollable={false}
-      contentContainerStyle={{ paddingHorizontal: 0 }}
+      header={<BackButton onPress={() => navigation.goBack()} />}
+      scrollable={true}
     >
-      <AuthBottomSheet variant="modal" onDismiss={() => navigation.goBack()}>
+      <View style={{ paddingTop: 20 }}>
 
         <AuthHeader
           title="Set a new password!"
@@ -135,7 +133,7 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
             style={styles.submitBtn}
           />
         </View>
-      </AuthBottomSheet>
+      </View>
     </AppScreen>
   );
 };

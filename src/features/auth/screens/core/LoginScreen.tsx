@@ -8,9 +8,9 @@ import {
   NeonButton,
   Input,
   AppScreen,
+  BackButton,
 } from '@shared/components';
 import {
-  AuthBottomSheet,
   AuthHeader,
   IllustrationPlaceholder,
 } from '@features/auth/components';
@@ -72,11 +72,10 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       loadingMessage="Signing in..."
       errorMessage={error}
       onDismissError={() => dispatch(clearError())}
-      backgroundColor="transparent"
-      scrollable={false}
-      contentContainerStyle={{ paddingHorizontal: 0 }}
+      header={<BackButton onPress={() => navigation.goBack()} />}
+      scrollable={true}
     >
-      <AuthBottomSheet variant="modal" onDismiss={() => navigation.goBack()} showOverlay={true}>
+      <View style={{ paddingTop: 20 }}>
         <AuthHeader
           title="Welcome Back!"
           subtitle="Let's login for explore continues"
@@ -140,7 +139,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             <Text style={[styles.registerLink, { color: colors.primary }]}>Sign Up here</Text>
           </TouchableOpacity>
         </View>
-      </AuthBottomSheet>
+      </View>
     </AppScreen>
   );
 };

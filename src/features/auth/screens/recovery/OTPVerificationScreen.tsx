@@ -11,8 +11,9 @@ import {
   NeonButton,
   AppScreen,
   Input,
+  BackButton,
 } from '@shared/components';
-import { AuthBottomSheet, IllustrationPlaceholder, AuthHeader } from '@features/auth/components';
+import { IllustrationPlaceholder, AuthHeader } from '@features/auth/components';
 import { getErrorMessage } from '@shared/constants/errorMessages';
 import { authService } from '@features/auth/services/authService';
 import logger from '@shared/utils/logger';
@@ -103,11 +104,10 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
       loadingMessage={resendLoading ? 'Resending code...' : 'Verifying...'}
       errorMessage={apiError}
       onDismissError={() => setApiError(null)}
-      backgroundColor="transparent"
-      scrollable={false}
-      contentContainerStyle={{ paddingHorizontal: 0 }}
+      header={<BackButton onPress={() => navigation.goBack()} />}
+      scrollable={true}
     >
-      <AuthBottomSheet variant="modal" onDismiss={() => navigation.goBack()}>
+      <View style={{ paddingTop: 20 }}>
         <AuthHeader
           title="Confirm Your Email"
           subtitle={`We've sent 6 digits verification code to ${email}`}
@@ -159,7 +159,7 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
             style={styles.verifyBtn}
           />
         </View>
-      </AuthBottomSheet>
+      </View>
     </AppScreen>
   );
 };

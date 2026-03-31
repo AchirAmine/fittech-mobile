@@ -4,12 +4,27 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@features/*": ["src/features/*"],
-      "@features/account/*": ["src/features/account/*"],
-      "@shared/*": ["src/shared/*"],
-      "@navigation/*": ["src/navigation/*"],
-      "@store/*": ["src/store/*"],
-      "@appTypes/*": ["src/types/*"]
+      "@features/*": [
+        "src/features/*"
+      ],
+      "@features/account/*": [
+        "src/features/account/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ],
+      "@navigation/*": [
+        "src/navigation/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@appTypes/*": [
+        "src/types/*"
+      ]
     }
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }

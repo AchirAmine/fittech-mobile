@@ -35,8 +35,12 @@ export const AuthNavigator = () => (
     screenOptions={commonStackOptions}
   >
     <AuthStack.Screen name={ROUTES.AUTH.SPLASH} component={SplashScreen} />
-    <AuthStack.Screen name={ROUTES.AUTH.LOGIN} component={LoginScreen} options={{ presentation: 'transparentModal', animation: 'slide_from_bottom' }} />
-    <AuthStack.Screen name={ROUTES.AUTH.WELCOME} component={WelcomeScreen} />
+    <AuthStack.Screen name={ROUTES.AUTH.LOGIN} component={LoginScreen} />
+    <AuthStack.Screen 
+      name={ROUTES.AUTH.WELCOME} 
+      component={WelcomeScreen} 
+      options={{ animation: 'fade' }}
+    />
     <AuthStack.Screen name={ROUTES.AUTH.AUTH_CHOICE} component={AuthChoiceScreen} />
 
     <AuthStack.Screen name={ROUTES.AUTH.REGISTER_STEP1} component={RegisterStep1Screen} />
@@ -47,9 +51,9 @@ export const AuthNavigator = () => (
     <AuthStack.Screen name={ROUTES.AUTH.REGISTER_STEP6} component={RegisterStep6Screen} />
     <AuthStack.Screen name={ROUTES.AUTH.REGISTER_STEP7} component={RegisterStep7Screen} />
 
-    <AuthStack.Screen name={ROUTES.AUTH.FORGOT_PASSWORD} component={ForgotPasswordScreen} options={{ presentation: 'transparentModal' }} />
-    <AuthStack.Screen name={ROUTES.AUTH.OTP_VERIFICATION} component={OTPVerificationScreen} options={{ presentation: 'transparentModal' }} />
-    <AuthStack.Screen name={ROUTES.AUTH.RESET_PASSWORD} component={ResetPasswordScreen} options={{ presentation: 'transparentModal' }}/>
+    <AuthStack.Screen name={ROUTES.AUTH.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
+    <AuthStack.Screen name={ROUTES.AUTH.OTP_VERIFICATION} component={OTPVerificationScreen} />
+    <AuthStack.Screen name={ROUTES.AUTH.RESET_PASSWORD} component={ResetPasswordScreen} />
     <AuthStack.Screen name={ROUTES.AUTH.SUCCESS} component={SuccessScreen} />
     <AuthStack.Screen name={ROUTES.AUTH.ABOUT_US} component={AboutUsScreen} />
   </AuthStack.Navigator>

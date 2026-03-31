@@ -9,9 +9,9 @@ import {
   Logo,
   Input,
   AppScreen,
+  BackButton,
 } from '@shared/components';
 import {
-  AuthBottomSheet,
   AuthHeader,
   IllustrationPlaceholder,
 } from '@features/auth/components';
@@ -59,11 +59,10 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
       loadingMessage="Sending verification code..."
       errorMessage={apiError}
       onDismissError={() => setApiError(null)}
-      backgroundColor="transparent"
-      scrollable={false}
-      contentContainerStyle={{ paddingHorizontal: 0 }}
+      header={<BackButton onPress={() => navigation.goBack()} />}
+      scrollable={true}
     >
-      <AuthBottomSheet variant="modal" onDismiss={() => navigation.goBack()}>
+      <View style={{ paddingTop: 20 }}>
         <View style={styles.headerRow}>
           <View style={styles.logoCenter}>
             <Logo size="large" color={colors.primary} />
@@ -103,7 +102,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
             style={styles.submitBtn}
           />
         </View>
-      </AuthBottomSheet>
+      </View>
     </AppScreen>
   );
 };

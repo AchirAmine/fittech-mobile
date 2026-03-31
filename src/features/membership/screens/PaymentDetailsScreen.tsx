@@ -47,7 +47,6 @@ export const PaymentDetailsScreen = () => {
       {
         onSuccess: (data) => {
           if (backendMethod === 'ONLINE' && data.clientSecret) {
-            // Here you would normally integrate Stripe Mobile SDK
             Alert.alert('Online Payment', 'Stripe integration would happen here. Subscription created!');
             navigation.navigate(ROUTES.MAIN.MEMBERSHIP);
           } else {
