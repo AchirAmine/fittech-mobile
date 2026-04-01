@@ -23,7 +23,6 @@ export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
         SELECT PAYMENT METHOD
       </Text>
       <View style={styles.paymentMethodsContainer}>
-        {/* Credit Card Option */}
         <TouchableOpacity
           style={[
             styles.paymentMethodCard,
@@ -48,7 +47,6 @@ export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
               Secure payment via Stripe
             </Text>
           </View>
-          {/* Radio Button */}
           <View style={[
             styles.radioCircle,
             { 
@@ -60,7 +58,6 @@ export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
           </View>
         </TouchableOpacity>
 
-        {/* Cash Option */}
         <TouchableOpacity
           style={[
             styles.paymentMethodCard,
@@ -85,7 +82,6 @@ export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
               Pay at the front desk
             </Text>
           </View>
-          {/* Radio Button */}
           <View style={[
             styles.radioCircle,
             { 

@@ -114,7 +114,6 @@ export const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.mainContainer}>
-          {/* DISCOVERY AREA: Active Plan or Banner */}
           <View style={styles.discoverySection}>
             {isSubscriptionsLoading ? (
               <View style={[styles.activePlanSummary, { backgroundColor: colors.card, height: 160 }]}>
@@ -133,7 +132,6 @@ export const HomeScreen = () => {
             )}
           </View>
 
-          {/* MY COACHING (If Active) */}
           {coaching && (
             <MyCoachingCard 
               coach={coaching.coach}
@@ -143,7 +141,6 @@ export const HomeScreen = () => {
             />
           )}
 
-          {/* CORE ACTIONS */}
           <HomeSection title="QUICK ACTIONS" titleColor={isDark ? colors.textSecondary : '#666'}>
             <View style={styles.quickActionRow}>
               <QuickActionCard 
@@ -163,7 +160,6 @@ export const HomeScreen = () => {
             </View>
           </HomeSection>
 
-          {/* SPORTS SELECTION */}
           <HomeSection title="EXPLORE OUR SPORTS" titleColor={colors.primary}>
             <ScrollView 
               horizontal 
@@ -182,7 +178,6 @@ export const HomeScreen = () => {
             </ScrollView>
           </HomeSection>
 
-          {/* COMMUNITY & FEATURES */}
           <HomeSection title="WHY CHOOSE FITTECH" titleColor={colors.primary}>
             <View style={styles.featuresContainer}>
               {features.map((feature) => (
@@ -290,7 +285,7 @@ const styles = StyleSheet.create({
   },
   sportsScrollContent: {
     gap: 12,
-    paddingRight: 16, // Extra space at the end of scroll
+    paddingRight: 16,
   },
   featuresContainer: {
     gap: 16,

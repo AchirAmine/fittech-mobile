@@ -5,7 +5,7 @@ import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import { useTheme } from '@shared/hooks/useTheme';
 import { SubscriptionPlan } from '@appTypes/index';
-import { PlanFeaturesList } from './PlanFeaturesList';
+import { PlanFeaturesList } from '@features/membership/components/PlanFeaturesList';
 
 interface PaymentPlanHeaderProps {
   plan: SubscriptionPlan;
@@ -33,7 +33,6 @@ export const PaymentPlanHeader: React.FC<PaymentPlanHeaderProps> = ({ plan }) =>
           </Text>
         </View>
 
-        {/* Features in Plan Card */}
         <PlanFeaturesList features={plan.features} alignment="start" forceDarkText={true} />
       </LinearGradient>
     </View>
