@@ -8,7 +8,7 @@ import { useTheme } from '@shared/hooks/useTheme';
 
 import { AppScreen, ErrorBanner } from '@shared/components/layout';
 import CategoryFilters from '@shared/components/ui/CategoryFilters';
-import WeeklyCalendar from '../components/WeeklyCalendar';
+import WeeklyCalendar from '@shared/components/ui/WeeklyCalendar';
 import PlanningContent from '../components/PlanningContent';
 import { PLANNING_CATEGORIES } from '@appTypes/planning';
 import { usePlanningSessions } from '../hooks/usePlanning';

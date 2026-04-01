@@ -13,21 +13,7 @@ interface Props {
 
 const SessionList: React.FC<Props> = ({ sessions }) => {
   const { colors } = useTheme();
-
-  if (sessions.length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <View style={[styles.emptyIconWrap, { backgroundColor: hexToRGBA(colors.primary, 0.1) }]}>
-          <Ionicons name="calendar-outline" size={32} color={colors.primary} />
-        </View>
-        <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>No Sessions Found</Text>
-        <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-          There are no classes or training sessions scheduled for this day/category.
-        </Text>
-      </View>
-    );
-  }
-
+  
   // Grouping logic memoized to prevent recalculation on every render
   const { grouped, sortedTimes } = useMemo(() => {
     const acc = sessions.reduce((acc, session) => {
@@ -42,6 +28,20 @@ const SessionList: React.FC<Props> = ({ sessions }) => {
       sortedTimes: Object.keys(acc).sort(),
     };
   }, [sessions]);
+
+  if (sessions.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <View style={[styles.emptyIconWrap, { backgroundColor: hexToRGBA(colors.primary, 0.1) }]}>
+          <Ionicons name="calendar-outline" size={32} color={colors.primary} />
+        </View>
+        <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>No Sessions Found</Text>
+        <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
+          There are no classes or training sessions scheduled for this day/category.
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

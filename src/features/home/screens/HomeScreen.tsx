@@ -18,6 +18,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { HomeActivePlan } from '../components/HomeActivePlan';
 import QuickActionCard from '../components/QuickActionCard';
+import { useGetActiveCoaching } from '@features/personal-coaching/hooks/useCoaching';
+import { MyCoachingCard } from '@features/personal-coaching/components/MyCoachingCard';
 
 export const HomeScreen = () => {
   const { colors, isDark } = useTheme();
@@ -25,6 +27,7 @@ export const HomeScreen = () => {
   const authUser = useAppSelector((state) => state.auth.user);
   const { data: accountUser } = useGetAccount();
   const { data: subscriptions, isLoading: isSubscriptionsLoading } = useGetMySubscriptions();
+  const { data: coaching } = useGetActiveCoaching();
 
   const user = accountUser || authUser;
 
@@ -130,6 +133,16 @@ export const HomeScreen = () => {
             )}
           </View>
 
+          {/* MY COACHING (If Active) */}
+          {coaching && (
+            <MyCoachingCard 
+              coach={coaching.coach}
+              planTitle={coaching.planTitle}
+              onPress={() => navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD)}
+              onDashboardPress={() => navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD)}
+            />
+          )}
+
           {/* CORE ACTIONS */}
           <HomeSection title="QUICK ACTIONS" titleColor={isDark ? colors.textSecondary : '#666'}>
             <View style={styles.quickActionRow}>
@@ -141,10 +154,11 @@ export const HomeScreen = () => {
                 onPress={() => navigation.navigate(ROUTES.MAIN.PLANNING as any)}
               />
               <QuickActionCard 
-                title="Coaches" 
+                title="Personal Coaches" 
                 icon="people" 
                 iconColor="#FF911A" 
                 iconBg={isDark ? hexToRGBA('#FF911A', 0.1) : '#FFF3E5'}
+                onPress={() => navigation.navigate(ROUTES.MAIN.PERSONAL_COACHES as any)}
               />
             </View>
           </HomeSection>

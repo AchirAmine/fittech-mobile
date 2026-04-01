@@ -15,6 +15,7 @@ const initialState: AuthState = {
   token: null,
   refreshToken: null,
   isAuthenticated: false,
+  isFirstLaunch: true,
   ...initialRequestState,
 };
 
@@ -41,6 +42,9 @@ const authSlice = createSlice({
         state.user = { ...state.user, ...action.payload };
       }
     },
+    setHasLaunched: (state, action: PayloadAction<boolean>) => {
+      state.isFirstLaunch = action.payload;
+    },
     logout: (state) => {
       queryClient.cancelQueries();
       queryClient.removeQueries();
@@ -56,6 +60,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.status = "idle";
       state.error = null;
+      // We explicitly DO NOT reset isFirstLaunch here to skip splash on logout
     },
     clearError: (state) => {
       state.error = null;
@@ -105,5 +110,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout, clearError, updateUser } = authSlice.actions;
+export const { setCredentials, logout, clearError, updateUser, setHasLaunched } = authSlice.actions;
 export default authSlice.reducer;

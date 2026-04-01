@@ -31,6 +31,10 @@ export const ROUTES = {
     PLAN_DETAILS: 'PlanDetails',
     MEMBERSHIP: 'Membership',
     COURSE_DETAILS: 'CourseDetails',
+    COACH_PROFILE: 'CoachProfile',
+    MY_COACHING_DASHBOARD: 'MyCoachingDashboard',
+    BOOK_SESSION: 'BookSession',
+    PERSONAL_COACHES: 'PersonalCoaches',
   },
 } as const;
 

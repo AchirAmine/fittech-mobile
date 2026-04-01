@@ -4,7 +4,7 @@ import { AccountScreen } from '@features/account/screens/AccountScreen';
 import { ProfileScreen } from '@features/account/screens/ProfileScreen';
 import { HealthProfileScreen } from '@features/account/screens/HealthProfileScreen';
 import { SubscriptionScreen } from '@features/membership/screens/SubscriptionScreen';
-import { PaymentDetailsScreen } from '@features/membership/screens/PaymentDetailsScreen';
+import { PaymentDetailsScreen } from '@features/checkout/screens/PaymentDetailsScreen';
 import { SubscriptionPlan } from '@appTypes/index';
 import { ROUTES } from '@navigation/routes';
 

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
@@ -10,7 +10,10 @@ interface Props {
   onDateSelect: (date: Date) => void;
 }
 
-const WeeklyCalendar: React.FC<Props> = ({ selectedDate, onDateSelect }) => {
+const WeeklyCalendar: React.FC<Props> = ({ 
+  selectedDate, 
+  onDateSelect, 
+}) => {
   const { colors, isDark } = useTheme();
 
   // Get the start of the week (Monday) for the selected date
@@ -38,7 +41,12 @@ const WeeklyCalendar: React.FC<Props> = ({ selectedDate, onDateSelect }) => {
     const startDate = start.getDate();
     const endDate = end.getDate();
 
-    return `This Week · ${startMonth} ${startDate} – ${endMonth} ${endDate}`;
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const isThisWeek = weekDays.some(day => day.getTime() === today.getTime());
+    const label = isThisWeek ? 'This Week' : 'Selected Week';
+
+    return `${label} · ${startMonth} ${startDate} – ${endMonth} ${endDate}`;
   }, [weekDays]);
 
   const handlePrevWeek = () => {
@@ -164,7 +172,6 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#FFF',
     marginTop: 6,
   },
 });

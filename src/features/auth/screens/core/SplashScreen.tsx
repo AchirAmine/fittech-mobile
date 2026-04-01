@@ -15,6 +15,8 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Palette } from '@shared/constants/colors';
+import { useAppDispatch } from '@shared/hooks/useReduxHooks';
+import { setHasLaunched } from '../../store/authSlice';
 
 type Props = Partial<NativeStackScreenProps<AuthStackParamList, 'Splash'>>;
 
@@ -24,6 +26,7 @@ const MAX_SCALE = (Math.max(width, height) * 2.5) / DOT_SIZE;
 
 const SplashScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
+  const dispatch = useAppDispatch();
 
   const [typedText, setTypedText] = useState('');
   const brandName = "FitTech";
@@ -37,6 +40,7 @@ const SplashScreen: React.FC<Props> = ({ navigation }) => {
   const timerRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
+    dispatch(setHasLaunched(false));
     containerOpacity.value = withTiming(1, { duration: 400 });
 
     let index = 0;

@@ -113,7 +113,7 @@ export const Input: React.FC<InputProps> = memo(({
 
       <TextInput
         style={[styles.input, { color: editable ? colors.textPrimary : colors.primary, paddingTop: label ? 12 : 8 }]}
-        placeholderTextColor="transparent"
+        placeholderTextColor={colors.textMuted}
         value={value}
         onFocus={editable ? handleFocus : undefined}
         onBlur={handleBlur}

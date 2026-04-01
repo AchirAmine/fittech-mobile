@@ -7,23 +7,25 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { AppScreen } from '@shared/components';
 import { NeonButton } from '@shared/components/ui/NeonButton';
 import { Input } from '@shared/components/ui/Input';
-import { SubscriptionPlan } from '@appTypes/index';
 import { PaymentPlanHeader } from '../components/PaymentPlanHeader';
 import { PaymentMethods, PaymentMethod } from '../components/PaymentMethods';
 import { PaymentSummary } from '../components/PaymentSummary';
-import { useSubscribe } from '../hooks/useMembership';
+import { useSubscribe } from '@features/membership/hooks/useMembership';
+import { useHireCoach } from '@features/personal-coaching/hooks/useCoaching';
 import { ROUTES } from '@navigation/routes';
 import { Alert } from 'react-native';
 
 type RouteParams = {
-  plan: SubscriptionPlan;
+  plan: any; // Using any to accommodate both SubscriptionPlan and Coaching Checkout details
 };
 
 export const PaymentDetailsScreen = () => {
   const route = useRoute();
   const navigation = useNavigation<any>();
   const { colors, isDark } = useTheme();
-  const { mutate: subscribe, isPending } = useSubscribe();
+  
+  const { mutate: subscribe, isPending: isSubscribing } = useSubscribe();
+  const { mutate: hireCoach, isPending: isHiring } = useHireCoach();
   
   const { plan } = (route.params as RouteParams) || {};
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('credit_card');
@@ -39,9 +41,26 @@ export const PaymentDetailsScreen = () => {
     );
   }
 
+  const isPending = isSubscribing || isHiring;
+
   const handleConfirmPay = () => {
     const backendMethod = selectedMethod === 'credit_card' ? 'ONLINE' : 'AT_CLUB';
     
+    if (plan.type === 'coaching') {
+      hireCoach(plan.id, {
+        onSuccess: () => {
+          Alert.alert('Success', 'Your personal training session has been booked!', [
+            { text: 'OK', onPress: () => navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD) }
+          ]);
+        },
+        onError: () => {
+          Alert.alert('Error', 'Failed to book session');
+        }
+      });
+      return;
+    }
+
+    // Default: Membership subscription
     subscribe(
       { offerId: plan.id, paymentMethod: backendMethod },
       {
@@ -63,6 +82,7 @@ export const PaymentDetailsScreen = () => {
       }
     );
   };
+
 
   return (
     <AppScreen

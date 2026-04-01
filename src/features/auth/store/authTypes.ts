@@ -6,4 +6,5 @@ export interface AuthState extends RequestState {
   token: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
+  isFirstLaunch: boolean;
 }

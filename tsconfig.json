@@ -21,6 +21,9 @@
       ],
       "@appTypes/*": [
         "src/types/*"
+      ],
+      "@assets/*": [
+        "assets/*"
       ]
     }
   },

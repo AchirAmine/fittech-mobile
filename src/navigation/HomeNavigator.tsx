@@ -1,14 +1,21 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { HomeScreen } from '@features/home/screens/HomeScreen';
 import { ProfileScreen } from '@features/account/screens/ProfileScreen';
 import { SubscriptionScreen } from '@features/membership/screens/SubscriptionScreen';
-import { PaymentDetailsScreen } from '@features/membership/screens/PaymentDetailsScreen';
+import { PaymentDetailsScreen } from '@features/checkout/screens/PaymentDetailsScreen';
+import { PersonalCoachesScreen } from '@features/personal-coaching/screens/PersonalCoachesScreen';
+import { CoachProfileScreen } from '@features/personal-coaching/screens/CoachProfileScreen';
+import { MyCoachingDashboardScreen } from '@features/personal-coaching/screens/MyCoachingDashboardScreen';
+import { BookSessionScreen } from '@features/personal-coaching/screens/BookSessionScreen';
 import { ROUTES } from '@navigation/routes';
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import PlanningScreen from '@features/planning/screens/PlanningScreen';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
+import { BackButton } from '@shared/components/ui/BackButton';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -53,6 +60,43 @@ export const HomeNavigator = () => {
         name={ROUTES.MAIN.PLANNING as any} 
         component={PlanningScreen} 
         options={{ title: 'Planning' }}
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.PERSONAL_COACHES} 
+        component={PersonalCoachesScreen} 
+        options={({ navigation }) => ({ 
+          title: 'COACHES',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.COACH_PROFILE} 
+        component={CoachProfileScreen} 
+        options={({ navigation }) => ({ 
+          title: 'COACH PROFILE',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+          headerRight: () => (
+            <TouchableOpacity style={{ marginRight: 8 }}>
+              <Ionicons name="share-social-outline" size={24} color={colors.textPrimary} />
+            </TouchableOpacity>
+          )
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.MY_COACHING_DASHBOARD} 
+        component={MyCoachingDashboardScreen} 
+        options={({ navigation }) => ({ 
+          title: 'MY COACHING',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.BOOK_SESSION} 
+        component={BookSessionScreen} 
+        options={({ navigation }) => ({ 
+          title: 'BOOK SESSION',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })} 
       />
     </Stack.Navigator>
   );

@@ -82,6 +82,10 @@ export type HomeStackParamList = {
   [ROUTES.MAIN.SUBSCRIPTION_OFFERS]: undefined;
   [ROUTES.MAIN.PAYMENT_DETAILS]: { plan: SubscriptionPlan };
   [ROUTES.MAIN.PLANNING]: undefined;
+  [ROUTES.MAIN.PERSONAL_COACHES]: undefined;
+  [ROUTES.MAIN.COACH_PROFILE]: { coachId: string };
+  [ROUTES.MAIN.MY_COACHING_DASHBOARD]: undefined;
+  [ROUTES.MAIN.BOOK_SESSION]: undefined;
 };
 
 export type MainTabParamList = {
