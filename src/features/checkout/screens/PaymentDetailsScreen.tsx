@@ -90,10 +90,10 @@ export const PaymentDetailsScreen = () => {
               );
             } else {
               showModal(
-                'success',
-                'Payment Pending',
-                'If you completed the payment, your coaching session will activate shortly.',
-                () => { hideModal(); navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD); }
+                'error',
+                'Payment Incomplete',
+                'You closed the payment page before finishing. If you already paid, your session will activate shortly.',
+                hideModal
               );
             }
           } else {
@@ -135,10 +135,10 @@ export const PaymentDetailsScreen = () => {
               );
             } else if (result.type === 'cancel' || result.type === 'dismiss') {
               showModal(
-                'success',
-                'Payment Pending',
-                'If you completed the payment, your subscription will activate shortly.',
-                () => { hideModal(); navigation.navigate(ROUTES.MAIN.MEMBERSHIP); }
+                'error',
+                'Payment Incomplete',
+                'You closed the payment page before finishing. If you already paid, your subscription will activate shortly.',
+                hideModal
               );
             }
           } else {

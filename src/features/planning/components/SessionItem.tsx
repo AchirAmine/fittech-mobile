@@ -24,7 +24,6 @@ const SessionItem: React.FC<Props> = ({ session }) => {
 
   const handlePress = () => {
     if (isClass) {
-      // Always navigate to the CourseDetails screen
       navigation.navigate(ROUTES.MAIN.COURSES as any, {
         screen: ROUTES.MAIN.COURSE_DETAILS,
         params: { courseId: session.id },
@@ -32,10 +31,7 @@ const SessionItem: React.FC<Props> = ({ session }) => {
     }
   };
   
-  // Design tokens based on session type
-  const cardBg = isClass 
-    ? (isDark ? hexToRGBA(colors.primary, 0.15) : hexToRGBA(colors.primary, 0.08))
-    : (isDark ? colors.card : colors.white);
+  const cardBg = isDark ? colors.card : colors.white;
   
   const cardBorderColor = isClass 
     ? hexToRGBA(colors.primary, 0.3) 
@@ -48,7 +44,7 @@ const SessionItem: React.FC<Props> = ({ session }) => {
       case 'FULL': return colors.error;
       case 'OPEN': return colors.primary;
       case 'RESERVED': return colors.success;
-      case 'WAITLISTED': return '#FFAB00'; // Amber/Warning color
+      case 'WAITLISTED': return colors.warning; 
       default: return colors.primary;
     }
   };
@@ -108,7 +104,7 @@ const SessionItem: React.FC<Props> = ({ session }) => {
             {isClass && session.zone && (
               <View style={styles.zoneRow}>
                 <Ionicons name="location-outline" size={14} color={colors.primary} />
-                <Text style={[styles.zoneText, { color: colors.primary }]}>{session.zone}</Text>
+                <Text style={[styles.zoneText, { color: colors.primary }]}>Zone {session.zone}</Text>
               </View>
             )}
           </View>
@@ -122,7 +118,7 @@ const SessionItem: React.FC<Props> = ({ session }) => {
           <View style={styles.footer}>
             <View style={styles.enrollmentSection}>
               <View style={styles.enrollmentLabels}>
-                <Text style={[styles.enrollmentTitle, { color: isFull ? colors.error : (isDark ? colors.primary : colors.textSecondary) }]}>
+                <Text style={[styles.enrollmentTitle, { color: isFull ? colors.error : colors.textSecondary }]}>
                   {isFull ? 'FULLY BOOKED' : `${session.capacity - session.enrolled} SPOTS LEFT`}
                 </Text>
                 <Text style={[styles.enrollmentCount, { color: colors.textSecondary }]}>
@@ -180,7 +176,7 @@ const styles = StyleSheet.create({
   },
   statusBadgeText: {
     fontFamily: Theme.Typography.fontFamily.bold,
-    fontSize: 10,
+    fontSize: 11,
   },
   mainContent: {
     flexDirection: 'row',
@@ -194,7 +190,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: Theme.Typography.fontFamily.bold,
-    fontSize: 17,
+    fontSize: 18,
     marginBottom: 6,
   },
   openInfo: {
@@ -211,11 +207,11 @@ const styles = StyleSheet.create({
   },
   closingText: {
     fontFamily: Theme.Typography.fontFamily.bold,
-    fontSize: 12,
+    fontSize: 13,
   },
   subtitle: {
     fontFamily: Theme.Typography.fontFamily.regular,
-    fontSize: 13,
+    fontSize: 14,
     lineHeight: 18,
   },
   infoRow: {
@@ -230,7 +226,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontFamily: Theme.Typography.fontFamily.medium,
-    fontSize: 13,
+    fontSize: 14,
   },
   zoneRow: {
     flexDirection: 'row',
@@ -240,7 +236,7 @@ const styles = StyleSheet.create({
   },
   zoneText: {
     fontFamily: Theme.Typography.fontFamily.semiBold,
-    fontSize: 12,
+    fontSize: 13,
   },
   avatar: {
     width: 44,
@@ -264,7 +260,7 @@ const styles = StyleSheet.create({
   },
   enrollmentTitle: {
     fontFamily: Theme.Typography.fontFamily.bold,
-    fontSize: 10,
+    fontSize: 11,
     letterSpacing: 0.5,
   },
   enrollmentCount: {

@@ -201,15 +201,20 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
   headerLeft: {
     paddingLeft: 4,
+    paddingBottom: 6,
+    paddingTop: 2,
+    justifyContent: 'center',
   },
   greetingLabel: {
     fontSize: 13,
     fontFamily: Theme.Typography.fontFamily.medium,
+    lineHeight: 18,
     opacity: 0.8,
   },
   userName: {
     fontSize: 18,
     fontFamily: Theme.Typography.fontFamily.bold,
+    lineHeight: 24,
   },
   greeting: {
     fontSize: 20,

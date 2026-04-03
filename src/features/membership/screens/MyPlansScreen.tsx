@@ -12,6 +12,7 @@ import { useGetMySubscriptions } from '../hooks/useMembership';
 import { Subscription } from '@appTypes/index';
 
 import { ActivePlanCard } from '../components/ActivePlanCard';
+import { NeonButton } from '@shared/components/ui/NeonButton';
 
 export const MyPlansScreen = () => {
   const { colors, isDark } = useTheme();
@@ -33,38 +34,50 @@ export const MyPlansScreen = () => {
       contentContainerStyle={styles.scrollContent}
     >
       {activeSubscriptions.length > 0 ? (
-        activeSubscriptions.map((sub: Subscription) => (
-          <ActivePlanCard
-            key={sub.id}
-            title={sub.offer.title}
-            subtitle={`${(sub.offer.sports || []).map(s => s.sportType).join(' & ')}`}
-            image={sub.offer.picture ? { uri: `${process.env.EXPO_PUBLIC_API_URL?.split('/api')[0]}/${sub.offer.picture}` } : undefined}
-            value={sub.endDate ? Math.ceil((new Date(sub.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)).toString() : '0'}
-            unit="DAYS REMAINING"
-            onPress={() => handleCheck(sub.id, sub.offer.title)}
-          />
-        ))
+        <>
+          {activeSubscriptions.map((sub: Subscription) => (
+            <ActivePlanCard
+              key={sub.id}
+              title={sub.offer.title}
+              subtitle={`${(sub.offer.sports || []).map(s => s.sportType).join(' & ')}`}
+              image={sub.offer.picture ? { uri: `${process.env.EXPO_PUBLIC_API_URL?.split('/api')[0]}/${sub.offer.picture}` } : undefined}
+              value={sub.endDate ? Math.ceil((new Date(sub.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)).toString() : '0'}
+              unit="DAYS REMAINING"
+              onPress={() => handleCheck(sub.id, sub.offer.title)}
+            />
+          ))}
+          <TouchableOpacity 
+            style={[styles.addPlanCard, { backgroundColor: colors.cardSecondary }]}
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)}
+          >
+            <View style={[styles.addIconCircle, { backgroundColor: colors.primaryMid }]}>
+              <Ionicons name="add" size={28} color={colors.white} />
+            </View>
+            <View style={styles.addPlanTextContent}>
+              <Text style={[styles.addPlanTitle, { color: colors.textPrimary }]}>Add a Plan</Text>
+              <Text style={[styles.addPlanSubtitle, { color: colors.textSecondary }]}>Explore available packages</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color={colors.border} />
+          </TouchableOpacity>
+        </>
       ) : (
         <View style={styles.emptyContainer}>
-          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No active plans found.</Text>
+          <View style={[styles.emptyIconContainer, { backgroundColor: colors.card }]}>
+            <Ionicons name="card-outline" size={64} color={colors.primaryLight} />
+          </View>
+          <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>No Active Plans</Text>
+          <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
+            You haven't subscribed to any membership plan yet. Start your fitness journey today!
+          </Text>
+          <NeonButton 
+            title="Explore Plans" 
+            onPress={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)}
+            style={styles.exploreBtn}
+            icon="compass-outline"
+          />
         </View>
       )}
-
-      {/* Add a Plan Action */}
-      <TouchableOpacity 
-        style={[styles.addPlanCard, { backgroundColor: isDark ? colors.card : colors.cardSecondary }]}
-        activeOpacity={0.7}
-        onPress={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)}
-      >
-        <View style={[styles.addIconCircle, { backgroundColor: colors.primaryMid }]}>
-          <Ionicons name="add" size={28} color={colors.white} />
-        </View>
-        <View style={styles.addPlanTextContent}>
-          <Text style={[styles.addPlanTitle, { color: colors.textPrimary }]}>Add a Plan</Text>
-          <Text style={[styles.addPlanSubtitle, { color: colors.textSecondary }]}>Explore available packages</Text>
-        </View>
-        <Ionicons name="chevron-forward" size={24} color={colors.border} />
-      </TouchableOpacity>
     </AppScreen>
   );
 };
@@ -102,11 +115,34 @@ const styles = StyleSheet.create({
     fontFamily: Theme.Typography.fontFamily.regular,
   },
   emptyContainer: {
-    padding: 40,
+    padding: 30,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 60,
   },
-  emptyText: {
-    fontFamily: Theme.Typography.fontFamily.medium,
+  emptyIconContainer: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  emptyTitle: {
+    fontSize: 22,
+    fontFamily: Theme.Typography.fontFamily.bold,
+    marginBottom: 10,
+  },
+  emptySubtitle: {
     fontSize: 15,
+    fontFamily: Theme.Typography.fontFamily.regular,
+    textAlign: 'center',
+    lineHeight: 22,
+    paddingHorizontal: 20,
+    marginBottom: 32,
+  },
+  exploreBtn: {
+    width: '100%',
+    borderRadius: 16,
   },
 });
