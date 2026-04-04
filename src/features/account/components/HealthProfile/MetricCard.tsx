@@ -19,7 +19,7 @@ export const MetricCard = ({ label, value, unit, icon, onChange, colors, isDark,
   <View style={[
     styles.metricCard,
     {
-      backgroundColor: isDark ? colors.card : '#fff',
+      backgroundColor: isDark ? colors.card : colors.white,
       borderColor: isEditing ? colors.primary : colors.border,
       borderWidth: isEditing ? 1.5 : 1,
     },
@@ -29,11 +29,6 @@ export const MetricCard = ({ label, value, unit, icon, onChange, colors, isDark,
         <Ionicons name={icon} size={20} color={colors.primary} />
       </View>
       <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>{label}</Text>
-      {isEditing && (
-        <View style={styles.editIndicator}>
-          <Ionicons name="pencil" size={12} color={colors.primary} />
-        </View>
-      )}
     </View>
     <View style={styles.metricBody}>
       <TextInput
@@ -45,6 +40,14 @@ export const MetricCard = ({ label, value, unit, icon, onChange, colors, isDark,
         editable={isEditing}
       />
       <Text style={[styles.metricUnit, { color: colors.primaryMid }]}>{unit}</Text>
+      {isEditing && (
+        <View style={[
+          styles.editIndicator,
+          { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
+        ]}>
+          <Ionicons name="pencil" size={10} color={colors.primary} />
+        </View>
+      )}
     </View>
   </View>
 );
@@ -82,9 +85,9 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: 'rgba(0,0,0,0.05)',
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 8,
   },
   metricBody: { flexDirection: 'row', alignItems: 'baseline', gap: 4 },
   metricInput: {

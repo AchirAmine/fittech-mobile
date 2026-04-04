@@ -24,7 +24,7 @@ const registerStep6Schema = object().shape({
 const RegisterStep6Screen: React.FC<Props> = ({ navigation, route }) => {
   const { data: prevData } = route.params;
 
-  const { control, handleSubmit, watch, formState: { errors } } = useForm({
+  const { control, handleSubmit, watch, clearErrors, formState: { errors } } = useForm({
     resolver: yupResolver(registerStep6Schema),
     defaultValues: {
       activities: [] as string[],
@@ -57,6 +57,7 @@ const RegisterStep6Screen: React.FC<Props> = ({ navigation, route }) => {
       onBack={() => navigation.goBack()}
       onContinue={handleSubmit(onSubmit)}
       error={errors.activities?.message || errors.customActivity?.message}
+      onDismissError={() => clearErrors()}
     >
       <Controller
         control={control}

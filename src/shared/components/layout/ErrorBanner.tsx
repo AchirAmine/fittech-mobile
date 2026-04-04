@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
@@ -7,15 +8,28 @@ import { Theme } from '@shared/constants/theme';
 interface ErrorBannerProps {
   message: string | null;
   onDismiss?: () => void;
+  allowTopInset?: boolean;
 }
 
-export const ErrorBanner: React.FC<ErrorBannerProps> = memo(({ message, onDismiss }) => {
+export const ErrorBanner: React.FC<ErrorBannerProps> = memo(({ 
+  message, 
+  onDismiss,
+  allowTopInset = false
+}) => {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
 
   if (!message) return null;
 
+  const topPosition = allowTopInset 
+    ? Math.max(insets.top + 10, Platform.OS === 'ios' ? 50 : 40)
+    : 15;
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.error }]}>
+    <View style={[
+      styles.container, 
+      { backgroundColor: colors.error, top: topPosition }
+    ]}>
       <Ionicons name="alert-circle" size={20} color="#FFFFFF" />
       <Text style={styles.text}>{message}</Text>
       {onDismiss && (

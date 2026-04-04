@@ -127,7 +127,13 @@ export const AppScreen: React.FC<AppScreenProps> = ({
         <Animated.View 
           entering={FadeInUp} 
           exiting={FadeOutUp}
-          style={[styles.errorBanner, { backgroundColor: colors.error }]}
+          style={[
+            styles.errorBanner, 
+            { 
+              backgroundColor: colors.error, 
+              top: safeArea ? Math.max(insets.top + 10, Platform.OS === 'ios' ? 50 : 40) : 15 
+            }
+          ]}
         >
           <Ionicons name="alert-circle" size={20} color={colors.white} />
           <Text style={[styles.errorText, { color: colors.white }]}>{errorMessage}</Text>

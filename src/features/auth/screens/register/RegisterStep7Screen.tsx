@@ -32,7 +32,7 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState('');
 
-  const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+  const { control, handleSubmit, watch, setValue, clearErrors, formState: { errors } } = useForm({
     resolver: yupResolver(registerStep7Schema),
     defaultValues: {
       healthConcerns: [] as string[],
@@ -82,7 +82,7 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
         dateOfBirth: data.dateOfBirth,
         photoLocalUri: data.photo,
         healthProfile: {
-          goals: data.goal ? [data.goal] : [],
+          goals: data.goals || [],
           heightValue: data.heightValue,
           heightUnit: data.heightUnit,
           weightValue: data.weightValue,
@@ -120,6 +120,7 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
       error={apiError || errors.healthConcerns?.message || errors.customConcern?.message}
       onDismissError={() => {
         setApiError('');
+        clearErrors();
       }}
     >
       <Controller
@@ -131,6 +132,7 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
               <SelectableCard
                 key={option.id}
                 label={option.label}
+                subtitle={option.subtitle}
                 iconName={option.icon}
                 isSelected={(value || []).includes(option.id)}
                 onPress={() => handleToggleConcern(option.id, value || [], onChange)}

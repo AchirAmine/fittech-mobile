@@ -36,7 +36,7 @@ export interface SignupData {
   weightUnit?: 'kg';
   heightValue?: number;
   heightUnit?: 'cm';
-  goal?: string;
+  goals?: string[];
   activities?: string[];
   healthConcerns?: string[];
 }

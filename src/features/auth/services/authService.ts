@@ -20,7 +20,7 @@ export const authService = {
     formData.append('dateOfBirth', userData.dateOfBirth || '');
     formData.append('height', String(userData.healthProfile?.heightValue || ''));
     formData.append('weight', String(userData.healthProfile?.weightValue || ''));
-    formData.append('fitnessObjective', userData.healthProfile?.goals?.[0] || '');
+    formData.append('fitnessObjective', userData.healthProfile?.goals?.join(', ') || '');
     formData.append('medicalRestrictions', userData.healthProfile?.restrictions || '');
 
     if (userData.photoLocalUri) {

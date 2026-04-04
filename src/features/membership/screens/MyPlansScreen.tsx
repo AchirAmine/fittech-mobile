@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ROUTES } from '@navigation/routes';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MembershipStackParamList } from '@appTypes/navigation.types';
 import { useTheme } from '@shared/hooks/useTheme';
@@ -17,7 +18,13 @@ import { NeonButton } from '@shared/components/ui/NeonButton';
 export const MyPlansScreen = () => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<MembershipStackParamList>>();
-  const { data: subscriptions, isLoading, isError, error } = useGetMySubscriptions();
+  const { data: subscriptions, isLoading, isError, error, refetch } = useGetMySubscriptions();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const handleCheck = (planId: string, planName: string) => {
     navigation.navigate(ROUTES.MAIN.PLAN_DETAILS, { planId, planName });
@@ -46,20 +53,12 @@ export const MyPlansScreen = () => {
               onPress={() => handleCheck(sub.id, sub.offer.title)}
             />
           ))}
-          <TouchableOpacity 
-            style={[styles.addPlanCard, { backgroundColor: colors.cardSecondary }]}
-            activeOpacity={0.7}
+          <NeonButton 
+            title="Explore More Plans" 
             onPress={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)}
-          >
-            <View style={[styles.addIconCircle, { backgroundColor: colors.primaryMid }]}>
-              <Ionicons name="add" size={28} color={colors.white} />
-            </View>
-            <View style={styles.addPlanTextContent}>
-              <Text style={[styles.addPlanTitle, { color: colors.textPrimary }]}>Add a Plan</Text>
-              <Text style={[styles.addPlanSubtitle, { color: colors.textSecondary }]}>Explore available packages</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={24} color={colors.border} />
-          </TouchableOpacity>
+            style={styles.exploreMoreBtn}
+            icon="compass-outline"
+          />
         </>
       ) : (
         <View style={styles.emptyContainer}>
@@ -87,32 +86,9 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     gap: 20,
   },
-  addPlanCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 18,
-    borderRadius: 20,
+  exploreMoreBtn: {
     marginTop: 10,
-  },
-  addIconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  addPlanTextContent: {
-    flex: 1,
-  },
-  addPlanTitle: {
-    fontSize: 17,
-    fontFamily: Theme.Typography.fontFamily.bold,
-    marginBottom: 2,
-  },
-  addPlanSubtitle: {
-    fontSize: 13,
-    fontFamily: Theme.Typography.fontFamily.regular,
+    borderRadius: 16,
   },
   emptyContainer: {
     padding: 30,

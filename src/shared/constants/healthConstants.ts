@@ -11,6 +11,7 @@ export interface GoalOption {
 export interface HealthConcernOption {
   id: string;
   label: string;
+  subtitle: string;
   icon: keyof typeof Ionicons.glyphMap;
   color: string;
 }
@@ -25,12 +26,12 @@ export const GOALS: GoalOption[] = [
 ];
 
 export const HEALTH_CONCERNS: HealthConcernOption[] = [
-  { id: 'diabetes', label: 'Diabetes',          icon: 'water-outline', color: '#007AFF' },
-  { id: 'heart',    label: 'Heart conditions',  icon: 'heart-outline', color: '#FF3B30' },
-  { id: 'joint',    label: 'Joint problems',    icon: 'body-outline',  color: '#FF9500' },
-  { id: 'asthma',   label: 'Asthma',            icon: 'pulse-outline', color: '#5856D6' },
-  { id: 'none',     label: 'None of the above', icon: 'ban-outline',   color: '#8E8E93' },
-  { id: 'other',    label: 'Other',             icon: 'create-outline', color: '#8E8E93' },
+  { id: 'diabetes', label: 'Diabetes',          subtitle: 'Blood sugar management', icon: 'water-outline', color: '#007AFF' },
+  { id: 'heart',    label: 'Heart conditions',  subtitle: 'Cardiovascular focus',   icon: 'heart-outline', color: '#FF3B30' },
+  { id: 'joint',    label: 'Joint problems',    subtitle: 'Mobility & bone health',  icon: 'body-outline',  color: '#FF9500' },
+  { id: 'asthma',   label: 'Asthma',            subtitle: 'Respiratory awareness',  icon: 'pulse-outline', color: '#5856D6' },
+  { id: 'none',     label: 'None of the above', subtitle: 'No medical limits',      icon: 'ban-outline',   color: '#8E8E93' },
+  { id: 'other',    label: 'Other',             subtitle: 'Custom health concern',  icon: 'create-outline', color: '#8E8E93' },
 ];
 
 export interface ActivityOption {

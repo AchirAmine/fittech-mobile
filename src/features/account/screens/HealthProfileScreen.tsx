@@ -14,10 +14,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { Input } from '@shared/components/ui';
-import { GOALS, HEALTH_CONCERNS } from '@shared/constants/healthConstants';
+import { GOALS, HEALTH_CONCERNS, ACTIVITIES } from '@shared/constants/healthConstants';
 import { useGetAccount, useUpdateAccount } from '@features/account/hooks/useAccount';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { MetricCard, GoalSelector, RestrictionSelector, SaveButton } from '../components';
+import { MetricCard, GoalSelector, RestrictionSelector, ActivitySelector, SaveButton } from '../components';
 import { AppScreen } from '@shared/components';
 import { getErrorMessage } from '@shared/constants/errorMessages';
 import { useEditableHeader } from '../hooks/useEditableHeader';
@@ -27,13 +27,15 @@ const healthSchema = object().shape({
   height: number().required('Height is required').min(50).max(250),
   weight: number().required('Weight is required').min(20).max(300),
   restrictions: array().of(string()).default([]),
-  goal: string().required('Goal is required'),
-  otherGoalText: string().when('goal', {
-    is: 'other',
+  goals: array().of(string()).min(1, 'At least one goal is required').default([]),
+  otherGoalText: string().when('goals', {
+    is: (goals: string[]) => goals?.includes('other'),
     then: (schema) => schema.required('Please specify your goal'),
     otherwise: (schema) => schema.optional(),
   }),
   otherRestrictionText: string().optional(),
+  activities: array().of(string()).default([]),
+  otherActivityText: string().optional(),
 });
 
 export const HealthProfileScreen = () => {
@@ -57,52 +59,93 @@ export const HealthProfileScreen = () => {
     defaultValues: {
       height: 170,
       weight: 70,
-      goal: '',
+      goals: [] as string[],
       otherGoalText: '',
       restrictions: [] as string[],
       otherRestrictionText: '',
+      activities: [] as string[],
+      otherActivityText: '',
     },
   });
 
-  const selectedGoal = watch('goal');
+  const selectedGoals = watch('goals') as string[];
   const selectedRestrictions = watch('restrictions') as string[];
+  const selectedActivities = watch('activities') as string[];
 
   useEffect(() => {
     if (userData) {
-      const goalExists = GOALS.some(g => g.id === userData.fitnessObjective);
-      const goalId = goalExists ? userData.fitnessObjective : (userData.fitnessObjective ? 'other' : '');
-      const otherGoalText = goalExists ? '' : (userData.fitnessObjective || '');
+      const rawGoals = Array.isArray(userData.fitnessObjective) 
+        ? userData.fitnessObjective 
+        : (userData.fitnessObjective ? [userData.fitnessObjective] : []);
 
-      const rawRestrictions = parseRestrictions(userData.medicalRestrictions);
-      const standardIds = HEALTH_CONCERNS.map(c => c.id).filter(id => id !== 'other' && id !== 'none');
-      const selectedIds = rawRestrictions.filter(r => standardIds.includes(r));
-      const customRestrictions = rawRestrictions.filter(r => !standardIds.includes(r) && r !== 'none');
+      const standardGoalIds = GOALS.map(g => g.id).filter(id => id !== 'other');
+      const selectedGoalIds = rawGoals.filter(g => standardGoalIds.includes(g));
       
-      const hasOther = customRestrictions.length > 0 || rawRestrictions.includes('other');
-      if (hasOther && !selectedIds.includes('other')) {
-        selectedIds.push('other');
+      const customGoalInputs = rawGoals.filter(g => !standardGoalIds.includes(g));
+      const hasOtherGoal = customGoalInputs.length > 0;
+      if (hasOtherGoal && !selectedGoalIds.includes('other')) {
+        selectedGoalIds.push('other');
       }
+      const otherGoalText = customGoalInputs.join(', ');
+
+      const rawRestrictions = parseRestrictions(userData.medicalRestrictions || '');
+      const standardRestrictionIds = HEALTH_CONCERNS.map(c => c.id).filter(id => id !== 'other' && id !== 'none');
+      const standardActivityIds = ACTIVITIES.map(a => a.id).filter(id => id !== 'other');
+
+      const selectedRestrictionIds = rawRestrictions.filter(r => standardRestrictionIds.includes(r));
+      const selectedActivityIds = rawRestrictions.filter(r => standardActivityIds.includes(r));
+
+      const customInputs = rawRestrictions.filter(r => !standardRestrictionIds.includes(r) && !standardActivityIds.includes(r) && r !== 'none');
       
-      const otherText = customRestrictions.join(', ');
+      let otherRestrictionText = '';
+      let otherActivityText = '';
+      
+      customInputs.forEach(input => {
+        if (input.startsWith('Activity: ')) {
+          otherActivityText = input.replace('Activity: ', '');
+          if (!selectedActivityIds.includes('other')) selectedActivityIds.push('other');
+        } else if (input.startsWith('Restriction: ')) {
+          otherRestrictionText = input.replace('Restriction: ', '');
+          if (!selectedRestrictionIds.includes('other')) selectedRestrictionIds.push('other');
+        } else if (input.startsWith('Other: ')) {
+          otherActivityText = input.replace('Other: ', '');
+          if (!selectedActivityIds.includes('other')) selectedActivityIds.push('other');
+        } else {
+          otherRestrictionText = input;
+          if (!selectedRestrictionIds.includes('other')) selectedRestrictionIds.push('other');
+        }
+      });
 
       reset({
         height: userData.height || 170,
         weight: userData.weight || 70,
-        restrictions: selectedIds,
-        goal: goalId as string,
+        restrictions: selectedRestrictionIds,
+        activities: selectedActivityIds,
+        goals: selectedGoalIds,
         otherGoalText,
-        otherRestrictionText: otherText,
+        otherRestrictionText,
+        otherActivityText,
       });
     }
   }, [userData, reset]);
 
   const onSubmit = (formData: InferType<typeof healthSchema>) => {
-    const finalGoal = formData.goal === 'other' ? formData.otherGoalText : formData.goal;
+    let finalGoals = (formData.goals || []).filter((g): g is string => g !== undefined && g !== 'other');
+    if (formData.goals?.includes('other') && formData.otherGoalText) {
+      finalGoals.push(formData.otherGoalText);
+    }
     
     let finalRestrictions = (formData.restrictions || []).filter((r): r is string => r !== undefined && r !== 'other');
     if (formData.restrictions?.includes('other') && formData.otherRestrictionText) {
-      finalRestrictions.push(formData.otherRestrictionText);
+      finalRestrictions.push(`Restriction: ${formData.otherRestrictionText}`);
     }
+
+    let finalActivities = (formData.activities || []).filter((a): a is string => a !== undefined && a !== 'other');
+    if (formData.activities?.includes('other') && formData.otherActivityText) {
+      finalActivities.push(`Activity: ${formData.otherActivityText}`);
+    }
+
+    const mergedRestrictionsAndActivities = [...finalActivities, ...finalRestrictions];
 
     updateMe({
       healthProfile: {
@@ -110,8 +153,8 @@ export const HealthProfileScreen = () => {
         heightUnit: 'cm',
         weightValue: formData.weight,
         weightUnit: 'kg',
-        restrictions: formatRestrictions(finalRestrictions),
-        goals: [finalGoal as string],
+        restrictions: formatRestrictions(mergedRestrictionsAndActivities),
+        goals: finalGoals,
       },
     }, {
       onSuccess: () => {
@@ -120,8 +163,10 @@ export const HealthProfileScreen = () => {
     });
   };
 
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
+  const onToggleGoal = (id: string) => {
+    if (!isEditing) return;
+    const current = watch('goals') || [];
+    setValue('goals', current.includes(id) ? current.filter(g => g !== id) : [...current, id]);
   };
 
   const onToggleRestriction = (id: string) => {
@@ -135,6 +180,12 @@ export const HealthProfileScreen = () => {
     setValue('restrictions', without.includes(id) ? without.filter(r => r !== id) : [...without, id]);
   };
 
+  const onToggleActivity = (id: string) => {
+    if (!isEditing) return;
+    const current = selectedActivities || [];
+    setValue('activities', current.includes(id) ? current.filter(a => a !== id) : [...current, id]);
+  };
+
   const handleDismissError = () => {
     if (updateError) resetMutation();
     if (fetchError) refetch();
@@ -142,6 +193,7 @@ export const HealthProfileScreen = () => {
 
   return (
     <AppScreen
+      safeArea={false}
       isLoading={loading}
       errorMessage={getErrorMessage(fetchError || updateError)}
       onDismissError={handleDismissError}
@@ -190,39 +242,14 @@ export const HealthProfileScreen = () => {
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.primaryMid }]}>Main Fitness Goal</Text>
           <GoalSelector
-            selectedGoal={selectedGoal}
+            selectedGoals={selectedGoals}
             isEditing={isEditing}
-            onSelect={id => setValue('goal', id)}
+            onToggle={onToggleGoal}
             colors={colors}
             isDark={isDark}
+            otherValue={watch('otherGoalText')}
+            onChangeOtherText={text => setValue('otherGoalText', text)}
           />
-          {selectedGoal === 'other' && (
-            <Animated.View entering={FadeInDown} style={styles.otherInput}>
-              {isEditing ? (
-                <Controller
-                  control={control}
-                  name="otherGoalText"
-                  render={({ field: { onChange, value } }) => (
-                    <Input
-                      label="Please specify your goal"
-                      value={value || ''}
-                      onChangeText={onChange}
-                      error={errors.otherGoalText?.message}
-                      icon="create-outline"
-                      labelBg={isDark ? colors.background : '#fff'}
-                    />
-                  )}
-                />
-              ) : (
-                <View style={[styles.customValueRow, { backgroundColor: colors.cardSecondary }]}>
-                  <Ionicons name="information-circle-outline" size={18} color={colors.primary} />
-                  <Text style={[styles.customValueText, { color: colors.textPrimary }]}>
-                    {watch('otherGoalText') || 'Not specified'}
-                  </Text>
-                </View>
-              )}
-            </Animated.View>
-          )}
         </View>
 
         <View style={styles.section}>
@@ -233,33 +260,22 @@ export const HealthProfileScreen = () => {
             onToggle={onToggleRestriction}
             colors={colors}
             isDark={isDark}
+            otherValue={watch('otherRestrictionText')}
+            onChangeOtherText={text => setValue('otherRestrictionText', text)}
           />
-          {selectedRestrictions?.includes('other') && (
-            <Animated.View entering={FadeInDown} style={styles.otherInput}>
-              {isEditing ? (
-                <Controller
-                  control={control}
-                  name="otherRestrictionText"
-                  render={({ field: { onChange, value } }) => (
-                    <Input
-                      label="Please specify your medical concerns"
-                      value={value || ''}
-                      onChangeText={onChange}
-                      icon="medical-outline"
-                      labelBg={isDark ? colors.background : '#fff'}
-                    />
-                  )}
-                />
-              ) : (
-                <View style={[styles.customValueRow, { backgroundColor: colors.cardSecondary }]}>
-                  <Ionicons name="medical-outline" size={18} color={colors.primary} />
-                  <Text style={[styles.customValueText, { color: colors.textPrimary }]}>
-                    {watch('otherRestrictionText') || 'Not specified'}
-                  </Text>
-                </View>
-              )}
-            </Animated.View>
-          )}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.primaryMid }]}>Preferred Activities</Text>
+          <ActivitySelector
+            selectedActivities={selectedActivities}
+            isEditing={isEditing}
+            onToggle={onToggleActivity}
+            colors={colors}
+            isDark={isDark}
+            otherValue={watch('otherActivityText')}
+            onChangeOtherText={text => setValue('otherActivityText', text)}
+          />
         </View>
 
         <SaveButton
@@ -281,19 +297,6 @@ const styles = StyleSheet.create({
   },
   halfWidth: { width: '48%' },
   section: { marginBottom: 8 },
-  otherInput: { marginTop: 12, paddingHorizontal: 2 },
-  customValueRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 12,
-    gap: 10,
-    marginTop: 4,
-  },
-  customValueText: {
-    fontSize: 14,
-    fontFamily: Theme.Typography.fontFamily.medium,
-  },
   sectionTitle: {
     fontSize: 17,
     fontFamily: Theme.Typography.fontFamily.bold,
