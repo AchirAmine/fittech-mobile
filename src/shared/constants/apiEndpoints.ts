@@ -31,5 +31,6 @@ export const API_ENDPOINTS = {
     INVITE_COACH: (id: string) => `/personal-coaching/coaches/${id}/invite`,
     MY_COACH_SLOTS: "/personal-coaching/my-coach/slots",
     BOOK_SLOT: (id: string) => `/personal-coaching/my-coach/slots/${id}/book`,
+    PAY_INVITATION: (id: string) => `/personal-coaching/invitations/${id}/pay`,
   },
 } as const;

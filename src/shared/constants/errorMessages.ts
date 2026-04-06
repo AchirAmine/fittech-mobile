@@ -56,6 +56,11 @@ export const getErrorMessage = (error: unknown): string => {
       return err.message || 'Conflict occurred.';
   }
 
+  if (msg.includes('otp') || msg.includes('code') || msg.includes('verification')) {
+    if (msg.includes('expired')) return 'Verification code has expired. Please resend it.';
+    return 'Invalid verification code. Please check and try again.';
+  }
+
   if (code === 408 || msg.includes('timeout')) {
     return ERROR_MESSAGES.TIMEOUT;
   }

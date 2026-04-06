@@ -1,10 +1,11 @@
 import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { AppScreen } from '@shared/components';
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
+import { useCallback } from 'react';
 
 import { useGetCoach } from '../hooks/useCoaching';
 import { CoachHero } from '../components/CoachHero';
@@ -18,7 +19,13 @@ export const CoachProfileScreen = () => {
   const route = useRoute<ProfileRouteProp>();
   const { coachId } = route.params;
 
-  const { data: coach, isLoading } = useGetCoach(coachId);
+  const { data: coach, isLoading, refetch } = useGetCoach(coachId);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   if (isLoading) {
     return (
@@ -73,6 +80,7 @@ export const CoachProfileScreen = () => {
         />
         <CoachActionFooter 
           coachId={coach.id}
+          invitationId={coach.invitation?.id}
           name={coach.name}
           price={coach.price}
           initialStatus={initialStatus as any}

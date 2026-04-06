@@ -13,7 +13,7 @@ import { PaymentPlanHeader } from '../components/PaymentPlanHeader';
 import { PaymentMethods, PaymentMethod } from '../components/PaymentMethods';
 import { PaymentSummary } from '../components/PaymentSummary';
 import { useSubscribe } from '@features/membership/hooks/useMembership';
-import { useHireCoach } from '@features/personal-coaching/hooks/useCoaching';
+import { usePayCoaching } from '@features/personal-coaching/hooks/useCoaching';
 import { ROUTES } from '@navigation/routes';
 
 type RouteParams = {
@@ -34,7 +34,7 @@ export const PaymentDetailsScreen = () => {
   const { colors } = useTheme();
 
   const { mutate: subscribe, isPending: isSubscribing } = useSubscribe();
-  const { mutate: hireCoach, isPending: isHiring } = useHireCoach();
+  const { mutate: payCoaching, isPending: isPayingCoaching } = usePayCoaching();
 
   const { plan } = (route.params as RouteParams) || {};
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('credit_card');
@@ -68,52 +68,53 @@ export const PaymentDetailsScreen = () => {
     );
   }
 
-  const isPending = isSubscribing || isHiring;
+  const isPending = isSubscribing || isPayingCoaching;
 
   const handleConfirmPay = () => {
     const backendMethod = selectedMethod === 'credit_card' ? 'ONLINE' : 'AT_CLUB';
 
     if (plan.type === 'coaching') {
-      hireCoach(plan.id, {
-        onSuccess: async (data: any) => {
-          if (backendMethod === 'ONLINE' && data?.checkoutUrl) {
-            const result = await WebBrowser.openAuthSessionAsync(
-              data.checkoutUrl,
-              'fittech://payment'
-            );
-            if (result.type === 'success') {
-              showModal(
-                'success',
-                'Payment Done!',
-                'Your coaching session is being activated. Please wait a moment.',
-                () => { hideModal(); navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD); }
-              );
-            } else {
-              showModal(
-                'error',
-                'Payment Incomplete',
-                'You closed the payment page before finishing. If you already paid, your session will activate shortly.',
-                hideModal
-              );
-            }
-          } else {
-            showModal(
-              'success',
-              'Session Booked!',
-              'Your personal training session has been booked successfully.',
-              () => { hideModal(); navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD); }
-            );
-          }
-        },
-        onError: (err: any) => {
-          showModal(
-            'error',
-            'Booking Failed',
-            err.response?.data?.message || err.message || 'Failed to book session. Please try again.',
-            hideModal
-          );
+      if (backendMethod === 'ONLINE') {
+        if (!plan.invitationId) {
+          showModal('error', 'Missing Data', 'Invitation ID is missing. Please try again from the coach profile.', hideModal);
+          return;
         }
-      });
+        payCoaching(plan.invitationId, {
+          onSuccess: async (data: any) => {
+            if (data?.checkoutUrl) {
+              const result = await WebBrowser.openAuthSessionAsync(
+                data.checkoutUrl,
+                'fittech://payment'
+              );
+              if (result.type === 'success') {
+                showModal(
+                  'success',
+                  'Payment Done!',
+                  'Your coaching session is being activated. Please wait a moment.',
+                  () => { hideModal(); navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD); }
+                );
+              } else {
+                showModal(
+                  'error',
+                  'Payment Incomplete',
+                  'You closed the payment page before finishing.',
+                  hideModal
+                );
+              }
+            }
+          },
+          onError: (err: any) => {
+            showModal('error', 'Payment Failed', err.response?.data?.message || 'Failed to initialize payment.', hideModal);
+          }
+        });
+      } else {
+        showModal(
+          'success',
+          'Request Pending',
+          'Please visit the front desk to complete your payment. Once paid, your coach will be active.',
+          () => { hideModal(); navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD); }
+        );
+      }
       return;
     }
 

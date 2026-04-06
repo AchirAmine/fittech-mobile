@@ -1,6 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { HomeScreen } from '@features/home/screens/HomeScreen';
 import { ProfileScreen } from '@features/account/screens/ProfileScreen';
@@ -50,19 +50,28 @@ export const HomeNavigator = () => {
         options={{ title: 'My Profile' }}
       />
       <Stack.Screen 
+        name={ROUTES.MAIN.PLANNING as any} 
+        component={PlanningScreen} 
+        options={({ navigation }) => ({ 
+          title: 'PLANNING',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })}
+      />
+      <Stack.Screen 
         name={ROUTES.MAIN.SUBSCRIPTION_OFFERS} 
         component={SubscriptionScreen} 
-        options={{ title: 'Explore Plans' }}
+        options={({ navigation }) => ({ 
+          title: 'EXPLORE PLANS',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })}
       />
       <Stack.Screen 
         name={ROUTES.MAIN.PAYMENT_DETAILS} 
         component={PaymentDetailsScreen} 
-        options={{ title: 'Payment Details' }}
-      />
-      <Stack.Screen 
-        name={ROUTES.MAIN.PLANNING as any} 
-        component={PlanningScreen} 
-        options={{ title: 'Planning' }}
+        options={({ navigation }) => ({ 
+          title: 'PAYMENT DETAILS',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })}
       />
       <Stack.Screen 
         name={ROUTES.MAIN.PERSONAL_COACHES} 

@@ -19,8 +19,11 @@ export const NextSessionItem = ({ day, time }: NextSessionItemProps) => {
         <Ionicons name="barbell-outline" size={20} color={colors.primary} />
       </View>
       <View style={styles.sessionInfo}>
-        <Text style={[styles.sessionText, { color: colors.textPrimary }]}>
-          {day} · {time}
+        <Text style={[styles.dateText, { color: colors.textPrimary }]}>
+          {day}
+        </Text>
+        <Text style={[styles.timeText, { color: colors.textSecondary }]}>
+          {time}
         </Text>
       </View>
     </View>
@@ -49,9 +52,16 @@ const styles = StyleSheet.create({
   sessionInfo: {
     marginLeft: 16,
     flex: 1,
+    justifyContent: 'center',
   },
-  sessionText: {
+  dateText: {
     fontSize: 15,
+    fontFamily: Theme.Typography.fontFamily.semiBold,
+    marginBottom: 2,
+  },
+  timeText: {
+    fontSize: 13,
     fontFamily: Theme.Typography.fontFamily.medium,
+    opacity: 0.8,
   },
 });

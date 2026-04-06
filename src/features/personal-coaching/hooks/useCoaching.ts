@@ -78,3 +78,9 @@ export const useBookSlot = () => {
     },
   });
 };
+
+export const usePayCoaching = () => {
+  return useMutation({
+    mutationFn: (invitationId: string) => coachingService.payCoaching(invitationId),
+  });
+};

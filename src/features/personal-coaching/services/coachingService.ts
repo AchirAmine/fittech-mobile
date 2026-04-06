@@ -36,6 +36,16 @@ export const coachingService = {
     const coach = data.data.coach;
     const slots = data.data.slots || [];
 
+    const formatSessionDate = (dateString: string) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-GB', { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long' 
+      });
+    };
+
     return {
       coach: {
         id: coach.id,
@@ -48,7 +58,7 @@ export const coachingService = {
         .filter((slot: any) => slot.isBookedByMember)
         .map((slot: any) => ({
           id: slot.id,
-          day: slot.day,
+          day: slot.date ? formatSessionDate(slot.date) : slot.day,
           time: `${slot.startTime} - ${slot.endTime}`,
         })),
     };
@@ -67,5 +77,10 @@ export const coachingService = {
   bookSlot: async (slotId: string) => {
     const { data } = await axiosClient.post(API_ENDPOINTS.PERSONAL_COACHING.BOOK_SLOT(slotId));
     return data;
+  },
+  
+  payCoaching: async (invitationId: string) => {
+    const { data } = await axiosClient.post(API_ENDPOINTS.PERSONAL_COACHING.PAY_INVITATION(invitationId));
+    return data.data;
   },
 };

@@ -75,8 +75,7 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
         navigation.navigate(ROUTES.AUTH.RESET_PASSWORD, { email });
       }
     } catch (error: unknown) {
-      logger.error('OTP verification failed:', error);
-      setApiError(getErrorMessage(error as { message?: string; code?: number }));
+      setApiError(getErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -91,8 +90,7 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
       setTimer(180);
       reset({ otp: '' });
     } catch (error: unknown) {
-      logger.error('Resend OTP failed:', error);
-      setApiError(getErrorMessage(error as { message?: string; code?: number }));
+      setApiError(getErrorMessage(error));
     } finally {
       setResendLoading(false);
     }
@@ -126,7 +124,13 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
                 label="Enter Verification Code"
                 icon="mail-outline"
                 value={value}
-                onChangeText={(val) => onChange(val.replace(/[^0-9]/g, '').slice(0, OTP_LENGTH))}
+                onChangeText={(val) => {
+                  const cleaned = val.replace(/[^0-9]/g, '').slice(0, OTP_LENGTH);
+                  onChange(cleaned);
+                  if (cleaned.length === OTP_LENGTH) {
+                    handleSubmit(onSubmit)();
+                  }
+                }}
                 onBlur={onBlur}
                 keyboardType="number-pad"
                 maxLength={OTP_LENGTH}

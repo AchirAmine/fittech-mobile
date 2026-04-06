@@ -11,6 +11,7 @@ import { HomeStackParamList } from '@appTypes/navigation.types';
 import { CoachInfoCard } from '../components/CoachInfoCard';
 import { BookingSessionsCard } from '../components/BookingSessionsCard';
 import { NextSessionItem } from '../components/NextSessionItem';
+import { EmptyCoachingState } from '../components/EmptyCoachingState';
 
 export const MyCoachingDashboardScreen = () => {
   const { colors } = useTheme();
@@ -33,9 +34,11 @@ export const MyCoachingDashboardScreen = () => {
 
   if (!coaching) {
     return (
-      <AppScreen errorMessage="No active coaching found">
-        <View style={styles.errorContainer}>
-          <Text style={{ color: colors.textSecondary }}>You don't have an active coaching subscription yet.</Text>
+      <AppScreen safeArea={true} style={{ backgroundColor: colors.background }}>
+        <View style={styles.emptyContainer}>
+          <EmptyCoachingState 
+            onPress={() => navigation.navigate(ROUTES.MAIN.PERSONAL_COACHES)}
+          />
         </View>
       </AppScreen>
     );
@@ -81,10 +84,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     letterSpacing: 0.5,
   },
-  errorContainer: {
+  emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 24,
   }
 });

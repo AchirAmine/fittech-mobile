@@ -23,17 +23,22 @@ export const BookSessionScreen = () => {
       refetch();
     }, [refetch])
   );
-  
+
   const [selectedDate, setSelectedDate] = useState(new Date());
-  
+
   const availableTimes = React.useMemo(() => {
     return (slots as any[]).filter((slot: any) => {
       if (!slot.date) return false;
+      
       const slotDate = new Date(slot.date);
+      const year = slotDate.getUTCFullYear();
+      const month = slotDate.getUTCMonth();
+      const date = slotDate.getUTCDate();
+      
       return (
-        slotDate.getUTCFullYear() === selectedDate.getFullYear() &&
-        slotDate.getUTCMonth() === selectedDate.getMonth() &&
-        slotDate.getUTCDate() === selectedDate.getDate()
+        year === selectedDate.getFullYear() &&
+        month === selectedDate.getMonth() &&
+        date === selectedDate.getDate()
       );
     }).map((slot: any) => ({
       id: slot.id,
@@ -46,8 +51,9 @@ export const BookSessionScreen = () => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   React.useEffect(() => {
-    if (availableTimes.length > 0) {
-      setSelectedTime(availableTimes[0].id);
+    const firstAvailable = availableTimes.find(t => !t.isBooked);
+    if (firstAvailable) {
+      setSelectedTime(firstAvailable.id);
     } else {
       setSelectedTime('');
     }

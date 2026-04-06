@@ -12,6 +12,7 @@ import { useHireCoach } from '../hooks/useCoaching';
 
 interface CoachActionFooterProps {
   coachId: string;
+  invitationId?: string;
   name: string;
   price: number;
   initialStatus?: 'idle' | 'requested' | 'accepted';
@@ -21,6 +22,7 @@ interface CoachActionFooterProps {
 
 export const CoachActionFooter = ({ 
   coachId, 
+  invitationId,
   name, 
   price, 
   initialStatus = 'idle',
@@ -32,6 +34,10 @@ export const CoachActionFooter = ({
   const { mutate: hireCoach, isPending } = useHireCoach();
   
   const [requestStatus, setRequestStatus] = useState(initialStatus);
+  
+  React.useEffect(() => {
+    setRequestStatus(initialStatus);
+  }, [initialStatus]);
   const [showModal, setShowModal] = useState(false);
 
   const handleHire = () => {
@@ -47,7 +53,9 @@ export const CoachActionFooter = ({
   const handleConfirmPayment = () => {
     navigation.navigate(ROUTES.MAIN.PAYMENT_DETAILS, { 
       plan: {
+        type: 'coaching',
         id: coachId,
+        invitationId: invitationId,
         title: `Coaching with ${name}`,
         price: price,
         currency: 'DA',
@@ -86,9 +94,11 @@ export const CoachActionFooter = ({
         type="success"
         title="Request Sent!"
         message={`Your personal training request has been successfully sent to Coach ${name.split(' ')[0]}. Once he accept your request you can pay.`}
-        onConfirm={() => setShowModal(false)}
+        onConfirm={() => {
+          setShowModal(false);
+        }}
         onClose={() => setShowModal(false)}
-        confirmText="Got it"
+        confirmText="OK"
       />
     </View>
   );
