@@ -2,21 +2,14 @@ import React, { useEffect } from 'react';
 import {
   View,
   StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-  Text,
+
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string, InferType } from 'yup';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Input } from '@shared/components/ui';
-import { Palette } from '@shared/constants/colors';
-import { Theme } from '@shared/constants/theme';
 import { useGetAccount, useUpdateAccount } from '@features/account/hooks/useAccount';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SectionCard, InfoRow, ProfileAvatar, SaveButton } from '../components';
@@ -33,6 +26,7 @@ const profileSchema = object().shape({
 export const ProfileScreen = () => {
   const { colors, isDark } = useTheme();
   const { data: userData, isLoading: loading, error: fetchError, refetch } = useGetAccount();
+
   const { 
     mutate: updateMe, 
     isPending: updating, 
@@ -147,7 +141,15 @@ export const ProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
-  form: { gap: 20, paddingTop: 20 },
-  inputSpacing: { marginBottom: 16 },
+  scrollContent: { 
+    paddingHorizontal: 20, 
+    paddingBottom: 40 
+  },
+  form: { 
+    gap: 20, 
+    paddingTop: 20 
+  },
+  inputSpacing: { 
+    marginBottom: 16 
+  },
 });

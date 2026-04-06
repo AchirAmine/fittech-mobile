@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { AppScreen } from '@shared/components';
 import { useGetActiveCoaching } from '../hooks/useCoaching';
 import { ROUTES } from '@navigation/routes';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { CoachInfoCard } from '../components/CoachInfoCard';
@@ -15,7 +15,13 @@ import { NextSessionItem } from '../components/NextSessionItem';
 export const MyCoachingDashboardScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
-  const { data: coaching, isLoading } = useGetActiveCoaching();
+  const { data: coaching, isLoading, refetch } = useGetActiveCoaching();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   if (isLoading) {
     return (

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { AppScreen } from '@shared/components';
 import { NeonButton } from '@shared/components/ui/NeonButton';
 import { StatusModal } from '@shared/components/ui/StatusModal';
 import { useGetActiveCoaching, useGetCoachSlots, useBookSlot } from '../hooks/useCoaching';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import WeeklyCalendar from '@shared/components/ui/WeeklyCalendar';
 import { BookingStepHeader } from '../components/BookingStepHeader';
 import { TimeSlotPicker } from '../components/TimeSlotPicker';
@@ -15,8 +15,14 @@ export const BookSessionScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const { data: coaching } = useGetActiveCoaching();
-  const { data: slots = [], isLoading: isLoadingSlots } = useGetCoachSlots();
+  const { data: slots = [], isLoading: isLoadingSlots, refetch } = useGetCoachSlots();
   const { mutate: bookSlot, isPending: isBooking } = useBookSlot();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
   
   const [selectedDate, setSelectedDate] = useState(new Date());
   

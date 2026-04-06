@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +8,7 @@ import { AppScreen } from '@shared/components/layout';
 import { CoursesStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { useCourseDetail } from '../hooks/useCourses';
+import { useFocusEffect } from '@react-navigation/native';
 
 // Refactored Components
 import DetailsHeader from '../components/details/DetailsHeader';
@@ -22,7 +23,13 @@ const CourseDetailsScreen: React.FC<Props> = ({ route }) => {
   const { courseId } = route.params;
   const { colors, isDark } = useTheme();
 
-  const { data: course, isLoading, isError } = useCourseDetail(courseId);
+  const { data: course, isLoading, isError, refetch } = useCourseDetail(courseId);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   if (isLoading) {
     return (

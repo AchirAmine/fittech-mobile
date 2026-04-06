@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
 import { AppScreen, Loader } from '@shared/components';
 import { useAppSelector } from '@shared/hooks/useReduxHooks';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { ROUTES } from '@navigation/routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@appTypes/navigation.types';
@@ -22,7 +22,13 @@ export const HomeScreen = () => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const authUser = useAppSelector((state) => state.auth.user);
-  const { data: summary, isLoading: isSummaryLoading } = useHomeSummary();
+  const { data: summary, isLoading: isSummaryLoading, refetch } = useHomeSummary();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const user = summary ? {
     firstName: summary.fullName.split(' ')[0],

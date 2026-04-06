@@ -2,6 +2,7 @@ import React, { useState, useCallback, memo } from 'react';
 import { StyleSheet, Platform } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { useTheme } from '@shared/hooks/useTheme';
@@ -24,7 +25,13 @@ const PlanningScreen: React.FC<Props> = ({ navigation }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const { data: filteredSessions = [], isLoading, isError, error } = usePlanningSessions(currentDate, selectedCategory);
+  const { data: filteredSessions = [], isLoading, isError, error, refetch } = usePlanningSessions(currentDate, selectedCategory);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const handleDateChange = useCallback((event: DateTimePickerEvent, selectedDate?: Date) => {
     if (Platform.OS === 'android') {

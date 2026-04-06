@@ -5,19 +5,26 @@ import { Theme } from '@shared/constants/theme';
 import { AppScreen } from '@shared/components';
 import { Input } from '@shared/components/ui/Input';
 import { CoachCard } from '../components/CoachCard';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { ROUTES } from '@navigation/routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { useGetCoaches, Coach } from '../hooks/useCoaching';
 import { hexToRGBA } from '@shared/constants/colors';
+import { useCallback } from 'react';
 
 export const PersonalCoachesScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const [searchQuery, setSearchQuery] = useState('');
   
-  const { data: coaches = [], isLoading } = useGetCoaches();
+  const { data: coaches = [], isLoading, refetch } = useGetCoaches();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const filteredCoaches = (coaches as Coach[]).filter(coach => 
     coach.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
