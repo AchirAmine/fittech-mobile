@@ -25,11 +25,9 @@ const CustomIllustration = () => {
   
   return (
     <View style={styles.customIllustrationContainer}>
-      {/* Abstract Animated-like Background Circles (Fully Transparent to container) */}
       <View style={[styles.circleBg, { width: 220, height: 220, borderRadius: 110, backgroundColor: colors.primaryMid, opacity: 0.1 }]} />
       <View style={[styles.circleBg, { width: 160, height: 160, borderRadius: 80, backgroundColor: colors.primaryMid, opacity: 0.2 }]} />
       
-      {/* Main Center Icon */}
       <View style={[styles.mainIconWrap, { backgroundColor: colors.card, shadowColor: colors.shadow }]}>
         <Ionicons name="barbell" size={80} color={colors.primaryMid} style={{ transform: [{ rotate: '-45deg' }] }} />
       </View>

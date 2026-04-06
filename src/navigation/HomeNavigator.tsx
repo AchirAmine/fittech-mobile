@@ -12,6 +12,8 @@ import { MyCoachingDashboardScreen } from '@features/personal-coaching/screens/M
 import { BookSessionScreen } from '@features/personal-coaching/screens/BookSessionScreen';
 import { ROUTES } from '@navigation/routes';
 import { HomeStackParamList } from '@appTypes/navigation.types';
+import { MyPlansScreen } from '@features/membership/screens/MyPlansScreen';
+import { PlanDetailsScreen } from '@features/membership/screens/PlanDetailsScreen';
 import PlanningScreen from '@features/planning/screens/PlanningScreen';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
@@ -98,6 +100,22 @@ export const HomeNavigator = () => {
           title: 'BOOK SESSION',
           headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         })} 
+      />
+      <Stack.Screen
+        name={ROUTES.MAIN.MY_PLANS}
+        component={MyPlansScreen}
+        options={({ navigation }) => ({ 
+          title: 'MY PLANS',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })}
+      />
+      <Stack.Screen
+        name={ROUTES.MAIN.PLAN_DETAILS}
+        component={PlanDetailsScreen}
+        options={({ route, navigation }) => ({
+          title: (route.params as any)?.planName?.toUpperCase() || 'PLAN DETAILS',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })}
       />
       <Stack.Screen 
         name={ROUTES.MAIN.COURSE_DETAILS} 

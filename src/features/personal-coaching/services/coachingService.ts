@@ -29,12 +29,43 @@ export const coachingService = {
   },
 
   getActiveCoaching: async () => {
-    // This can still be used for detailed info if needed, but HomeScreen uses summary
-    return null; 
+    const { data } = await axiosClient.get(API_ENDPOINTS.PERSONAL_COACHING.MY_COACH_SLOTS);
+    
+    if (!data.data || !data.data.coach) return null;
+
+    const coach = data.data.coach;
+    const slots = data.data.slots || [];
+
+    return {
+      coach: {
+        id: coach.id,
+        name: coach.fullName,
+        image: coach.profilePicture 
+          ? { uri: coach.profilePicture.startsWith('http') ? coach.profilePicture : `${BASE_URL}/${coach.profilePicture}` }
+          : require('@assets/images/coaches/coach-1.png'),
+      },
+      sessions: slots
+        .filter((slot: any) => slot.isBookedByMember)
+        .map((slot: any) => ({
+          id: slot.id,
+          day: slot.day,
+          time: `${slot.startTime} - ${slot.endTime}`,
+        })),
+    };
   },
 
   hireCoach: async (coachId: string) => {
     const { data } = await axiosClient.post(API_ENDPOINTS.PERSONAL_COACHING.INVITE_COACH(coachId));
+    return data;
+  },
+
+  getCoachesSlots: async () => {
+    const { data } = await axiosClient.get(API_ENDPOINTS.PERSONAL_COACHING.MY_COACH_SLOTS);
+    return data.data?.slots || [];
+  },
+
+  bookSlot: async (slotId: string) => {
+    const { data } = await axiosClient.post(API_ENDPOINTS.PERSONAL_COACHING.BOOK_SLOT(slotId));
     return data;
   },
 };

@@ -56,7 +56,6 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </View>
         </View>
 
-        {/* Usage Statistics - Simplified as backend doesn't provide precise remaining sessions in the main sub object yet */}
         <View style={styles.sectionHeader}>
             <Ionicons name="stats-chart" size={20} color={colors.primaryMid} />
             <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Plan Sports</Text>

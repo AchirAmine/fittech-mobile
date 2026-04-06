@@ -110,7 +110,7 @@ export const HomeScreen = () => {
                 <HomeActivePlan 
                   title={activeSubscription.offerTitle}
                   endDate={activeSubscription.endDate || undefined}
-                  onPress={() => navigation.navigate(ROUTES.MAIN.MEMBERSHIP as any)}
+                  onPress={() => navigation.navigate(ROUTES.MAIN.MY_PLANS as any)}
                 />
               ) : (
                 <HomeInactivePlan 

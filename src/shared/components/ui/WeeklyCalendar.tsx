@@ -15,11 +15,12 @@ const WeeklyCalendar: React.FC<Props> = ({
   onDateSelect, 
 }) => {
   const { colors, isDark } = useTheme();
+  
+  const [viewDate, setViewDate] = React.useState(new Date(selectedDate));
 
-  // Get the start of the week (Monday) for the selected date
   const weekDays = useMemo(() => {
     const days = [];
-    const startOfWeek = new Date(selectedDate);
+    const startOfWeek = new Date(viewDate);
     const day = startOfWeek.getDay();
     const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Monday start
     startOfWeek.setDate(diff);
@@ -31,7 +32,7 @@ const WeeklyCalendar: React.FC<Props> = ({
       days.push(nextDay);
     }
     return days;
-  }, [selectedDate]);
+  }, [viewDate]);
 
   const weekRangeText = useMemo(() => {
     const start = weekDays[0];
@@ -50,20 +51,19 @@ const WeeklyCalendar: React.FC<Props> = ({
   }, [weekDays]);
 
   const handlePrevWeek = () => {
-    const prev = new Date(selectedDate);
+    const prev = new Date(viewDate);
     prev.setDate(prev.getDate() - 7);
-    onDateSelect(prev);
+    setViewDate(prev);
   };
 
   const handleNextWeek = () => {
-    const next = new Date(selectedDate);
+    const next = new Date(viewDate);
     next.setDate(next.getDate() + 7);
-    onDateSelect(next);
+    setViewDate(next);
   };
 
   return (
     <View style={styles.container}>
-      {/* Week Navigator */}
       <View style={[styles.weekNavigator, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : colors.card }]}>
         <TouchableOpacity onPress={handlePrevWeek} style={styles.navBtn}>
           <Ionicons name="chevron-back" size={20} color={colors.textSecondary} />
@@ -78,21 +78,26 @@ const WeeklyCalendar: React.FC<Props> = ({
         </TouchableOpacity>
       </View>
 
-      {/* Days Strip */}
       <View style={styles.daysRow}>
         {weekDays.map((day, index) => {
           const isSelected = day.toDateString() === selectedDate.toDateString();
           const dayName = day.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
           const dateNum = day.getDate();
 
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const isPast = day.getTime() < today.getTime();
+
           return (
             <TouchableOpacity 
               key={index}
-              onPress={() => onDateSelect(day)}
+              onPress={() => !isPast && onDateSelect(day)}
+              disabled={isPast}
               style={[
                 styles.dayCard,
                 { backgroundColor: isDark ? hexToRGBA(colors.white, 0.03) : colors.card },
-                isSelected && { backgroundColor: colors.primary }
+                isSelected && { backgroundColor: colors.primary },
+                isPast && { opacity: 0.3 }
               ]}
               activeOpacity={0.7}
             >
@@ -131,7 +136,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 20,
     marginBottom: 16,
-    // Subtle shadow for premium feel
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,

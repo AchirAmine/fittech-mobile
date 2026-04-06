@@ -23,6 +23,7 @@ export const coachingKeys = {
   details: () => [...coachingKeys.all, 'detail'] as const,
   detail: (id: string) => [... coachingKeys.details(), id] as const,
   active: () => [...coachingKeys.all, 'active'] as const,
+  slots: () => [...coachingKeys.all, 'slots'] as const,
 };
 
 export const useGetCoaches = () => {
@@ -48,6 +49,13 @@ export const useGetActiveCoaching = () => {
   });
 };
 
+export const useGetCoachSlots = () => {
+  return useQuery({
+    queryKey: coachingKeys.slots(),
+    queryFn: () => coachingService.getCoachesSlots() as any,
+  });
+};
+
 export const useHireCoach = () => {
   const queryClient = useQueryClient();
 
@@ -55,6 +63,18 @@ export const useHireCoach = () => {
     mutationFn: (coachId: string) => coachingService.hireCoach(coachId),
     onSuccess: (data, coachId) => {
       queryClient.invalidateQueries({ queryKey: coachingKeys.detail(coachId) });
+    },
+  });
+};
+
+export const useBookSlot = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (slotId: string) => coachingService.bookSlot(slotId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: coachingKeys.slots() });
+      queryClient.invalidateQueries({ queryKey: coachingKeys.active() });
     },
   });
 };
