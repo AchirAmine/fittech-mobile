@@ -24,9 +24,9 @@ const SessionItem: React.FC<Props> = ({ session }) => {
 
   const handlePress = () => {
     if (isClass) {
-      navigation.navigate(ROUTES.MAIN.COURSES as any, {
-        screen: ROUTES.MAIN.COURSE_DETAILS,
-        params: { courseId: session.id },
+      navigation.navigate(ROUTES.MAIN.COURSE_DETAILS as any, { 
+        courseId: session.id,
+        courseTitle: session.title 
       });
     }
   };
@@ -139,11 +139,20 @@ const SessionItem: React.FC<Props> = ({ session }) => {
             </View>
 
             <TouchableOpacity 
-              style={[styles.joinButton, { backgroundColor: isFull ? hexToRGBA(colors.textMuted, 0.4) : colors.primary }]}
+              style={[
+                styles.joinButton, 
+                { 
+                  backgroundColor: session.statusBadge === 'RESERVED' 
+                    ? colors.success 
+                    : (isFull ? hexToRGBA(colors.textMuted, 0.4) : colors.primary) 
+                }
+              ]}
               activeOpacity={0.8}
               onPress={handlePress}
             >
-              <Text style={[styles.joinButtonText, { color: colors.white }]}>{isFull ? 'Wait' : 'Join'}</Text>
+              <Text style={[styles.joinButtonText, { color: colors.white }]}>
+                {session.statusBadge === 'RESERVED' ? 'Reserved' : (isFull ? 'Wait' : 'Join')}
+              </Text>
             </TouchableOpacity>
           </View>
         )}

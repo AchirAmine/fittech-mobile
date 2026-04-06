@@ -1,43 +1,40 @@
-import { MOCK_COACHES } from '../constants/mockData';
+import axiosClient from '@shared/services/axiosClient';
+import { API_ENDPOINTS } from '@shared/constants/apiEndpoints';
 
-const DELAY = 1200;
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.split('/api')[0] || '';
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const mapCoach = (coach: any) => ({
+  id: coach.coachId,
+  name: coach.fullName,
+  specialty: coach.speciality,
+  clientsCount: coach.activeClientsCount,
+  image: coach.profilePicture 
+    ? { uri: coach.profilePicture.startsWith('http') ? coach.profilePicture : `${BASE_URL}/${coach.profilePicture}` }
+    : require('@assets/images/coaches/coach-1.png'),
+  experience: coach.experience || 'Professional',
+  price: coach.pricing || 0,
+  about: coach.description || 'Personal coach available for training.',
+  invitation: coach.invitation || null,
+});
 
 export const coachingService = {
   getCoaches: async () => {
-    await delay(DELAY);
-    return MOCK_COACHES;
+    const { data } = await axiosClient.get(API_ENDPOINTS.PERSONAL_COACHING.COACHES);
+    return (data.data || []).map(mapCoach);
   },
 
   getCoachById: async (id: string) => {
-    await delay(DELAY);
-    const coach = MOCK_COACHES.find((c) => c.id === id);
-    return coach || null;
+    const { data } = await axiosClient.get(API_ENDPOINTS.PERSONAL_COACHING.COACH_DETAIL(id));
+    return data.data ? mapCoach(data.data) : null;
   },
 
   getActiveCoaching: async () => {
-    await delay(DELAY);
-    const marcus = MOCK_COACHES.find(c => c.id === '1');
-    if (!marcus) return null;
-    
-    return {
-      id: 'active-session-1',
-      coach: marcus,
-      planTitle: 'Strength Training Plan',
-      startDate: new Date().toISOString(),
-      sessions: [
-        { id: 's1', day: 'Monday', time: '09:00 - 10:00', type: 'strength' },
-        { id: 's2', day: 'Wednesday', time: '14:00 - 15:00', type: 'strength' },
-      ]
-    };
+    // This can still be used for detailed info if needed, but HomeScreen uses summary
+    return null; 
   },
 
   hireCoach: async (coachId: string) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true, message: 'Request sent successfully' });
-      }, DELAY);
-    });
+    const { data } = await axiosClient.post(API_ENDPOINTS.PERSONAL_COACHING.INVITE_COACH(coachId));
+    return data;
   },
 };

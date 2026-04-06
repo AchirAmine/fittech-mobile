@@ -16,6 +16,7 @@ import PlanningScreen from '@features/planning/screens/PlanningScreen';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { BackButton } from '@shared/components/ui/BackButton';
+import CourseDetailsScreen from '@features/courses/screens/CourseDetailsScreen';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -97,6 +98,14 @@ export const HomeNavigator = () => {
           title: 'BOOK SESSION',
           headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.COURSE_DETAILS} 
+        component={CourseDetailsScreen} 
+        options={({ route, navigation }) => ({ 
+          title: (route.params as any)?.courseTitle?.toUpperCase() || 'COURSE DETAILS',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })}
       />
     </Stack.Navigator>
   );

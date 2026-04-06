@@ -1,29 +1,21 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-import { Coach } from '../hooks/useCoaching';
 
-interface MyCoachingCardProps {
-  coach: Coach;
-  planTitle: string;
-  onPress: () => void;
-  onDashboardPress: () => void;
+interface FindCoachCardProps {
+  onPress?: () => void;
 }
 
-export const MyCoachingCard = ({ coach, planTitle, onPress, onDashboardPress }: MyCoachingCardProps) => {
+export const FindCoachCard: React.FC<FindCoachCardProps> = ({ onPress }) => {
   const { colors, isDark } = useTheme();
 
   return (
     <View style={styles.outerContainer}>
       <View style={styles.headerRow}>
         <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>MY COACHING</Text>
-        <TouchableOpacity style={styles.dashboardBtn} onPress={onDashboardPress} activeOpacity={0.7}>
-          <Text style={[styles.dashboardText, { color: colors.primaryMid }]}>Dashboard</Text>
-          <Ionicons name="arrow-forward" size={14} color={colors.primaryMid} />
-        </TouchableOpacity>
       </View>
 
       <TouchableOpacity 
@@ -39,18 +31,18 @@ export const MyCoachingCard = ({ coach, planTitle, onPress, onDashboardPress }: 
       >
         <View style={styles.cardContent}>
           
-          <View style={[styles.avatarWrapper, { borderColor: colors.primaryMid }]}>
-            <Image source={coach.image} style={styles.avatar} />
+          <View style={[styles.avatarWrapper, { backgroundColor: colors.cardSecondary, borderColor: hexToRGBA(colors.primaryMid, 0.2) }]}>
+            <Ionicons name="person-add" size={26} color={colors.primaryMid} />
           </View>
           
           <View style={styles.textContainer}>
-            <Text style={[styles.coachName, { color: colors.textPrimary }]}>{coach.name.toUpperCase()}</Text>
-            <Text style={[styles.planTitle, { color: colors.primaryMid }]}>{planTitle}</Text>
+            <Text style={[styles.coachName, { color: colors.textPrimary }]}>Find your coach</Text>
+            <Text style={[styles.planTitle, { color: colors.textSecondary }]}>Get a professional workout plan</Text>
           </View>
 
-          <TouchableOpacity style={[styles.chatBtn, { backgroundColor: isDark ? hexToRGBA(colors.primaryMid, 0.2) : hexToRGBA(colors.primaryMid, 0.1) }]}>
-            <Ionicons name="chatbubble-ellipses" size={20} color={colors.primaryMid} />
-          </TouchableOpacity>
+          <View style={[styles.actionBtn, { backgroundColor: colors.cardSecondary }]}>
+            <Ionicons name="add" size={24} color={colors.primaryMid} />
+          </View>
 
         </View>
       </TouchableOpacity>
@@ -73,15 +65,6 @@ const styles = StyleSheet.create({
     fontFamily: Theme.Typography.fontFamily.bold,
     letterSpacing: 1,
   },
-  dashboardBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  dashboardText: {
-    fontSize: 13,
-    fontFamily: Theme.Typography.fontFamily.medium,
-  },
   cardContainer: {
     borderRadius: 24,
     padding: 16,
@@ -98,15 +81,10 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    borderWidth: 2,
+    borderWidth: 1.5,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
-  },
-  avatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
   },
   textContainer: {
     flex: 1,
@@ -121,8 +99,9 @@ const styles = StyleSheet.create({
   planTitle: {
     fontSize: 13,
     fontFamily: Theme.Typography.fontFamily.medium,
+    opacity: 0.7,
   },
-  chatBtn: {
+  actionBtn: {
     width: 44,
     height: 44,
     borderRadius: 14,

@@ -40,7 +40,17 @@ export const CoachProfileScreen = () => {
     );
   }
 
-  const initialStatus = coach.id === '1' ? 'accepted' : 'idle';
+  const getInitialStatus = () => {
+    if (!coach.invitation) return 'idle';
+    switch (coach.invitation.status) {
+      case 'PENDING': return 'requested';
+      case 'ACCEPTED_UNPAID': return 'accepted';
+      case 'ACTIVE': return 'accepted'; // Or maybe a new 'active' status
+      default: return 'idle';
+    }
+  };
+
+  const initialStatus = getInitialStatus();
 
   return (
     <AppScreen 

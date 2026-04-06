@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
 import { hexToRGBA } from '@shared/constants/colors';
+import { NeonButton } from '@shared/components/ui/NeonButton';
 
 interface HomeInactivePlanProps {
   onBrowsePlans: () => void;
@@ -21,7 +22,6 @@ export const HomeInactivePlan: React.FC<HomeInactivePlanProps> = ({ onBrowsePlan
         end={{ x: 1, y: 1 }}
         style={[styles.gradient, { shadowColor: colors.shadow }]}
       >
-        {/* Background decorative elements would go here if needed */}
         <View style={styles.content}>
           <View style={[styles.iconContainer, { backgroundColor: hexToRGBA(colors.white, 0.15) }]}>
             <Ionicons name="basket-outline" size={32} color={colors.white} />
@@ -44,14 +44,13 @@ export const HomeInactivePlan: React.FC<HomeInactivePlanProps> = ({ onBrowsePlan
             </View>
           </View>
 
-          <TouchableOpacity 
-            style={[styles.browseButton, { backgroundColor: colors.primary }]} 
-            onPress={onBrowsePlans}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.browseButtonText, { color: colors.white }]}>Browse Plans</Text>
-            <Ionicons name="arrow-forward" size={18} color={colors.white} />
-          </TouchableOpacity>
+          <View style={styles.buttonWrapper}>
+            <NeonButton 
+              title="Browse Plans" 
+              onPress={onBrowsePlans}
+              icon="arrow-forward"
+            />
+          </View>
         </View>
       </LinearGradient>
     </View>
@@ -60,9 +59,9 @@ export const HomeInactivePlan: React.FC<HomeInactivePlanProps> = ({ onBrowsePlan
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 20,
+    borderRadius: 24,
     overflow: 'hidden',
-    marginBottom: 20,
+    marginBottom: 24,
     elevation: 8,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.15,
@@ -113,19 +112,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: Theme.Typography.fontFamily.medium,
   },
-  browseButton: {
-    backgroundColor: '#3B82F6', // Matching the screenshot's vibrant blue
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-    paddingVertical: 14,
-    borderRadius: 16,
-    gap: 10,
+  buttonWrapper: {
     width: '100%',
-  },
-  browseButtonText: {
-    fontSize: 16,
-    fontFamily: Theme.Typography.fontFamily.bold,
   },
 });

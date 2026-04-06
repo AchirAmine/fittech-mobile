@@ -22,4 +22,14 @@ export const API_ENDPOINTS = {
     WAITLIST: (id: string) => `/courses/${id}/waitlist`,
     MEMBER_PLANNING: (sport: string, day: string) => `/courses/member-planning/${sport}/${day}`,
   },
+  MEMBER_EXTENDED: {
+    HOME_SUMMARY: "/members/home-summary",
+  },
+  PERSONAL_COACHING: {
+    COACHES: "/personal-coaching/coaches",
+    COACH_DETAIL: (id: string) => `/personal-coaching/coaches/${id}`,
+    INVITE_COACH: (id: string) => `/personal-coaching/coaches/${id}/invite`,
+    MY_COACH_SLOTS: "/personal-coaching/my-coach/slots",
+    BOOK_SLOT: (id: string) => `/personal-coaching/my-coach/slots/${id}/book`,
+  },
 } as const;

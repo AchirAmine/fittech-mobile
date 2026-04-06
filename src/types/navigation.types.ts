@@ -86,6 +86,7 @@ export type HomeStackParamList = {
   [ROUTES.MAIN.COACH_PROFILE]: { coachId: string };
   [ROUTES.MAIN.MY_COACHING_DASHBOARD]: undefined;
   [ROUTES.MAIN.BOOK_SESSION]: undefined;
+  [ROUTES.MAIN.COURSE_DETAILS]: { courseId: string; courseTitle?: string; category?: string };
 };
 
 export type MainTabParamList = {

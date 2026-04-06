@@ -8,6 +8,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 
+import { useHireCoach } from '../hooks/useCoaching';
+
 interface CoachActionFooterProps {
   coachId: string;
   name: string;
@@ -27,14 +29,19 @@ export const CoachActionFooter = ({
 }: CoachActionFooterProps) => {
   const { colors } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
+  const { mutate: hireCoach, isPending } = useHireCoach();
   
   const [requestStatus, setRequestStatus] = useState(initialStatus);
   const [showModal, setShowModal] = useState(false);
 
   const handleHire = () => {
-    setRequestStatus('requested');
-    setShowModal(true);
-    onHireTriggered?.();
+    hireCoach(coachId, {
+      onSuccess: () => {
+        setRequestStatus('requested');
+        setShowModal(true);
+        onHireTriggered?.();
+      }
+    });
   };
 
   const handleConfirmPayment = () => {
@@ -71,6 +78,7 @@ export const CoachActionFooter = ({
         } 
         outlined={requestStatus === 'requested'}
         icon={requestStatus === 'requested' ? "checkmark-outline" : undefined}
+        loading={isPending}
       />
 
       <StatusModal

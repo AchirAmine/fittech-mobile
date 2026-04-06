@@ -33,7 +33,7 @@ export const HomeActivePlan: React.FC<HomeActivePlanProps> = ({ title, endDate, 
           <Text style={[styles.activePlanSubtitle, { color: hexToRGBA(colors.white, 0.8) }]}>
             Active • Expires {endDate ? new Date(endDate).toLocaleDateString() : 'N/A'}
           </Text>
-          <Ionicons name="chevron-forward" size={16} color={hexToRGBA(colors.white, 0.6)} />
+          <Ionicons name="chevron-forward" size={24} color={hexToRGBA(colors.white, 0.8)} />
         </View>
       </LinearGradient>
     </TouchableOpacity>

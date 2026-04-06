@@ -10,6 +10,11 @@ export interface Coach {
   experience: string;
   price: number;
   about: string;
+  invitation?: {
+    id: string;
+    status: string;
+    createdAt: string;
+  } | null;
 }
 
 export const coachingKeys = {
