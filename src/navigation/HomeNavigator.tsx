@@ -19,6 +19,7 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { BackButton } from '@shared/components/ui/BackButton';
 import CourseDetailsScreen from '@features/courses/screens/CourseDetailsScreen';
+import { RewardsScreen } from '@features/rewards/screens/RewardsScreen';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -133,6 +134,14 @@ export const HomeNavigator = () => {
           title: (route.params as any)?.courseTitle?.toUpperCase() || 'COURSE DETAILS',
           headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         })}
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.REWARDS} 
+        component={RewardsScreen} 
+        options={({ navigation }) => ({ 
+          title: 'REWARDS',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })} 
       />
     </Stack.Navigator>
   );

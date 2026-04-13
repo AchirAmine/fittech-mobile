@@ -33,4 +33,9 @@ export const API_ENDPOINTS = {
     BOOK_SLOT: (id: string) => `/personal-coaching/my-coach/slots/${id}/book`,
     PAY_INVITATION: (id: string) => `/personal-coaching/invitations/${id}/pay`,
   },
+  PROMO: {
+    ACTIVE: "/promo/active",
+    REDEEM: (id: string) => `/promo/${id}/redeem`,
+    HISTORY: "/promo/star-transactions",
+  },
 } as const;

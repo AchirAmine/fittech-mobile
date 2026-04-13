@@ -17,6 +17,7 @@ import { NearestCourseCard } from '../components/NearestCourseCard';
 import { HomePlanningCard } from '../components/HomePlanningCard';
 import { FindCoachCard } from '../components/FindCoachCard';
 import { HomeCheckInCard } from '../components/HomeCheckInCard';
+import { PointsBadge } from '@features/rewards/components/PointsBadge';
 
 export const HomeScreen = () => {
   const { colors, isDark } = useTheme();
@@ -70,6 +71,9 @@ export const HomeScreen = () => {
       ),
       headerRight: () => (
         <View style={styles.headerRight}>
+          <PointsBadge 
+            onPress={() => navigation.navigate(ROUTES.MAIN.REWARDS as any)} 
+          />
           <TouchableOpacity style={styles.notificationBtn} activeOpacity={0.7}>
             <Ionicons name="notifications-outline" size={24} color={colors.textPrimary} />
             <View style={[styles.notificationBadge, { borderColor: colors.card }]}>
@@ -79,7 +83,7 @@ export const HomeScreen = () => {
           <TouchableOpacity 
             style={[styles.avatarContainer, { backgroundColor: colors.cardSecondary }]} 
             activeOpacity={0.8}
-            onPress={() => navigation.navigate('ProfileMain')}
+            onPress={() => navigation.navigate('ProfileMain' as any)}
           >
             {user?.profilePicture ? (
               <Image source={user.profilePicture as any} style={styles.avatar} resizeMode="cover" />

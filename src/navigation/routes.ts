@@ -35,6 +35,7 @@ export const ROUTES = {
     MY_COACHING_DASHBOARD: 'MyCoachingDashboard',
     BOOK_SESSION: 'BookSession',
     PERSONAL_COACHES: 'PersonalCoaches',
+    REWARDS: 'Rewards',
   },
 } as const;
 
