@@ -1,4 +1,4 @@
-// Global Shared Types
+
 
 export interface OfferSport {
   id: string;
@@ -10,7 +10,7 @@ export interface OfferSport {
 export interface Offer {
   id: string;
   title: string;
-  duration: number; // in months
+  duration: number; 
   price: number;
   picture?: string;
   sports: OfferSport[];
@@ -25,15 +25,24 @@ export interface Payment {
   createdAt: string;
 }
 
+export interface SubscriptionSportBalance {
+  id: string;
+  sportType: string;
+  remainingSessions: number;
+}
+
 export interface Subscription {
   id: string;
   paymentMethod: 'ONLINE' | 'AT_CLUB';
   status?: 'ACTIVE' | 'PENDING_PAYMENT' | 'EXPIRED' | 'CANCELLED';
+  remainingSessions: number;
+  remainingOpenSessions: number;
   startDate?: string;
   endDate?: string;
   createdAt: string;
   offer: Offer;
   payment?: Payment;
+  sportBalances?: SubscriptionSportBalance[];
 }
 
 export interface PlanFeature {
@@ -51,6 +60,7 @@ export interface SubscriptionPlan {
   duration: number;
   badge?: string;
   image: any;
+  starsAwarded: number;
   features: PlanFeature[];
 }
 

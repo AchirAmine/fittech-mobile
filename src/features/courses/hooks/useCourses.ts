@@ -9,7 +9,7 @@ export const useCourses = (category?: string) => {
   return useQuery({
     queryKey: ['courses', category, gender],
     queryFn: () => coursesService.getCourses(category, gender),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000, 
   });
 };
 

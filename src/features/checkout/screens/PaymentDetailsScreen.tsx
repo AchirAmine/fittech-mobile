@@ -14,7 +14,9 @@ import { PaymentMethods, PaymentMethod } from '../components/PaymentMethods';
 import { PaymentSummary } from '../components/PaymentSummary';
 import { useSubscribe } from '@features/membership/hooks/useMembership';
 import { usePayCoaching } from '@features/personal-coaching/hooks/useCoaching';
+import { useApplyPromoCode } from '@features/rewards/hooks/useRewards';
 import { ROUTES } from '@navigation/routes';
+import { ApplyPromoCodeResult } from '@features/rewards/types/rewards.types';
 
 type RouteParams = {
   plan: any;
@@ -39,6 +41,10 @@ export const PaymentDetailsScreen = () => {
   const { plan } = (route.params as RouteParams) || {};
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('credit_card');
   const [promoCode, setPromoCode] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState<ApplyPromoCodeResult | null>(null);
+  
+  const { mutate: applyPromo, isPending: isApplyingPromo } = useApplyPromoCode();
+
   const [modal, setModal] = useState<ModalState>({
     visible: false,
     type: 'success',
@@ -57,6 +63,25 @@ export const PaymentDetailsScreen = () => {
   };
 
   const hideModal = () => setModal((prev) => ({ ...prev, visible: false }));
+
+  const handleApplyPromoCode = () => {
+    if (!promoCode.trim() || isApplyingPromo) return;
+    
+    applyPromo({ code: promoCode, planPrice: plan.price }, {
+      onSuccess: (data) => {
+        setAppliedDiscount(data);
+      },
+      onError: (err: any) => {
+        setAppliedDiscount(null);
+        showModal('error', 'Invalid Code', err.response?.data?.message || 'The promo code you entered is invalid or expired.', hideModal);
+      }
+    });
+  };
+
+  const handleRemovePromoCode = () => {
+    setAppliedDiscount(null);
+    setPromoCode('');
+  };
 
   if (!plan) {
     return (
@@ -119,7 +144,7 @@ export const PaymentDetailsScreen = () => {
     }
 
     subscribe(
-      { offerId: plan.id, paymentMethod: backendMethod },
+      { offerId: plan.id, paymentMethod: backendMethod, promoCode: appliedDiscount?.code },
       {
         onSuccess: async (data) => {
           if (backendMethod === 'ONLINE' && data.checkoutUrl) {
@@ -168,6 +193,8 @@ export const PaymentDetailsScreen = () => {
       scrollable={true}
       errorMessage={null}
       backgroundColor={colors.background}
+      safeArea={false}
+
     >
       <PaymentPlanHeader plan={plan} />
       <PaymentMethods selectedMethod={selectedMethod} onSelectMethod={setSelectedMethod} />
@@ -177,13 +204,20 @@ export const PaymentDetailsScreen = () => {
         value={promoCode}
         onChangeText={setPromoCode}
         icon="pricetag-outline"
-        rightText="APPLY"
-        onRightTextPress={() => {}}
+        rightText={isApplyingPromo ? "..." : (appliedDiscount ? "REMOVE" : "APPLY")}
+        onRightTextPress={appliedDiscount ? handleRemovePromoCode : handleApplyPromoCode}
+        rightTextColor={appliedDiscount ? colors.error : undefined}
         containerStyle={styles.promoInputContainer}
         labelBg={colors.background}
+        editable={!appliedDiscount && !isApplyingPromo}
+        status={appliedDiscount ? 'success' : undefined}
       />
 
-      <PaymentSummary plan={plan} />
+      <PaymentSummary 
+        plan={plan} 
+        discountPercentage={appliedDiscount?.discountPercentage}
+        discountAmount={appliedDiscount?.discountAmount}
+      />
 
       <View style={styles.footerContainer}>
         <Text style={[styles.termsText, { color: colors.textMuted }]}>
@@ -201,7 +235,7 @@ export const PaymentDetailsScreen = () => {
           content={
             <View style={styles.buttonPriceContainer}>
               <Text style={[styles.buttonPriceText, { color: colors.white }]}>
-                {plan.price.toLocaleString()} {plan.currency}
+                {(appliedDiscount?.finalPrice ?? plan.price).toLocaleString()} {plan.currency}
               </Text>
               <Ionicons name="arrow-forward" size={18} color={colors.white} />
             </View>

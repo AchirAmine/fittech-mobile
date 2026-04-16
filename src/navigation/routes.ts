@@ -36,6 +36,7 @@ export const ROUTES = {
     BOOK_SESSION: 'BookSession',
     PERSONAL_COACHES: 'PersonalCoaches',
     REWARDS: 'Rewards',
+    MY_VOUCHERS: 'MyVouchers',
   },
 } as const;
 

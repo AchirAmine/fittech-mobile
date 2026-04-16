@@ -51,7 +51,7 @@ const SessionItem: React.FC<Props> = ({ session }) => {
 
   return (
     <View style={styles.container}>
-      {/* Card Content */}
+      {}
       <View style={[
         styles.card, 
         { 
@@ -60,7 +60,7 @@ const SessionItem: React.FC<Props> = ({ session }) => {
           borderWidth: 1,
         }
       ]}>
-        {/* Status Badge */}
+        {}
         {session.statusBadge && (
           <View style={[
             styles.statusBadge, 
@@ -165,7 +165,7 @@ const SessionItem: React.FC<Props> = ({ session }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 4, // Smaller gap between cards in the same group
+    marginBottom: 4, 
   },
   card: {
     flex: 1,

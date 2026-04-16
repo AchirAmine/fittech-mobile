@@ -60,7 +60,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.status = "idle";
       state.error = null;
-      // We explicitly DO NOT reset isFirstLaunch here to skip splash on logout
+      
     },
     clearError: (state) => {
       state.error = null;

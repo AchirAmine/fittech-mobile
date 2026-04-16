@@ -27,8 +27,8 @@ export const useSubscribe = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ offerId, paymentMethod }: { offerId: string; paymentMethod: 'ONLINE' | 'AT_CLUB' }) =>
-      membershipService.subscribe(offerId, paymentMethod),
+    mutationFn: ({ offerId, paymentMethod, promoCode }: { offerId: string; paymentMethod: 'ONLINE' | 'AT_CLUB'; promoCode?: string }) =>
+      membershipService.subscribe(offerId, paymentMethod, promoCode),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: membershipKeys.mySubscriptions() });
     },

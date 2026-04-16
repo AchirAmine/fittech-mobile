@@ -38,7 +38,7 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   return (
     <AppScreen scrollable={false} backgroundColor={colors.background}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Subscription Card */}
+        {}
         <View style={[styles.subscriptionCard, { backgroundColor: colors.primaryMid, shadowColor: colors.black }]}>
           <View style={styles.cardHeader}>
             <View style={styles.titleContainer}>
@@ -58,20 +58,73 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
 
         <View style={styles.sectionHeader}>
             <Ionicons name="stats-chart" size={20} color={colors.primaryMid} />
-            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Plan Sports</Text>
-        </View>
-        <View style={[styles.statsCard, { backgroundColor: colors.cardSecondary }]}>
-          {(offer.sports || []).map(sport => (
-            <View key={sport.id} style={{ marginBottom: 12 }}>
-              <View style={styles.statsHeader}>
-                <Text style={[styles.statsTitle, { color: colors.textPrimary }]}>{sport.sportType.toUpperCase()}</Text>
-                <Text style={[styles.statsValue, { color: colors.primaryMid }]}>{sport.freeSessions} Solo / {sport.coachSessions} Coach</Text>
-              </View>
-            </View>
-          ))}
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Session Balances</Text>
         </View>
 
-        {/* Billing Information */}
+        <View style={styles.statsContainer}>
+          {}
+          {(() => {
+            const initialSolo = (offer.sports || []).reduce((acc, s) => acc + s.freeSessions, 0);
+            const soloProgress = initialSolo > 0 ? (subscription.remainingOpenSessions / initialSolo) : 0;
+            
+            return (
+              <View style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <View style={styles.progressHeader}>
+                  <Text style={[styles.progressTitle, { color: colors.textPrimary }]}>Solo Sessions Remaining</Text>
+                  <Text style={[styles.progressCounter, { color: colors.primaryMid }]}>
+                    {subscription.remainingOpenSessions} <Text style={{ color: colors.textSecondary }}>/ {initialSolo}</Text>
+                  </Text>
+                </View>
+                
+                <View style={[styles.progressBarBg, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : hexToRGBA(colors.black, 0.05) }]}>
+                  <View style={[styles.progressBarFill, { backgroundColor: colors.primaryMid, width: `${soloProgress * 100}%` }]} />
+                </View>
+
+                <View style={styles.infoRow}>
+                  <Ionicons name="information-circle-outline" size={16} color={colors.textMuted} />
+                  <Text style={[styles.infoText, { color: colors.textMuted }]}>Shared across all available activities.</Text>
+                </View>
+              </View>
+            );
+          })()}
+
+          {}
+          <View style={styles.sectionHeader}>
+              <Text style={[styles.subSectionTitle, { color: colors.textMuted, marginTop: 10 }]}>COACH ASSISTANCE</Text>
+          </View>
+          
+          {(subscription.sportBalances && subscription.sportBalances.length > 0) ? (
+            subscription.sportBalances.map(balance => {
+              const initialSport = (offer.sports || []).find(s => s.sportType.toUpperCase() === balance.sportType.toUpperCase());
+              const initialCoach = initialSport?.coachSessions || 0;
+              const coachProgress = initialCoach > 0 ? (balance.remainingSessions / initialCoach) : 0;
+
+              return (
+                <View key={balance.id} style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                  <View style={styles.progressHeader}>
+                    <Text style={[styles.progressTitle, { color: colors.textPrimary }]}>{balance.sportType.toUpperCase()}</Text>
+                    <Text style={[styles.progressCounter, { color: colors.primaryMid }]}>
+                      {balance.remainingSessions} <Text style={{ color: colors.textSecondary }}>/ {initialCoach}</Text>
+                    </Text>
+                  </View>
+                  
+                  <View style={[styles.progressBarBg, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : hexToRGBA(colors.black, 0.05) }]}>
+                    <View style={[styles.progressBarFill, { backgroundColor: colors.primaryMid, width: `${coachProgress * 100}%` }]} />
+                  </View>
+
+                  <View style={styles.infoRow}>
+                    <Ionicons name="people-outline" size={16} color={colors.textMuted} />
+                    <Text style={[styles.infoText, { color: colors.textMuted }]}>Remaining sessions for current billing cycle.</Text>
+                  </View>
+                </View>
+              );
+            })
+          ) : (
+              <Text style={[styles.noneText, { color: colors.textMuted }]}>No coach sessions available</Text>
+          )}
+        </View>
+
+        {}
         <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitleLabel, { color: colors.textSecondary }]}>Billing Information</Text>
         </View>
@@ -87,7 +140,7 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           </View>
         </View>
 
-        {/* Manage Subscription */}
+        {}
         <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitleLabel, { color: colors.textSecondary }]}>Manage Subscription</Text>
         </View>
@@ -147,7 +200,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     gap: 4,
     minHeight: 24,
-    flexShrink: 0, // Prevent the badge from being squeezed
+    flexShrink: 0, 
   },
   activeBadgeText: {
     fontSize: 10,
@@ -180,23 +233,66 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: Theme.Typography.fontFamily.regular,
   },
-  statsCard: {
-    borderRadius: 20,
-    padding: 20,
+  statsContainer: {
     gap: 16,
   },
-  statsHeader: {
+  progressCard: {
+    padding: 24,
+    borderRadius: 20,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  progressHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 16,
   },
-  statsTitle: {
+  progressTitle: {
     fontSize: 18,
     fontFamily: Theme.Typography.fontFamily.bold,
   },
-  statsValue: {
-    fontSize: 20,
+  progressCounter: {
+    fontSize: 22,
     fontFamily: Theme.Typography.fontFamily.bold,
+  },
+  progressBarBg: {
+    height: 12,
+    borderRadius: 6,
+    width: '100%',
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 6,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
+  },
+  infoText: {
+    fontSize: 14,
+    fontFamily: Theme.Typography.fontFamily.medium,
+    lineHeight: 20,
+    flex: 1,
+  },
+  subSectionTitle: {
+    fontSize: 12,
+    fontFamily: Theme.Typography.fontFamily.bold,
+    letterSpacing: 1,
+    marginBottom: 8,
+  },
+  noneText: {
+    fontSize: 13,
+    fontFamily: Theme.Typography.fontFamily.regular,
+    paddingLeft: 4,
   },
   billingCard: {
     borderRadius: 20,

@@ -72,6 +72,7 @@ export const HomeScreen = () => {
       headerRight: () => (
         <View style={styles.headerRight}>
           <PointsBadge 
+            balance={summary?.starBalance ?? (isSummaryLoading ? '...' : undefined)}
             onPress={() => navigation.navigate(ROUTES.MAIN.REWARDS as any)} 
           />
           <TouchableOpacity style={styles.notificationBtn} activeOpacity={0.7}>

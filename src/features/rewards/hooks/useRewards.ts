@@ -1,15 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosClient from '@shared/services/axiosClient';
 import { API_ENDPOINTS } from '@shared/constants/apiEndpoints';
-import { RewardsSummary, StarTransaction, Voucher } from '../types/rewards.types';
+import { RewardsSummary, StarTransaction, Voucher, MyPromoCode, ApplyPromoCodeResult } from '../types/rewards.types';
 
-export const useRewards = () => {
+export const useRewards = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ['rewardsSummary'],
     queryFn: async () => {
       const response = await axiosClient.get<{ success: boolean; data: RewardsSummary }>(API_ENDPOINTS.PROMO.ACTIVE);
       return response.data.data;
     },
+    enabled,
   });
 };
 
@@ -35,6 +36,28 @@ export const useRedeemReward = () => {
       queryClient.invalidateQueries({ queryKey: ['rewardsSummary'] });
       queryClient.invalidateQueries({ queryKey: ['rewardHistory'] });
       queryClient.invalidateQueries({ queryKey: ['homeSummary'] });
+    },
+  });
+};
+
+export const useMyCodes = () => {
+  return useQuery({
+    queryKey: ['myPromoCodes'],
+    queryFn: async () => {
+      const response = await axiosClient.get<{ success: boolean; data: MyPromoCode[] }>(API_ENDPOINTS.PROMO.MY_CODES);
+      return response.data.data;
+    },
+  });
+};
+
+export const useApplyPromoCode = () => {
+  return useMutation({
+    mutationFn: async ({ code, planPrice }: { code: string; planPrice: number }) => {
+      const response = await axiosClient.post<{ success: boolean; data: ApplyPromoCodeResult }>(API_ENDPOINTS.PROMO.APPLY_CODE, {
+        code,
+        planPrice,
+      });
+      return response.data.data;
     },
   });
 };

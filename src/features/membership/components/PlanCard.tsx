@@ -45,7 +45,7 @@ export const PlanCard = ({ plan, colors, isDark, onPress, index }: PlanCardProps
         },
       ]}
     >
-      {/* Image with gradient overlay */}
+      {}
       <View style={styles.imageContainer}>
         <Image
           source={typeof plan.image === 'string' ? { uri: plan.image } : plan.image}
@@ -70,20 +70,32 @@ export const PlanCard = ({ plan, colors, isDark, onPress, index }: PlanCardProps
           </View>
         </LinearGradient>
 
-        {/* Badge */}
+        {}
         {plan.badge && badgeColors && (
           <View style={[styles.badge, { backgroundColor: badgeColors.bg }]}>
             <Text style={[styles.badgeText, { color: badgeColors.text }]}>{plan.badge}</Text>
           </View>
         )}
+
+        {}
+        <View style={[
+          styles.starsBadge, 
+          { 
+            backgroundColor: colors.warning,
+            right: plan.badge ? 100 : 12 
+          }
+        ]}>
+          <Ionicons name="star" size={12} color={colors.white} />
+          <Text style={styles.starsBadgeText}>{plan.starsAwarded}</Text>
+        </View>
       </View>
 
-      {/* Card Body */}
+      {}
       <View style={styles.body}>
-        {/* Features */}
+        {}
         <PlanFeaturesList features={plan.features} alignment="center" />
 
-        {/* CTA Button */}
+        {}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: colors.primary }]}
           onPress={onPress}
@@ -182,5 +194,25 @@ const styles = StyleSheet.create({
   },
   buttonIcon: {
     marginTop: 1,
+  },
+  starsBadge: {
+    position: 'absolute',
+    top: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 12,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  starsBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontFamily: Theme.Typography.fontFamily.bold,
   },
 });
