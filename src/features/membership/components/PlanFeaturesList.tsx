@@ -7,7 +7,7 @@ import { PlanFeature } from '@appTypes/index';
 interface PlanFeaturesListProps {
   features: PlanFeature[];
   alignment?: 'center' | 'start';
-  /** If true, forces dark mode text colors suitable for dark gradient backgrounds */
+  
   forceDarkText?: boolean;
 }
 

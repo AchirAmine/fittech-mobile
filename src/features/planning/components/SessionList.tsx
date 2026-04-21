@@ -14,7 +14,7 @@ interface Props {
 const SessionList: React.FC<Props> = ({ sessions }) => {
   const { colors } = useTheme();
   
-  // Grouping logic memoized to prevent recalculation on every render
+  
   const { grouped, sortedTimes } = useMemo(() => {
     const acc = sessions.reduce((acc, session) => {
       const time = session.time;

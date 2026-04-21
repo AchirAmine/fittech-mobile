@@ -10,7 +10,7 @@ import { ROUTES } from '@navigation/routes';
 import { useCourseDetail } from '../hooks/useCourses';
 import { useFocusEffect } from '@react-navigation/native';
 
-// Refactored Components
+
 import DetailsHeader from '../components/details/DetailsHeader';
 import DetailsInfoGrid from '../components/details/DetailsInfoGrid';
 import DetailsCapacity from '../components/details/DetailsCapacity';

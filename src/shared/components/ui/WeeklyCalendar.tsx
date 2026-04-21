@@ -22,7 +22,7 @@ const WeeklyCalendar: React.FC<Props> = ({
     const days = [];
     const startOfWeek = new Date(viewDate);
     const day = startOfWeek.getDay();
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Monday start
+    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); 
     startOfWeek.setDate(diff);
     startOfWeek.setHours(0, 0, 0, 0);
 

@@ -8,14 +8,17 @@ import { useRewards } from '../hooks/useRewards';
 
 interface PointsBadgeProps {
   onPress?: () => void;
+  balance?: number | string;
 }
 
-export const PointsBadge: React.FC<PointsBadgeProps> = ({ onPress }) => {
+export const PointsBadge: React.FC<PointsBadgeProps> = ({ onPress, balance: externalBalance }) => {
   const { colors, isDark } = useTheme();
-  const { data, isLoading } = useRewards();
+  
+  const isExternalProvided = externalBalance !== undefined;
+  const { data, isLoading } = useRewards(!isExternalProvided);
 
-  const balance = data?.starBalance ?? (isLoading ? '...' : 0);
-
+  const balance = isExternalProvided ? externalBalance : (data?.starBalance ?? (isLoading ? '...' : 0));
+  
   return (
     <TouchableOpacity 
       style={[

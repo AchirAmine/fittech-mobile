@@ -11,6 +11,7 @@ import { HomeNavigator } from './HomeNavigator';
 import { MembershipNavigator } from './MembershipNavigator';
 import { AccountNavigator } from './AccountNavigator';
 import { CoursesNavigator } from './CoursesNavigator';
+import { ChatNavigator } from './ChatNavigator';
 import PlanningScreen from '@features/planning/screens/PlanningScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -44,6 +45,8 @@ export const MainTabNavigator = () => {
             iconName = focused ? 'card' : 'card-outline';
           } else if (route.name === ROUTES.MAIN.ACCOUNT) {
             iconName = focused ? 'person' : 'person-outline';
+          } else if (route.name === ROUTES.MAIN.CHAT) {
+            iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -63,6 +66,14 @@ export const MainTabNavigator = () => {
         options={{ 
           tabBarLabel: 'Courses',
           title: 'Courses',
+          headerShown: false
+        }} 
+      />
+      <Tab.Screen 
+        name={ROUTES.MAIN.CHAT} 
+        component={ChatNavigator} 
+        options={{ 
+          tabBarLabel: 'Chat',
           headerShown: false
         }} 
       />

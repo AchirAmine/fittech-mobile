@@ -62,7 +62,7 @@ export const SubscriptionScreen = () => {
   const handleConfirmJoin = () => {
     setIsModalVisible(false);
     if (selectedPlan) {
-      // Use requestAnimationFrame to ensure modal starts closing before navigation
+      
       requestAnimationFrame(() => {
         navigation.navigate(ROUTES.MAIN.PAYMENT_DETAILS as any, { plan: selectedPlan });
       });
@@ -85,7 +85,7 @@ export const SubscriptionScreen = () => {
       errorMessage={isError ? (error as any)?.message || 'Failed to load plans' : null} 
       isLoading={isLoading}
     >
-      {/* Header Block */}
+      {}
       <View style={styles.headerBlock}>
         <Text style={[styles.headline, { color: colors.textPrimary }]}>
           Choose Your Plan
@@ -95,9 +95,9 @@ export const SubscriptionScreen = () => {
         </Text>
       </View>
 
-      {/* Tabs with animated pill indicator */}
+      {}
       <View style={[styles.tabsWrapper, { backgroundColor: colors.cardSecondary, borderColor: colors.border }]}>
-        {/* Animated Pill */}
+        {}
         <Animated.View
           style={[
             styles.tabPill,
@@ -133,7 +133,7 @@ export const SubscriptionScreen = () => {
         })}
       </View>
 
-      {/* Plans List */}
+      {}
       <View style={styles.plansList}>
         {filteredPlans.length > 0 ? (
           filteredPlans.map((plan, index) => (

@@ -37,5 +37,15 @@ export const API_ENDPOINTS = {
     ACTIVE: "/promo/active",
     REDEEM: (id: string) => `/promo/${id}/redeem`,
     HISTORY: "/promo/star-transactions",
+    MY_CODES: "/promo/my-codes",
+    APPLY_CODE: "/promo/apply-code",
+  },
+  SUBSCRIPTIONS: {
+    ME: "/subscriptions/me",
+    CREATE: "/subscriptions",
+  },
+  OFFERS: {
+    LIST: "/offers",
+    PUBLIC: "/offers/public",
   },
 } as const;

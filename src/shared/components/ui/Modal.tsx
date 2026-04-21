@@ -51,9 +51,9 @@ export const Modal: React.FC<ModalProps> = memo(({
 
 const styles = StyleSheet.create({
   overlay: {
-    flex: 1, // Ensure overlay covers full screen
+    flex: 1, 
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)', // Fallback if overlay color fails
+    backgroundColor: 'rgba(0,0,0,0.5)', 
   },
   container: {
     width: '100%',

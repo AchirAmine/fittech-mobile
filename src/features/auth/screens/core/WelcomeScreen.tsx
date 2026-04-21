@@ -32,7 +32,7 @@ const CustomIllustration = () => {
         <Ionicons name="barbell" size={80} color={colors.primaryMid} style={{ transform: [{ rotate: '-45deg' }] }} />
       </View>
       
-      {/* Floating accents */}
+      {}
       <View style={[styles.floatingIcon, { top: 40, right: 30 }]}>
         <Ionicons name="pulse" size={32} color={colors.success || '#00C897'} />
       </View>

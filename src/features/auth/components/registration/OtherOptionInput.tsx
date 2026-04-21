@@ -4,7 +4,7 @@ import { Controller, Control } from 'react-hook-form';
 import { Input } from '@shared/components';
 
 interface OtherOptionInputProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   control: Control<any>;
   name: string;
   label: string;

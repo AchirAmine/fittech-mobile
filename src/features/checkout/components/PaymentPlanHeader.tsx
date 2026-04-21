@@ -41,11 +41,12 @@ export const PaymentPlanHeader: React.FC<PaymentPlanHeaderProps> = ({ plan }) =>
 
 const styles = StyleSheet.create({
   planCard: {
+    
     width: '100%',
     height: 180,
     borderRadius: 20,
     overflow: 'hidden',
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 24,
     elevation: 4,
     shadowOffset: { width: 0, height: 6 },

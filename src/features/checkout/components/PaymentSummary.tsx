@@ -6,10 +6,14 @@ import { SubscriptionPlan } from '@appTypes/index';
 
 interface PaymentSummaryProps {
   plan: SubscriptionPlan;
+  discountPercentage?: number;
+  discountAmount?: number;
 }
 
-export const PaymentSummary: React.FC<PaymentSummaryProps> = ({ plan }) => {
-  const { colors, isDark } = useTheme();
+export const PaymentSummary: React.FC<PaymentSummaryProps> = ({ plan, discountPercentage, discountAmount }) => {
+  const { colors } = useTheme();
+  const subtotal = plan.price;
+  const finalTotal = discountAmount !== undefined ? Math.max(subtotal - discountAmount, 0) : subtotal;
 
   return (
     <View style={[
@@ -22,13 +26,34 @@ export const PaymentSummary: React.FC<PaymentSummaryProps> = ({ plan }) => {
       <View style={styles.summaryRow}>
         <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Subtotal</Text>
         <Text style={[styles.summaryValue, { color: colors.textPrimary }]}>
-          {plan.price.toLocaleString()} {plan.currency}
+          {subtotal.toLocaleString()} {plan.currency}
         </Text>
       </View>
+      
       <View style={styles.summaryRow}>
         <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Promo Code</Text>
-        <Text style={[styles.summaryValue, { color: colors.success }]}>0%</Text>
+        <Text style={[styles.summaryValue, { color: discountPercentage ? colors.success : colors.textMuted }]}>
+          {discountPercentage ? `-${discountPercentage}%` : '0%'}
+        </Text>
       </View>
+
+      {discountAmount !== undefined && discountAmount > 0 && (
+        <View style={styles.summaryRow}>
+          <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Discount</Text>
+          <Text style={[styles.summaryValue, { color: colors.success }]}>
+            -{discountAmount.toLocaleString()} {plan.currency}
+          </Text>
+        </View>
+      )}
+
+      {plan.starsAwarded > 0 && (
+        <View style={styles.summaryRow}>
+          <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Stars Reward</Text>
+          <Text style={[styles.summaryValue, { color: colors.warning }]}>
+            +{plan.starsAwarded} Stars
+          </Text>
+        </View>
+      )}
       
       <View style={[styles.summaryDivider, { backgroundColor: colors.border }]} />
       
@@ -37,7 +62,7 @@ export const PaymentSummary: React.FC<PaymentSummaryProps> = ({ plan }) => {
           TOTAL AMOUNT
         </Text>
         <Text style={[styles.summaryTotalValue, { color: colors.primaryMid }]}>
-          {plan.price.toLocaleString()} {plan.currency}
+          {finalTotal.toLocaleString()} {plan.currency}
         </Text>
       </View>
     </View>

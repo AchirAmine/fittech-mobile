@@ -30,7 +30,7 @@ const CoursesScreen = () => {
           message={error instanceof Error ? error.message : 'Failed to load courses. Please try again.'} 
         />
       )}
-      {/* Shared Category Filters */}
+      {}
       <CategoryFilters 
         categories={COURSE_CATEGORIES}
         selectedId={activeCategory}
@@ -38,7 +38,7 @@ const CoursesScreen = () => {
         containerStyle={styles.filtersWrapper}
       />
 
-      {/* Courses List Component */}
+      {}
       <CourseList 
         courses={filteredCourses} 
         isLoading={isLoading} 

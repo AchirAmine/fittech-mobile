@@ -33,7 +33,7 @@ export const StatusModal: React.FC<StatusModalProps> = ({
 }) => {
   const { colors, isDark } = useTheme();
   
-  // Animation values
+  
   const opacity = React.useRef(new Animated.Value(0)).current;
   const scale = React.useRef(new Animated.Value(0.8)).current;
 
@@ -94,7 +94,7 @@ export const StatusModal: React.FC<StatusModalProps> = ({
             }
           ]}
         >
-          {/* Top Decorative Gradient */}
+          {}
           <LinearGradient
             colors={[
               type === 'success' ? colors.primary : (type === 'confirm' ? colors.primary : colors.error),
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   confirmButton: {
-    // Gradient is applied inside
+    
   },
   buttonText: {
     fontFamily: Theme.Typography.fontFamily.bold,

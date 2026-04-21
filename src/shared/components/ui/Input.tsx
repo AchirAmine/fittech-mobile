@@ -19,6 +19,7 @@ export interface InputProps extends TextInputProps {
   containerStyle?: object;
   labelBg?: string;
   value?: string;
+  rightTextColor?: string;
 }
 
 export const Input: React.FC<InputProps> = memo(({
@@ -33,6 +34,7 @@ export const Input: React.FC<InputProps> = memo(({
   containerStyle,
   labelBg,
   value,
+  rightTextColor,
   onFocus,
   onBlur,
   placeholder,
@@ -142,9 +144,9 @@ export const Input: React.FC<InputProps> = memo(({
       ]}>
         {content}
 
-        {rightText && (
+         {rightText && (
           <TouchableOpacity onPress={onRightTextPress} style={styles.rightTextBtn}>
-            <Text style={[styles.rightText, { color: colors.primary }]}>{rightText}</Text>
+            <Text style={[styles.rightText, { color: rightTextColor || colors.primary }]}>{rightText}</Text>
           </TouchableOpacity>
         )}
       </View>

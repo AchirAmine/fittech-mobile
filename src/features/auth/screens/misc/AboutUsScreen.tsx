@@ -13,6 +13,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@appTypes/navigation.types';
 import { AuthHeader } from '@features/auth/components';
+import { usePublicOffers } from '../../hooks/usePublicOffers';
+import { ROUTES } from '@navigation/routes';
+import { Loader } from '@shared/components';
 
 type Props = NativeStackScreenProps<AuthStackParamList, 'AboutUs'>;
 
@@ -84,6 +87,11 @@ const ABOUT_US_IMAGE = require('../../assets/about-us-hero-illustration.png') as
 
 const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
+  const { data: offers, isLoading } = usePublicOffers();
+
+  const handleGetStarted = () => {
+    navigation.navigate(ROUTES.AUTH.REGISTER_STEP1);
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -110,7 +118,10 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
                   FitTech is Sidi Bel Abbés' first connected gym — blending cutting-edge equipment, personalized coaching, and smart technology to push every member beyond their limits.
                 </Text>
                 
-                <TouchableOpacity style={[styles.getStartedButton, { backgroundColor: colors.primaryMid, shadowColor: colors.primary }]}>
+                <TouchableOpacity 
+                  style={[styles.getStartedButton, { backgroundColor: colors.primaryMid, shadowColor: colors.primary }]}
+                  onPress={handleGetStarted}
+                >
                   <Text style={[styles.getStartedButtonText, { color: colors.white }]}>Get Started Today</Text>
                 </TouchableOpacity>
               </LinearGradient>
@@ -141,6 +152,52 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
                 </View>
               ))}
             </View>
+          </View>
+
+          {/* New Section: Membership Plans */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, styles.centeredTitle, { color: colors.textPrimary }]}>Membership Plans</Text>
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false} 
+                contentContainerStyle={styles.plansScroll}
+              >
+                {offers?.map(offer => (
+                  <View key={offer.id} style={[styles.planCard, { backgroundColor: colors.card, borderColor: hexToRGBA(colors.primary, 0.2) }]}>
+                    <LinearGradient
+                      colors={[hexToRGBA(colors.primary, 0.05), 'transparent']}
+                      style={StyleSheet.absoluteFill}
+                    />
+                    
+                    <View style={styles.planHeader}>
+                      <Text style={[styles.planTitle, { color: colors.textPrimary }]}>{offer.title}</Text>
+                      <View style={styles.priceContainer}>
+                        <Text style={[styles.price, { color: colors.primary }]}>{offer.price}</Text>
+                        <Text style={[styles.currency, { color: colors.primary }]}> DA</Text>
+                        <Text style={[styles.duration, { color: colors.textSecondary }]}>/{offer.duration === 1 ? 'Month' : `${offer.duration} Mo`}</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.planFeatureList}>
+                      {offer.sports.map((sport, idx) => (
+                        <View key={idx} style={[styles.sportTag, { backgroundColor: hexToRGBA(colors.primary, 0.08) }]}>
+                          <Ionicons name="checkmark-circle" size={14} color={colors.primary} />
+                          <Text style={[styles.sportTagText, { color: colors.textPrimary }]}>{sport.sportType}</Text>
+                        </View>
+                      ))}
+                    </View>
+
+                    <View style={[styles.starsRewardContainer, { borderTopColor: hexToRGBA(colors.white, 0.1) }]}>
+                      <Ionicons name="star" size={18} color={colors.warning} />
+                      <Text style={[styles.starsRewardText, { color: colors.textSecondary }]}>Earn {offer.starsAwarded} stars</Text>
+                    </View>
+                  </View>
+                ))}
+              </ScrollView>
+            )}
           </View>
 
           <View style={styles.section}>
@@ -462,6 +519,78 @@ const styles = StyleSheet.create({
   copyright: {
     fontFamily: Theme.Typography.fontFamily.regular,
     fontSize: 12,
+  },
+  plansScroll: {
+    paddingHorizontal: 20,
+    gap: 20,
+    paddingBottom: 10,
+  },
+  planCard: {
+    width: 280,
+    padding: 24,
+    borderRadius: 30,
+    borderWidth: 1,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 5,
+  },
+  planHeader: {
+    marginBottom: 24,
+  },
+  planTitle: {
+    fontFamily: Theme.Typography.fontFamily.bold,
+    fontSize: 20,
+    marginBottom: 8,
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+  },
+  currency: {
+    fontFamily: Theme.Typography.fontFamily.bold,
+    fontSize: 16,
+    marginRight: 2,
+  },
+  price: {
+    fontFamily: Theme.Typography.fontFamily.bold,
+    fontSize: 32,
+  },
+  duration: {
+    fontFamily: Theme.Typography.fontFamily.medium,
+    fontSize: 14,
+    marginLeft: 4,
+  },
+  planFeatureList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 20,
+  },
+  sportTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+  },
+  sportTagText: {
+    fontFamily: Theme.Typography.fontFamily.medium,
+    fontSize: 12,
+  },
+  starsRewardContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingTop: 12,
+    borderTopWidth: 1,
+  },
+  starsRewardText: {
+    fontFamily: Theme.Typography.fontFamily.bold,
+    fontSize: 14,
   },
 });
 

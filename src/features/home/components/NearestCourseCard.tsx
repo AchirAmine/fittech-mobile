@@ -35,7 +35,7 @@ export const NearestCourseCard: React.FC<NearestCourseCardProps> = ({
         activeOpacity={0.8}
         onPress={onPress}
       >
-        {/* Left blue accent line */}
+        {}
         <View style={[styles.accentLine, { backgroundColor: colors.primaryMid }]} />
         
         <View style={styles.content}>
@@ -63,7 +63,7 @@ export const NearestCourseCard: React.FC<NearestCourseCardProps> = ({
           </View>
         </View>
         
-        {/* Right side icon */}
+        {}
         <View style={[styles.iconContainer, { backgroundColor: colors.cardSecondary }]}>
           <Ionicons name="barbell-outline" size={20} color={colors.primaryMid} />
         </View>

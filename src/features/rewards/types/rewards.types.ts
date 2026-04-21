@@ -39,3 +39,29 @@ export interface RewardsSummary {
   starsExpireAt: string | null;
   offers: Reward[];
 }
+
+export interface MyPromoCode {
+  id: string;
+  code: string;
+  isUsed: boolean;
+  usedAt: string | null;
+  redeemedAt: string;
+  isExpired: boolean;
+  offer: {
+    id: string;
+    name: string;
+    discountPercentage: number;
+    startDate: string;
+    endDate: string;
+  };
+}
+
+export interface ApplyPromoCodeResult {
+  code: string;
+  offerName: string;
+  discountPercentage: number;
+  originalPrice: number;
+  discountAmount: number;
+  finalPrice: number;
+  validUntil: string;
+}

@@ -1,5 +1,6 @@
 import axiosClient from '@shared/services/axiosClient';
 import { API_ENDPOINTS } from '@shared/constants/apiEndpoints';
+import { getImageSource } from '@shared/utils/imageUtils';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL?.split('/api')[0] || '';
 
@@ -8,9 +9,7 @@ const mapCoach = (coach: any) => ({
   name: coach.fullName,
   specialty: coach.speciality,
   clientsCount: coach.activeClientsCount,
-  image: coach.profilePicture 
-    ? { uri: coach.profilePicture.startsWith('http') ? coach.profilePicture : `${BASE_URL}/${coach.profilePicture}` }
-    : require('@assets/images/coaches/coach-1.png'),
+  image: getImageSource(coach.profilePicture),
   experience: coach.experience || 'Professional',
   price: coach.pricing || 0,
   about: coach.description || 'Personal coach available for training.',
@@ -50,9 +49,7 @@ export const coachingService = {
       coach: {
         id: coach.id,
         name: coach.fullName,
-        image: coach.profilePicture 
-          ? { uri: coach.profilePicture.startsWith('http') ? coach.profilePicture : `${BASE_URL}/${coach.profilePicture}` }
-          : require('@assets/images/coaches/coach-1.png'),
+        image: getImageSource(coach.profilePicture),
       },
       sessions: slots
         .filter((slot: any) => slot.isBookedByMember)

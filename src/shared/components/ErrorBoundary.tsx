@@ -26,12 +26,12 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    // Update state so the next render will show the fallback UI.
+    
     return { hasError: true, error, errorInfo: null };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // You can also log the error to an error reporting service
+    
     console.error('Uncaught error:', error, errorInfo);
     this.setState({
       error,
@@ -45,10 +45,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      // Fallback UI
-      // Since it's a class component and outside Context sometimes, we use a default theme-consistent colors
-      // We can use LightColors as default or detect if possible, but let's stick to a clean look.
-      const colors = DarkColors; // Using DarkColors for a "premium" error state look
+      
+      
+      
+      const colors = DarkColors; 
 
       return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>

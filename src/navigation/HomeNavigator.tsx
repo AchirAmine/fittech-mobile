@@ -20,6 +20,7 @@ import { Theme } from '@shared/constants/theme';
 import { BackButton } from '@shared/components/ui/BackButton';
 import CourseDetailsScreen from '@features/courses/screens/CourseDetailsScreen';
 import { RewardsScreen } from '@features/rewards/screens/RewardsScreen';
+import { MyVouchersScreen } from '@features/rewards/screens/MyVouchersScreen';
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
@@ -140,6 +141,14 @@ export const HomeNavigator = () => {
         component={RewardsScreen} 
         options={({ navigation }) => ({ 
           title: 'REWARDS',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.MY_VOUCHERS} 
+        component={MyVouchersScreen} 
+        options={({ navigation }) => ({ 
+          title: 'MY CODES',
           headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         })} 
       />

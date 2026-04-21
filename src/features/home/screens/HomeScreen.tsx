@@ -18,6 +18,7 @@ import { HomePlanningCard } from '../components/HomePlanningCard';
 import { FindCoachCard } from '../components/FindCoachCard';
 import { HomeCheckInCard } from '../components/HomeCheckInCard';
 import { PointsBadge } from '@features/rewards/components/PointsBadge';
+import { getImageSource } from '@shared/utils/imageUtils';
 
 export const HomeScreen = () => {
   const { colors, isDark } = useTheme();
@@ -34,12 +35,7 @@ export const HomeScreen = () => {
   const user = summary ? {
     firstName: summary.fullName.split(' ')[0],
     lastName: summary.fullName.split(' ').slice(1).join(' '),
-    profilePicture: summary.profilePicture 
-      ? { uri: summary.profilePicture.startsWith('http') 
-          ? summary.profilePicture 
-          : `${process.env.EXPO_PUBLIC_API_URL?.split('/api')[0]}/${summary.profilePicture}` 
-        } 
-      : undefined,
+    profilePicture: getImageSource(summary.profilePicture),
   } : authUser;
 
   const hasActivePlan = !!summary?.activeSubscription;
@@ -51,7 +47,7 @@ export const HomeScreen = () => {
       name: summary.personalCoachName,
       specialty: 'Personal Training',
       clientsCount: 1,
-      image: require('@assets/images/coaches/coach-1.png'),
+      image: undefined, 
       experience: 'Professional',
       price: 0,
       about: 'Your active personal coach.'
@@ -72,6 +68,7 @@ export const HomeScreen = () => {
       headerRight: () => (
         <View style={styles.headerRight}>
           <PointsBadge 
+            balance={summary?.starBalance ?? (isSummaryLoading ? '...' : undefined)}
             onPress={() => navigation.navigate(ROUTES.MAIN.REWARDS as any)} 
           />
           <TouchableOpacity style={styles.notificationBtn} activeOpacity={0.7}>
