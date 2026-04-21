@@ -38,6 +38,12 @@ export const SubscriptionConfirmationModal: React.FC<SubscriptionConfirmationMod
       highlight: false,
     },
     {
+      icon: '⭐',
+      label: 'Rewards',
+      value: `${plan.starsAwarded} Stars`,
+      highlight: false,
+    },
+    {
       icon: '💰',
       label: 'Price',
       value: `${plan.price.toLocaleString()} ${plan.currency}`,
@@ -48,7 +54,7 @@ export const SubscriptionConfirmationModal: React.FC<SubscriptionConfirmationMod
   return (
     <Modal visible={visible} onClose={onClose} contentStyle={styles.modalContent} hideHeader={true}>
 
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <View style={[styles.iconWrap, { backgroundColor: colors.cardSecondary }]}>
           <Ionicons name="fitness-outline" size={24} color={colors.primaryMid} />
@@ -65,7 +71,7 @@ export const SubscriptionConfirmationModal: React.FC<SubscriptionConfirmationMod
         </TouchableOpacity>
       </View>
 
-      {/* Details Card */}
+      {}
       <View style={[styles.detailsContainer, { backgroundColor: colors.cardSecondary, borderColor: colors.border }]}>
         {rows.map((row, index) => (
           <View
@@ -94,7 +100,7 @@ export const SubscriptionConfirmationModal: React.FC<SubscriptionConfirmationMod
       </View>
 
 
-      {/* Confirm Button */}
+      {}
       <LinearGradient
         colors={[colors.primaryDark, colors.primaryMid]}
         start={{ x: 0, y: 0 }}

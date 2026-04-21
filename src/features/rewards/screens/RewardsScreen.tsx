@@ -1,12 +1,13 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { ROUTES } from '@navigation/routes';
 import { useTheme } from '@shared/hooks/useTheme';
 import { AppScreen, Loader } from '@shared/components';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-import { useRewards, useRewardHistory, useRedeemReward } from '../hooks/useRewards';
+import { useRewards, useRewardHistory, useRedeemReward, useMyCodes } from '../hooks/useRewards';
 import { PointsBadge } from '../components/PointsBadge';
 import { RewardsTabSelector, RewardTab } from '../components/RewardsTabSelector';
 import { RewardItem } from '../components/RewardItem';
@@ -24,13 +25,14 @@ export const RewardsScreen = () => {
 
   const { data, isLoading } = useRewards();
   const { data: historyData, isLoading: isHistoryLoading } = useRewardHistory();
+  const { data: myCodes, isLoading: isCodesLoading } = useMyCodes();
   const { mutate: redeem, isPending: isRedeeming } = useRedeemReward();
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => <PointsBadge onPress={() => setActiveTab('history')} />,
+      headerRight: () => <PointsBadge balance={data?.starBalance} />,
     });
-  }, [navigation]);
+  }, [navigation, data]);
 
   if (isLoading || (activeTab === 'history' && isHistoryLoading)) {
     return <Loader />;
@@ -39,10 +41,7 @@ export const RewardsScreen = () => {
   const balance = data?.starBalance || 0;
   const lockedRewards = data?.offers.filter(r => !r.canRedeem) || [];
   const unlockedRewards = data?.offers.filter(r => r.canRedeem) || [];
-  const ownedVouchers = data?.offers.filter(r => r.hasRedeemed && r.promoCode).map(r => ({
-    ...r.promoCode!,
-    promoOffer: { name: r.name, starsRequired: r.starsRequired, endDate: r.endDate }
-  })) || [];
+  const ownedVouchersCount = myCodes?.length || 0;
   
   const transactions = historyData || [];
 
@@ -123,21 +122,7 @@ export const RewardsScreen = () => {
           </View>
         );
       case 'vouchers':
-        return (
-          <View>
-            {ownedVouchers.length === 0 ? (
-              <RewardsEmptyState 
-                icon="ticket-outline"
-                title="No Codes Yet"
-                subtitle="Redeem your stars for offers to see them here."
-              />
-            ) : (
-              ownedVouchers.map(item => (
-                <RewardItem key={item.id} item={item as any} type="redeemed" />
-              ))
-            )}
-          </View>
-        );
+        return null; 
       case 'history':
         const grouped = groupTransactionsByDate(transactions);
         return (
@@ -169,33 +154,26 @@ export const RewardsScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 20 }}
       >
-        {activeTab === 'history' ? (
-          <TouchableOpacity 
-            style={[styles.backToRewards, { backgroundColor: colors.cardSecondary }]}
-            onPress={() => setActiveTab('unlocked')}
-          >
-            <Ionicons name="arrow-back" size={20} color={colors.primary} />
-            <Text style={[styles.backText, { color: colors.primary }]}>Back to Rewards</Text>
-          </TouchableOpacity>
-        ) : (
-          <>
-            <TouchableOpacity 
-              style={[styles.historyCard, { backgroundColor: colors.card }]}
-              onPress={() => setActiveTab('history')}
-              activeOpacity={0.8}
-            >
-              <View style={[styles.historyIconContainer, { backgroundColor: hexToRGBA(colors.primary, 0.1) }]}>
-                <Ionicons name="time" size={20} color={colors.primary} />
-              </View>
-              <Text style={[styles.historyCardText, { color: colors.textPrimary }]}>
-                Transaction History
-              </Text>
-              <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
-            </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.vouchersCard, { backgroundColor: hexToRGBA(colors.primary, 0.1), borderColor: hexToRGBA(colors.primary, 0.2) }]}
+          onPress={() => navigation.navigate(ROUTES.MAIN.MY_VOUCHERS as any)}
+          activeOpacity={0.8}
+        >
+          <View style={[styles.vouchersIconContainer, { backgroundColor: colors.primary }]}>
+            <Ionicons name="ticket" size={20} color={colors.white} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.vouchersTitle, { color: colors.textPrimary }]}>My Voucher Wallet</Text>
+            <Text style={[styles.vouchersSubtitle, { color: colors.textSecondary }]}>
+              {ownedVouchersCount} active promo {ownedVouchersCount === 1 ? 'code' : 'codes'}
+            </Text>
+          </View>
+          <View style={[styles.viewButton, { backgroundColor: colors.primary }]}>
+            <Text style={[styles.viewButtonText, { color: colors.white }]}>VIEW</Text>
+          </View>
+        </TouchableOpacity>
 
-            <RewardsTabSelector activeTab={activeTab} onTabChange={setActiveTab} />
-          </>
-        )}
+        <RewardsTabSelector activeTab={activeTab} onTabChange={setActiveTab} />
 
         {renderContent()}
         <View style={{ height: 40 }} />
@@ -262,6 +240,41 @@ const styles = StyleSheet.create({
   historyCardText: {
     flex: 1,
     fontSize: 15,
+    fontFamily: Theme.Typography.fontFamily.bold,
+  },
+  vouchersCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 24,
+    marginBottom: 24,
+    borderWidth: 1,
+    marginHorizontal: 4,
+  },
+  vouchersIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+  },
+  vouchersTitle: {
+    fontSize: 16,
+    fontFamily: Theme.Typography.fontFamily.bold,
+  },
+  vouchersSubtitle: {
+    fontSize: 12,
+    fontFamily: Theme.Typography.fontFamily.medium,
+    marginTop: 2,
+  },
+  viewButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
+  },
+  viewButtonText: {
+    fontSize: 12,
     fontFamily: Theme.Typography.fontFamily.bold,
   },
 });

@@ -16,7 +16,7 @@ export const RewardsTabSelector: React.FC<RewardsTabSelectorProps> = ({ activeTa
   const tabs: { key: RewardTab; label: string }[] = [
     { key: 'unlocked', label: 'Unlocked' },
     { key: 'locked', label: 'Locked' },
-    { key: 'vouchers', label: 'My Codes' },
+    { key: 'history', label: 'History' },
   ];
 
   return (

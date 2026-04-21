@@ -90,6 +90,7 @@ export type HomeStackParamList = {
   [ROUTES.MAIN.MY_PLANS]: undefined;
   [ROUTES.MAIN.PLAN_DETAILS]: { planId: string; planName?: string };
   [ROUTES.MAIN.REWARDS]: undefined;
+  [ROUTES.MAIN.MY_VOUCHERS]: undefined;
 };
 
 export type MainTabParamList = {
@@ -97,5 +98,6 @@ export type MainTabParamList = {
   [ROUTES.MAIN.COURSES]: undefined;
   [ROUTES.MAIN.MEMBERSHIP]: undefined;
   [ROUTES.MAIN.ACCOUNT]: undefined;
+  [ROUTES.MAIN.CHAT_MAIN]: undefined;
 };
 

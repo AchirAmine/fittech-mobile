@@ -1,6 +1,7 @@
 export interface HomeSummary {
   fullName: string;
   profilePicture: string | null;
+  starBalance: number;
   hasActivePlanning: boolean;
   paymentDone: boolean;
   actualPlanning: {
