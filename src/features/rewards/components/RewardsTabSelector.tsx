@@ -2,23 +2,18 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 export type RewardTab = 'unlocked' | 'locked' | 'vouchers' | 'history';
-
 interface RewardsTabSelectorProps {
   activeTab: RewardTab;
   onTabChange: (tab: RewardTab) => void;
 }
-
 export const RewardsTabSelector: React.FC<RewardsTabSelectorProps> = ({ activeTab, onTabChange }) => {
   const { colors } = useTheme();
-
   const tabs: { key: RewardTab; label: string }[] = [
     { key: 'unlocked', label: 'Unlocked' },
     { key: 'locked', label: 'Locked' },
     { key: 'history', label: 'History' },
   ];
-
   return (
     <View style={[styles.container, { backgroundColor: colors.cardSecondary }]}>
       {tabs.map((tab) => {
@@ -50,7 +45,6 @@ export const RewardsTabSelector: React.FC<RewardsTabSelectorProps> = ({ activeTa
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

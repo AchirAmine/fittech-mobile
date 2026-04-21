@@ -15,23 +15,17 @@ import { AuthStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { Ionicons } from '@expo/vector-icons';
 import { Palette } from '@shared/constants/colors';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'Welcome'>;
-
 const { width } = Dimensions.get('window');
-
 const CustomIllustration = () => {
   const { colors } = useTheme();
-  
   return (
     <View style={styles.customIllustrationContainer}>
       <View style={[styles.circleBg, { width: 220, height: 220, borderRadius: 110, backgroundColor: colors.primaryMid, opacity: 0.1 }]} />
       <View style={[styles.circleBg, { width: 160, height: 160, borderRadius: 80, backgroundColor: colors.primaryMid, opacity: 0.2 }]} />
-      
       <View style={[styles.mainIconWrap, { backgroundColor: colors.card, shadowColor: colors.shadow }]}>
         <Ionicons name="barbell" size={80} color={colors.primaryMid} style={{ transform: [{ rotate: '-45deg' }] }} />
       </View>
-      
       {}
       <View style={[styles.floatingIcon, { top: 40, right: 30 }]}>
         <Ionicons name="pulse" size={32} color={colors.success || '#00C897'} />
@@ -45,14 +39,11 @@ const CustomIllustration = () => {
     </View>
   );
 };
-
 const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
-
   const handleGetStarted = () => {
     navigation.navigate(ROUTES.AUTH.AUTH_CHOICE);
   };
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView 
@@ -64,7 +55,6 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
           <View style={styles.illustrationWrapper}>
             <CustomIllustration />
           </View>
-  
           <View style={styles.footerContainer}>
             <Text style={[styles.headline, { color: colors.textPrimary }]}>
               The best Fitness app of the century
@@ -73,7 +63,6 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
               Your place to train, connect with coaches, track your progress, and stay motivated on your fitness journey.
             </Text>
           </View>
-  
           <View style={styles.buttonWrapper}>
             <NeonButton 
               title="Get Started" 
@@ -86,7 +75,6 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -176,5 +164,4 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-
 export default WelcomeScreen;

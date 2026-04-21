@@ -7,9 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
-
 import { useHireCoach } from '../hooks/useCoaching';
-
 interface CoachActionFooterProps {
   coachId: string;
   invitationId?: string;
@@ -19,7 +17,6 @@ interface CoachActionFooterProps {
   onHireTriggered?: () => void;
   image: any;
 }
-
 export const CoachActionFooter = ({ 
   coachId, 
   invitationId,
@@ -32,14 +29,11 @@ export const CoachActionFooter = ({
   const { colors } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const { mutate: hireCoach, isPending } = useHireCoach();
-  
   const [requestStatus, setRequestStatus] = useState(initialStatus);
-  
   React.useEffect(() => {
     setRequestStatus(initialStatus);
   }, [initialStatus]);
   const [showModal, setShowModal] = useState(false);
-
   const handleHire = () => {
     hireCoach(coachId, {
       onSuccess: () => {
@@ -49,7 +43,6 @@ export const CoachActionFooter = ({
       }
     });
   };
-
   const handleConfirmPayment = () => {
     navigation.navigate(ROUTES.MAIN.PAYMENT_DETAILS, { 
       plan: {
@@ -70,7 +63,6 @@ export const CoachActionFooter = ({
       } as any
     });
   };
-
   return (
     <View style={[styles.footer, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
       <NeonButton 
@@ -88,7 +80,6 @@ export const CoachActionFooter = ({
         icon={requestStatus === 'requested' ? "checkmark-outline" : undefined}
         loading={isPending}
       />
-
       <StatusModal
         visible={showModal}
         type="success"
@@ -103,7 +94,6 @@ export const CoachActionFooter = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: 24,

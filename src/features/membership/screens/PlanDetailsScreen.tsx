@@ -10,20 +10,15 @@ import { ROUTES } from '@navigation/routes';
 import { useGetMySubscriptions } from '../hooks/useMembership';
 import { Subscription } from '@appTypes/index';
 import { hexToRGBA } from '@shared/constants/colors';
-
 type Props = NativeStackScreenProps<MembershipStackParamList, typeof ROUTES.MAIN.PLAN_DETAILS>;
-
 export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
   const { colors, isDark } = useTheme();
   const { planId } = route.params;
   const { data: subscriptions, isLoading, isError, error } = useGetMySubscriptions();
-
   const subscription = subscriptions?.find(s => s.id === planId);
-
   if (isLoading) {
     return <AppScreen isLoading={true} errorMessage={null}><View /></AppScreen>;
   }
-
   if (isError || !subscription) {
     return (
       <AppScreen errorMessage={isError ? (error as any)?.message || 'Plan not found' : 'Subscription not found'}>
@@ -31,10 +26,8 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       </AppScreen>
     );
   }
-
   const { offer } = subscription;
   const renewalDate = subscription.endDate ? new Date(subscription.endDate).toLocaleDateString() : 'N/A';
-
   return (
     <AppScreen scrollable={false} backgroundColor={colors.background}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -55,18 +48,15 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
             <Text style={[styles.renewalText, { color: hexToRGBA(colors.white, 0.8) }]}>Renews on {renewalDate}</Text>
           </View>
         </View>
-
         <View style={styles.sectionHeader}>
             <Ionicons name="stats-chart" size={20} color={colors.primaryMid} />
             <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Session Balances</Text>
         </View>
-
         <View style={styles.statsContainer}>
           {}
           {(() => {
             const initialSolo = (offer.sports || []).reduce((acc, s) => acc + s.freeSessions, 0);
             const soloProgress = initialSolo > 0 ? (subscription.remainingOpenSessions / initialSolo) : 0;
-            
             return (
               <View style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <View style={styles.progressHeader}>
@@ -75,11 +65,9 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
                     {subscription.remainingOpenSessions} <Text style={{ color: colors.textSecondary }}>/ {initialSolo}</Text>
                   </Text>
                 </View>
-                
                 <View style={[styles.progressBarBg, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : hexToRGBA(colors.black, 0.05) }]}>
                   <View style={[styles.progressBarFill, { backgroundColor: colors.primaryMid, width: `${soloProgress * 100}%` }]} />
                 </View>
-
                 <View style={styles.infoRow}>
                   <Ionicons name="information-circle-outline" size={16} color={colors.textMuted} />
                   <Text style={[styles.infoText, { color: colors.textMuted }]}>Shared across all available activities.</Text>
@@ -87,18 +75,15 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
               </View>
             );
           })()}
-
           {}
           <View style={styles.sectionHeader}>
               <Text style={[styles.subSectionTitle, { color: colors.textMuted, marginTop: 10 }]}>COACH ASSISTANCE</Text>
           </View>
-          
           {(subscription.sportBalances && subscription.sportBalances.length > 0) ? (
             subscription.sportBalances.map(balance => {
               const initialSport = (offer.sports || []).find(s => s.sportType.toUpperCase() === balance.sportType.toUpperCase());
               const initialCoach = initialSport?.coachSessions || 0;
               const coachProgress = initialCoach > 0 ? (balance.remainingSessions / initialCoach) : 0;
-
               return (
                 <View key={balance.id} style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                   <View style={styles.progressHeader}>
@@ -107,11 +92,9 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
                       {balance.remainingSessions} <Text style={{ color: colors.textSecondary }}>/ {initialCoach}</Text>
                     </Text>
                   </View>
-                  
                   <View style={[styles.progressBarBg, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : hexToRGBA(colors.black, 0.05) }]}>
                     <View style={[styles.progressBarFill, { backgroundColor: colors.primaryMid, width: `${coachProgress * 100}%` }]} />
                   </View>
-
                   <View style={styles.infoRow}>
                     <Ionicons name="people-outline" size={16} color={colors.textMuted} />
                     <Text style={[styles.infoText, { color: colors.textMuted }]}>Remaining sessions for current billing cycle.</Text>
@@ -123,7 +106,6 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
               <Text style={[styles.noneText, { color: colors.textMuted }]}>No coach sessions available</Text>
           )}
         </View>
-
         {}
         <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitleLabel, { color: colors.textSecondary }]}>Billing Information</Text>
@@ -139,13 +121,11 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
             <Text style={[styles.billingValue, { color: colors.textPrimary }]}>{subscription.paymentMethod === 'ONLINE' ? 'Credit Card' : 'At Club'}</Text>
           </View>
         </View>
-
         {}
         <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitleLabel, { color: colors.textSecondary }]}>Manage Subscription</Text>
         </View>
         <View style={styles.actionsContainer}>
-          
           <TouchableOpacity 
             style={[styles.suspendButton, { borderColor: colors.error + '40' }]}
             activeOpacity={0.7}
@@ -157,7 +137,6 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 10,
@@ -340,5 +319,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-

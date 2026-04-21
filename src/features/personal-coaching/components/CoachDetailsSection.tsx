@@ -3,16 +3,13 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { InfoChip } from './InfoChip';
-
 interface CoachDetailsSectionProps {
   specialty: string;
   experience: string;
   about: string;
 }
-
 export const CoachDetailsSection = ({ specialty, experience, about }: CoachDetailsSectionProps) => {
   const { colors } = useTheme();
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.infoRow}>
@@ -21,7 +18,6 @@ export const CoachDetailsSection = ({ specialty, experience, about }: CoachDetai
           <InfoChip label={specialty} />
         </View>
       </View>
-
       <View style={styles.aboutSection}>
         <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>ABOUT</Text>
         <Text style={[styles.aboutText, { color: colors.textSecondary }]}>
@@ -31,7 +27,6 @@ export const CoachDetailsSection = ({ specialty, experience, about }: CoachDetai
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     paddingTop: 32,

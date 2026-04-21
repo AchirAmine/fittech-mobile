@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { ThemeColors } from '@shared/constants/colors';
-
 interface MetricCardProps {
   label: string;
   value: number;
@@ -14,7 +13,6 @@ interface MetricCardProps {
   isDark: boolean;
   isEditing: boolean;
 }
-
 export const MetricCard = ({ label, value, unit, icon, onChange, colors, isDark, isEditing }: MetricCardProps) => (
   <View style={[
     styles.metricCard,
@@ -51,7 +49,6 @@ export const MetricCard = ({ label, value, unit, icon, onChange, colors, isDark,
     </View>
   </View>
 );
-
 const styles = StyleSheet.create({
   metricCard: {
     padding: 16,

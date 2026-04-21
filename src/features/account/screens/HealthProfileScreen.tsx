@@ -22,7 +22,6 @@ import { AppScreen } from '@shared/components';
 import { getErrorMessage } from '@shared/constants/errorMessages';
 import { useEditableHeader } from '../hooks/useEditableHeader';
 import { parseRestrictions, formatRestrictions } from '../utils/accountUtils';
-
 const healthSchema = object().shape({
   height: number().required('Height is required').min(50).max(250),
   weight: number().required('Weight is required').min(20).max(300),
@@ -37,10 +36,8 @@ const healthSchema = object().shape({
   activities: array().of(string()).default([]),
   otherActivityText: string().optional(),
 });
-
 export const HealthProfileScreen = () => {
   const { colors, isDark } = useTheme();
-  
   const { data: userData, isLoading: loading, error: fetchError, refetch } = useGetAccount();
   const { 
     mutate: updateMe, 
@@ -48,12 +45,10 @@ export const HealthProfileScreen = () => {
     error: updateError,
     reset: resetMutation
   } = useUpdateAccount();
-  
   const { isEditing, setIsEditing } = useEditableHeader({ 
     colors,
     isUpdating: updating 
   });
-
   const { control, handleSubmit, setValue, reset, watch, formState: { errors } } = useForm({
     resolver: yupResolver(healthSchema),
     defaultValues: {
@@ -67,39 +62,30 @@ export const HealthProfileScreen = () => {
       otherActivityText: '',
     },
   });
-
   const selectedGoals = watch('goals') as string[];
   const selectedRestrictions = watch('restrictions') as string[];
   const selectedActivities = watch('activities') as string[];
-
   useEffect(() => {
     if (userData) {
       const rawGoals = Array.isArray(userData.fitnessObjective) 
         ? userData.fitnessObjective 
         : (userData.fitnessObjective ? [userData.fitnessObjective] : []);
-
       const standardGoalIds = GOALS.map(g => g.id).filter(id => id !== 'other');
       const selectedGoalIds = rawGoals.filter(g => standardGoalIds.includes(g));
-      
       const customGoalInputs = rawGoals.filter(g => !standardGoalIds.includes(g));
       const hasOtherGoal = customGoalInputs.length > 0;
       if (hasOtherGoal && !selectedGoalIds.includes('other')) {
         selectedGoalIds.push('other');
       }
       const otherGoalText = customGoalInputs.join(', ');
-
       const rawRestrictions = parseRestrictions(userData.medicalRestrictions || '');
       const standardRestrictionIds = HEALTH_CONCERNS.map(c => c.id).filter(id => id !== 'other' && id !== 'none');
       const standardActivityIds = ACTIVITIES.map(a => a.id).filter(id => id !== 'other');
-
       const selectedRestrictionIds = rawRestrictions.filter(r => standardRestrictionIds.includes(r));
       const selectedActivityIds = rawRestrictions.filter(r => standardActivityIds.includes(r));
-
       const customInputs = rawRestrictions.filter(r => !standardRestrictionIds.includes(r) && !standardActivityIds.includes(r) && r !== 'none');
-      
       let otherRestrictionText = '';
       let otherActivityText = '';
-      
       customInputs.forEach(input => {
         if (input.startsWith('Activity: ')) {
           otherActivityText = input.replace('Activity: ', '');
@@ -115,7 +101,6 @@ export const HealthProfileScreen = () => {
           if (!selectedRestrictionIds.includes('other')) selectedRestrictionIds.push('other');
         }
       });
-
       reset({
         height: userData.height || 170,
         weight: userData.weight || 70,
@@ -128,25 +113,20 @@ export const HealthProfileScreen = () => {
       });
     }
   }, [userData, reset]);
-
   const onSubmit = (formData: InferType<typeof healthSchema>) => {
     let finalGoals = (formData.goals || []).filter((g): g is string => g !== undefined && g !== 'other');
     if (formData.goals?.includes('other') && formData.otherGoalText) {
       finalGoals.push(formData.otherGoalText);
     }
-    
     let finalRestrictions = (formData.restrictions || []).filter((r): r is string => r !== undefined && r !== 'other');
     if (formData.restrictions?.includes('other') && formData.otherRestrictionText) {
       finalRestrictions.push(`Restriction: ${formData.otherRestrictionText}`);
     }
-
     let finalActivities = (formData.activities || []).filter((a): a is string => a !== undefined && a !== 'other');
     if (formData.activities?.includes('other') && formData.otherActivityText) {
       finalActivities.push(`Activity: ${formData.otherActivityText}`);
     }
-
     const mergedRestrictionsAndActivities = [...finalActivities, ...finalRestrictions];
-
     updateMe({
       healthProfile: {
         heightValue: formData.height,
@@ -162,13 +142,11 @@ export const HealthProfileScreen = () => {
       },
     });
   };
-
   const onToggleGoal = (id: string) => {
     if (!isEditing) return;
     const current = watch('goals') || [];
     setValue('goals', current.includes(id) ? current.filter(g => g !== id) : [...current, id]);
   };
-
   const onToggleRestriction = (id: string) => {
     if (!isEditing) return;
     const current = selectedRestrictions || [];
@@ -179,18 +157,15 @@ export const HealthProfileScreen = () => {
     const without = current.filter(r => r !== 'none');
     setValue('restrictions', without.includes(id) ? without.filter(r => r !== id) : [...without, id]);
   };
-
   const onToggleActivity = (id: string) => {
     if (!isEditing) return;
     const current = selectedActivities || [];
     setValue('activities', current.includes(id) ? current.filter(a => a !== id) : [...current, id]);
   };
-
   const handleDismissError = () => {
     if (updateError) resetMutation();
     if (fetchError) refetch();
   };
-
   return (
     <AppScreen
       safeArea={false}
@@ -238,7 +213,6 @@ export const HealthProfileScreen = () => {
             )}
           />
         </Animated.View>
-
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.primaryMid }]}>Main Fitness Goal</Text>
           <GoalSelector
@@ -251,7 +225,6 @@ export const HealthProfileScreen = () => {
             onChangeOtherText={text => setValue('otherGoalText', text)}
           />
         </View>
-
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.primaryMid }]}>Medical Restrictions</Text>
           <RestrictionSelector
@@ -264,7 +237,6 @@ export const HealthProfileScreen = () => {
             onChangeOtherText={text => setValue('otherRestrictionText', text)}
           />
         </View>
-
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: colors.primaryMid }]}>Preferred Activities</Text>
           <ActivitySelector
@@ -277,7 +249,6 @@ export const HealthProfileScreen = () => {
             onChangeOtherText={text => setValue('otherActivityText', text)}
           />
         </View>
-
         <SaveButton
           isEditing={isEditing}
           onPress={handleSubmit(onSubmit)}
@@ -287,7 +258,6 @@ export const HealthProfileScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
   form: { gap: 20, paddingTop: 20 },

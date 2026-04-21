@@ -6,14 +6,11 @@ import { hexToRGBA } from '@shared/constants/colors';
 import { useTheme } from '@shared/hooks/useTheme';
 import { SubscriptionPlan } from '@appTypes/index';
 import { PlanFeaturesList } from '@features/membership/components/PlanFeaturesList';
-
 interface PaymentPlanHeaderProps {
   plan: SubscriptionPlan;
 }
-
 export const PaymentPlanHeader: React.FC<PaymentPlanHeaderProps> = ({ plan }) => {
   const { colors } = useTheme();
-  
   return (
     <View style={[styles.planCard, { shadowColor: colors.black }]}>
       <Image
@@ -32,16 +29,13 @@ export const PaymentPlanHeader: React.FC<PaymentPlanHeaderProps> = ({ plan }) =>
             {plan.price.toLocaleString()} {plan.currency}
           </Text>
         </View>
-
         <PlanFeaturesList features={plan.features} alignment="start" forceDarkText={true} />
       </LinearGradient>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   planCard: {
-    
     width: '100%',
     height: 180,
     borderRadius: 20,

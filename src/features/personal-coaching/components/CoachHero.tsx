@@ -5,19 +5,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
 import { hexToRGBA } from '@shared/constants/colors';
-
 const { width } = Dimensions.get('window');
-
 interface CoachHeroProps {
   name: string;
   image: any;
   clientsCount: number;
   experience: string;
 }
-
 export const CoachHero = ({ name, image, clientsCount, experience }: CoachHeroProps) => {
   const { colors } = useTheme();
-
   return (
     <View style={styles.container}>
       <Image source={image} style={styles.image} resizeMode="cover" />
@@ -46,7 +42,6 @@ export const CoachHero = ({ name, image, clientsCount, experience }: CoachHeroPr
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     width: width,

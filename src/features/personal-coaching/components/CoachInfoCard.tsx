@@ -3,16 +3,13 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 interface CoachInfoCardProps {
   name: string;
   image: any;
   onMessagePress?: () => void;
 }
-
 export const CoachInfoCard = ({ name, image, onMessagePress }: CoachInfoCardProps) => {
   const { colors, isDark } = useTheme();
-
   return (
     <View style={[styles.container, { backgroundColor: isDark ? colors.card : '#FFF', shadowColor: colors.shadow }]}>
       <View style={styles.header}>
@@ -32,7 +29,6 @@ export const CoachInfoCard = ({ name, image, onMessagePress }: CoachInfoCardProp
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     padding: 20,

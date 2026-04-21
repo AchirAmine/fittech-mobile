@@ -7,10 +7,8 @@ import { SubscriptionScreen } from '@features/membership/screens/SubscriptionScr
 import { PaymentDetailsScreen } from '@features/checkout/screens/PaymentDetailsScreen';
 import { SubscriptionPlan } from '@appTypes/index';
 import { ROUTES } from '@navigation/routes';
-
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 export type ProfileStackParamList = {
   AccountMain: undefined;
   ProfileMain: undefined;
@@ -18,12 +16,9 @@ export type ProfileStackParamList = {
   [ROUTES.MAIN.SUBSCRIPTION_OFFERS]: undefined;
   [ROUTES.MAIN.PAYMENT_DETAILS]: { plan: SubscriptionPlan };
 };
-
 const Stack = createNativeStackNavigator<ProfileStackParamList>();
-
 export const AccountNavigator = () => {
   const { colors } = useTheme();
-
   return (
     <Stack.Navigator 
       screenOptions={{ 

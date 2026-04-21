@@ -3,7 +3,6 @@ import { View, Text, StyleSheet } from 'react-native';
 import { ACTIVITIES } from '@shared/constants/healthConstants';
 import { ThemeColors } from '@shared/constants/colors';
 import { EditableCard } from './EditableCard';
-
 interface ActivitySelectorProps {
   selectedActivities: string[];
   isEditing: boolean;
@@ -13,7 +12,6 @@ interface ActivitySelectorProps {
   otherValue?: string;
   onChangeOtherText?: (text: string) => void;
 }
-
 export const ActivitySelector = ({ 
   selectedActivities, 
   isEditing, 
@@ -24,11 +22,9 @@ export const ActivitySelector = ({
   onChangeOtherText,
 }: ActivitySelectorProps) => {
   const visibleActivities = isEditing ? ACTIVITIES : ACTIVITIES.filter(c => (selectedActivities || []).includes(c.id));
-
   if (visibleActivities.length === 0) {
     return <Text style={[styles.emptyText, { color: colors.textMuted }]}>No preferred activities</Text>;
   }
-
   return (
     <View style={styles.cardsContainer}>
       {visibleActivities.map((activity, index) => (
@@ -53,7 +49,6 @@ export const ActivitySelector = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,

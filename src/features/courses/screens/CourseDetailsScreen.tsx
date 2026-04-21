@@ -9,28 +9,21 @@ import { CoursesStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { useCourseDetail } from '../hooks/useCourses';
 import { useFocusEffect } from '@react-navigation/native';
-
-
 import DetailsHeader from '../components/details/DetailsHeader';
 import DetailsInfoGrid from '../components/details/DetailsInfoGrid';
 import DetailsCapacity from '../components/details/DetailsCapacity';
 import DetailsAbout from '../components/details/DetailsAbout';
 import DetailsActionArea from '../components/details/DetailsActionArea';
-
 type Props = NativeStackScreenProps<CoursesStackParamList, typeof ROUTES.MAIN.COURSE_DETAILS>;
-
 const CourseDetailsScreen: React.FC<Props> = ({ route }) => {
   const { courseId } = route.params;
   const { colors, isDark } = useTheme();
-
   const { data: course, isLoading, isError, refetch } = useCourseDetail(courseId);
-
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch])
   );
-
   if (isLoading) {
     return (
       <AppScreen safeArea={false}>
@@ -41,7 +34,6 @@ const CourseDetailsScreen: React.FC<Props> = ({ route }) => {
       </AppScreen>
     );
   }
-
   if (!course || isError) {
     return (
       <AppScreen safeArea={false}>
@@ -52,7 +44,6 @@ const CourseDetailsScreen: React.FC<Props> = ({ route }) => {
       </AppScreen>
     );
   }
-
   return (
     <AppScreen 
       backgroundColor={isDark ? colors.background : '#F8F9FB'}
@@ -67,7 +58,6 @@ const CourseDetailsScreen: React.FC<Props> = ({ route }) => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   scrollContent: {
     gap: 10, 
@@ -95,5 +85,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
 export default CourseDetailsScreen;

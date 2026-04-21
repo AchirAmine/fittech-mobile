@@ -6,7 +6,6 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
-
 export interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
@@ -21,7 +20,6 @@ export interface InputProps extends TextInputProps {
   value?: string;
   rightTextColor?: string;
 }
-
 export const Input: React.FC<InputProps> = memo(({
   label,
   error,
@@ -44,7 +42,6 @@ export const Input: React.FC<InputProps> = memo(({
   const { colors } = useTheme();
   const animatedValue = useRef(new Animated.Value(value ? 1 : 0)).current;
   const [isFocused, setIsFocused] = useState(false);
-
   const animateLabel = useCallback((toValue: number) => {
     Animated.timing(animatedValue, {
       toValue,
@@ -52,13 +49,11 @@ export const Input: React.FC<InputProps> = memo(({
       useNativeDriver: false,
     }).start();
   }, [animatedValue]);
-
   const handleFocus = useCallback<NonNullable<TextInputProps['onFocus']>>((e) => {
     setIsFocused(true);
     animateLabel(1);
     onFocus?.(e);
   }, [onFocus, animateLabel]);
-
   const handleBlur = useCallback<NonNullable<TextInputProps['onBlur']>>((e) => {
     setIsFocused(false);
     if (!value) {
@@ -66,7 +61,6 @@ export const Input: React.FC<InputProps> = memo(({
     }
     onBlur?.(e);
   }, [onBlur, value, animateLabel]);
-
   useEffect(() => {
     if (value || isFocused) {
       animateLabel(1);
@@ -74,9 +68,7 @@ export const Input: React.FC<InputProps> = memo(({
       animateLabel(0);
     }
   }, [value, isFocused, animateLabel]);
-  
   const hasValue = Boolean(value) || isFocused;
-
   const labelStyle: Record<string, unknown> = {
     position: 'absolute',
     left: icon ? 48 : 16,
@@ -94,7 +86,6 @@ export const Input: React.FC<InputProps> = memo(({
     fontFamily: Theme.Typography.fontFamily.medium,
     zIndex: 10,
   };
-
   const content = (
     <>
       {icon && (
@@ -106,13 +97,11 @@ export const Input: React.FC<InputProps> = memo(({
           <Ionicons name={icon} size={20} color={editable ? colors.primary : colors.primaryMid} style={styles.inputIcon} />
         )
       )}
-
       {label && (
         <Animated.Text style={labelStyle}>
           {label}
         </Animated.Text>
       )}
-
       <TextInput
         style={[styles.input, { color: editable ? colors.textPrimary : colors.primary, paddingTop: label ? 12 : 8 }]}
         placeholderTextColor={colors.textMuted}
@@ -123,7 +112,6 @@ export const Input: React.FC<InputProps> = memo(({
         editable={editable}
         {...rest}
       />
-
       {rightIcon && (
         <TouchableOpacity onPress={onRightIconPress} style={styles.rightIconBtn}>
           <Ionicons name={rightIcon} size={20} color={hasValue ? colors.primary : colors.textMuted} />
@@ -131,7 +119,6 @@ export const Input: React.FC<InputProps> = memo(({
       )}
     </>
   );
-
   return (
     <View style={containerStyle}>
       <View style={[
@@ -143,7 +130,6 @@ export const Input: React.FC<InputProps> = memo(({
         }
       ]}>
         {content}
-
          {rightText && (
           <TouchableOpacity onPress={onRightTextPress} style={styles.rightTextBtn}>
             <Text style={[styles.rightText, { color: rightTextColor || colors.primary }]}>{rightText}</Text>
@@ -154,7 +140,6 @@ export const Input: React.FC<InputProps> = memo(({
     </View>
   );
 });
-
 const styles = StyleSheet.create({
   inputWrap: {
     flexDirection: 'row',

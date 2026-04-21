@@ -3,20 +3,16 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
-
 export type PaymentMethod = 'credit_card' | 'cash';
-
 interface PaymentMethodsProps {
   selectedMethod: PaymentMethod;
   onSelectMethod: (method: PaymentMethod) => void;
 }
-
 export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   selectedMethod,
   onSelectMethod,
 }) => {
   const { colors, isDark } = useTheme();
-
   return (
     <>
       <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
@@ -57,7 +53,6 @@ export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
             {selectedMethod === 'credit_card' && <Ionicons name="checkmark" size={12} color={colors.primaryMid} />}
           </View>
         </TouchableOpacity>
-
         <TouchableOpacity
           style={[
             styles.paymentMethodCard,
@@ -96,7 +91,6 @@ export const PaymentMethods: React.FC<PaymentMethodsProps> = ({
     </>
   );
 };
-
 const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 14,

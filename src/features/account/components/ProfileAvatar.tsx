@@ -5,12 +5,10 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import { Theme } from '@shared/constants/theme';
 import { User } from '@appTypes/index';
 import { ThemeColors } from '@shared/constants/colors';
-
 interface ProfileAvatarProps {
   userData: User | null | undefined;
   colors: ThemeColors;
 }
-
 export const ProfileAvatar = ({ userData, colors }: ProfileAvatarProps) => {
   return (
     <Animated.View entering={FadeInUp.duration(600)} style={styles.avatarSection}>
@@ -32,7 +30,6 @@ export const ProfileAvatar = ({ userData, colors }: ProfileAvatarProps) => {
     </Animated.View>
   );
 };
-
 const styles = StyleSheet.create({
   avatarSection: {
     alignItems: 'center',

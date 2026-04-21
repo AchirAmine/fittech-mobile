@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, ViewStyle } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { NeonButton } from '@shared/components/ui';
-
 interface SaveButtonProps {
   isEditing: boolean;
   onPress: () => void;
@@ -10,7 +9,6 @@ interface SaveButtonProps {
   title?: string;
   style?: ViewStyle;
 }
-
 export const SaveButton: React.FC<SaveButtonProps> = ({
   isEditing,
   onPress,
@@ -19,7 +17,6 @@ export const SaveButton: React.FC<SaveButtonProps> = ({
   style,
 }) => {
   if (!isEditing) return null;
-
   return (
     <Animated.View entering={FadeInDown.duration(400)}>
       <NeonButton
@@ -31,7 +28,6 @@ export const SaveButton: React.FC<SaveButtonProps> = ({
     </Animated.View>
   );
 };
-
 const styles = StyleSheet.create({
   button: {
     marginTop: 10,

@@ -4,13 +4,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 interface ErrorBannerProps {
   message: string | null;
   onDismiss?: () => void;
   allowTopInset?: boolean;
 }
-
 export const ErrorBanner: React.FC<ErrorBannerProps> = memo(({ 
   message, 
   onDismiss,
@@ -18,13 +16,10 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = memo(({
 }) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-
   if (!message) return null;
-
   const topPosition = allowTopInset 
     ? Math.max(insets.top + 10, Platform.OS === 'ios' ? 50 : 40)
     : 15;
-
   return (
     <View style={[
       styles.container, 
@@ -40,7 +35,6 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = memo(({
     </View>
   );
 });
-
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',

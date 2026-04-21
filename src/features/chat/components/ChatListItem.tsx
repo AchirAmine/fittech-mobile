@@ -6,12 +6,10 @@ import { Conversation, ConversationType } from '../services/chatApi';
 import { getImageSource } from '@shared/utils/imageUtils';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-
 type Props = {
   conversation: Conversation;
   onPress: (conversationId: string) => void;
 };
-
 function getCategoryColor(category: string, colors: any): string {
   switch (category) {
     case 'ANNOUNCEMENTS': return '#FF3B30';
@@ -21,39 +19,31 @@ function getCategoryColor(category: string, colors: any): string {
     default: return colors.textMuted;
   }
 }
-
 const formatRelativeDate = (dateString: string) => {
   const date = new Date(dateString);
   const now = new Date();
-  
   const isToday = date.toDateString() === now.toDateString();
   if (isToday) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
-  
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
   if (date.toDateString() === yesterday.toDateString()) {
     return 'Yesterday';
   }
-  
   if (date.getFullYear() === now.getFullYear()) {
     return date.toLocaleDateString([], { day: '2-digit', month: 'short' });
   }
-  
   return date.toLocaleDateString([], { year: '2-digit', month: '2-digit', day: '2-digit' });
 };
-
 export const ChatListItem: React.FC<Props> = ({ conversation, onPress }) => {
   const { colors } = useTheme();
   const categoryColor = getCategoryColor(conversation.category, colors);
-  
   const profilePicture = (conversation.type === ConversationType.COURSE_PRIVATE || 
                           conversation.type === ConversationType.PERSONAL_COACHING ||
                           conversation.type === ConversationType.ADMIN_COACH_PRIVATE)
                          ? (conversation.coach?.profilePicture || conversation.member?.profilePicture)
                          : null;
-
   return (
     <TouchableOpacity
       style={[styles.container, { backgroundColor: colors.background }]}
@@ -62,7 +52,6 @@ export const ChatListItem: React.FC<Props> = ({ conversation, onPress }) => {
     >
       {}
       <View style={styles.row}>
-        
         {}
         <View style={styles.avatarSection}>
           <View style={[styles.avatarContainer, { borderColor: hexToRGBA(categoryColor, 0.3) }]}>
@@ -80,7 +69,6 @@ export const ChatListItem: React.FC<Props> = ({ conversation, onPress }) => {
           </View>
           <View style={[styles.onlineDot, { backgroundColor: categoryColor, borderColor: colors.background }]} />
         </View>
-
         {}
         <View style={[styles.contentSection, { borderBottomColor: colors.border }]}>
           <View style={styles.topRow}>
@@ -93,7 +81,6 @@ export const ChatListItem: React.FC<Props> = ({ conversation, onPress }) => {
               </Text>
             )}
           </View>
-
           <View style={styles.bottomRow}>
             <View style={styles.previewContainer}>
               {conversation.isLocked && (
@@ -109,7 +96,6 @@ export const ChatListItem: React.FC<Props> = ({ conversation, onPress }) => {
                 {conversation.lastMessagePreview || 'New groupe'}
               </Text>
             </View>
-            
             {}
             <View style={[styles.categoryDot, { backgroundColor: categoryColor }]} />
           </View>
@@ -118,7 +104,6 @@ export const ChatListItem: React.FC<Props> = ({ conversation, onPress }) => {
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     width: '100%',

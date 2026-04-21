@@ -6,14 +6,11 @@ import { hexToRGBA } from '@shared/constants/colors';
 import { Course } from '@appTypes/course';
 import { useReserveCourse, useCancelReservation, useJoinWaitingList } from '../../hooks/useCourses';
 import { StatusModal, StatusModalType } from '@shared/components/ui/StatusModal';
-
 interface Props {
   course: Course;
 }
-
 const DetailsActionArea: React.FC<Props> = ({ course }) => {
   const { colors, isDark } = useTheme();
-  
   const [modalConfig, setModalConfig] = React.useState<{
     visible: boolean;
     type: StatusModalType;
@@ -27,9 +24,7 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
     message: '',
     onConfirm: () => {},
   });
-
   const hideModal = () => setModalConfig(prev => ({ ...prev, visible: false }));
-
   const showModal = (type: StatusModalType, title: string, message: string, onConfirm?: () => void) => {
     setModalConfig({
       visible: true,
@@ -39,11 +34,9 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
       onConfirm: onConfirm || hideModal,
     });
   };
-
   const { mutate: reserve, isPending: isReserving } = useReserveCourse();
   const { mutate: cancel, isPending: isCancelling } = useCancelReservation();
   const { mutate: joinWait, isPending: isJoiningWait } = useJoinWaitingList();
-  
   const handleReserve = () => {
     reserve(course.id, {
       onSuccess: () => {
@@ -62,7 +55,6 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
       }
     });
   };
-
   const handleJoinWait = () => {
     joinWait(course.id, {
       onSuccess: () => {
@@ -81,7 +73,6 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
       }
     });
   };
-
   const handleCancel = () => {
     showModal(
       'confirm',
@@ -108,9 +99,7 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
       }
     );
   };
-  
   const isTimeForCancelEnabled = course.canCancel ?? true; 
-
   if (course.status === 'FULL') {
     return (
       <View style={[styles.waitingListCard, { backgroundColor: colors.card }]}>
@@ -133,7 +122,6 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
             <Text style={styles.reserveButtonText}>JOIN WAITING LIST</Text>
           )}
         </TouchableOpacity>
-        
         <StatusModal 
           {...modalConfig}
           onClose={hideModal}
@@ -143,7 +131,6 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
       </View>
     );
   }
-
   if (course.status === 'WAITLISTED') {
     return (
       <View style={[styles.waitingListCard, { backgroundColor: isDark ? hexToRGBA(colors.success, 0.1) : hexToRGBA(colors.success, 0.05), borderColor: colors.success, borderWidth: 1 }]}>
@@ -157,7 +144,6 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
       </View>
     );
   }
-
   if (course.status === 'RESERVED') {
     if (isTimeForCancelEnabled) {
       return (
@@ -190,7 +176,6 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
       );
     }
   }
-
   return (
     <>
       <TouchableOpacity 
@@ -213,7 +198,6 @@ const DetailsActionArea: React.FC<Props> = ({ course }) => {
     </>
   );
 };
-
 const styles = StyleSheet.create({
   reserveButton: {
     paddingVertical: 20,
@@ -255,5 +239,4 @@ const styles = StyleSheet.create({
     fontFamily: Theme.Typography.fontFamily.regular,
   },
 });
-
 export default DetailsActionArea;

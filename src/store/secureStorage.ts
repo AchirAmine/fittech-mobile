@@ -1,9 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 import { Storage } from 'redux-persist';
 import logger from '@shared/utils/logger';
-
 const sanitizeKey = (key: string): string => (typeof key === 'string' ? key.replace(/[^a-zA-Z0-9.\-_]/g, '_') : '');
-
 const secureStorage: Storage = {
   getItem: async (key: string): Promise<string | null> => {
     try {
@@ -32,5 +30,4 @@ const secureStorage: Storage = {
     }
   },
 };
-
 export default secureStorage;

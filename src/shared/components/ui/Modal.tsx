@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Modal as RNModal, TouchableOpacity, ViewStyle }
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Ionicons } from '@expo/vector-icons';
-
 export interface ModalProps {
   visible: boolean;
   onClose: () => void;
@@ -12,7 +11,6 @@ export interface ModalProps {
   contentStyle?: ViewStyle;
   hideHeader?: boolean;
 }
-
 export const Modal: React.FC<ModalProps> = memo(({ 
   visible, 
   onClose, 
@@ -22,7 +20,6 @@ export const Modal: React.FC<ModalProps> = memo(({
   hideHeader = false 
 }) => {
   const { colors } = useTheme();
-
   return (
     <RNModal
       visible={visible}
@@ -48,7 +45,6 @@ export const Modal: React.FC<ModalProps> = memo(({
     </RNModal>
   );
 });
-
 const styles = StyleSheet.create({
   overlay: {
     flex: 1, 

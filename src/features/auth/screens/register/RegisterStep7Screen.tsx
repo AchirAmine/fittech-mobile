@@ -4,19 +4,15 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, array, string, InferType } from 'yup';
-
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { useAppDispatch } from '@shared/hooks/useReduxHooks';
-
 import { getErrorMessage } from '@shared/constants/errorMessages';
 import { AuthSelectionTemplate, SelectableCard, OtherOptionInput } from '@features/auth/components';
 import { register } from '@features/auth/store/authActions';
 import logger from '@shared/utils/logger';
 import { HEALTH_CONCERNS } from '@shared/constants/healthConstants';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep7'>;
-
 const registerStep7Schema = object().shape({
   healthConcerns: array().of(string().required()).min(1, 'Please select at least one option'),
   customConcern: string().when('healthConcerns', {
@@ -25,13 +21,11 @@ const registerStep7Schema = object().shape({
     otherwise: (schema) => schema.notRequired(),
   }),
 });
-
 const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
   const { data: prevData } = route.params;
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState('');
-
   const { control, handleSubmit, watch, setValue, clearErrors, formState: { errors } } = useForm({
     resolver: yupResolver(registerStep7Schema),
     defaultValues: {
@@ -39,9 +33,7 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
       customConcern: '',
     },
   });
-
   const healthConcerns = watch('healthConcerns');
-
   const handleToggleConcern = useCallback((id: string, currentValues: string[], onChange: (vals: string[]) => void) => {
     let next: string[];
     if (id === 'none') {
@@ -57,18 +49,15 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
     onChange(next);
     setApiError('');
   }, []);
-
   const onSubmit = useCallback(async (formData: InferType<typeof registerStep7Schema>) => {
     const finalConcerns = (formData.healthConcerns ?? []).map((id: string) => {
       if (id === 'other') return `Other: ${formData.customConcern?.trim() ?? ''}`;
       return id;
     });
-
     const data: SignupData = {
       ...prevData,
       healthConcerns: finalConcerns,
     };
-
     setLoading(true);
     setApiError('');
     try {
@@ -90,7 +79,6 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
           restrictions: [...(data.activities || []), ...(data.healthConcerns || [])].filter(Boolean).join(', '),
         },
       }));
-
       if (register.fulfilled.match(result)) {
         navigation.navigate(ROUTES.AUTH.OTP_VERIFICATION, {
           email: result.payload.email || data.email || '',
@@ -106,7 +94,6 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
       setLoading(false);
     }
   }, [dispatch, navigation, prevData]);
-
   return (
     <AuthSelectionTemplate
       title="Any health concerns?"
@@ -141,7 +128,6 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
           </>
         )}
       />
-
       {(healthConcerns || []).includes('other') && (
         <OtherOptionInput
           control={control}
@@ -155,6 +141,4 @@ const RegisterStep7Screen: React.FC<Props> = ({ navigation, route }) => {
     </AuthSelectionTemplate>
   );
 };
-
 export default memo(RegisterStep7Screen);
-

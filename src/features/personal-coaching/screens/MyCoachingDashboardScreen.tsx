@@ -12,18 +12,15 @@ import { CoachInfoCard } from '../components/CoachInfoCard';
 import { BookingSessionsCard } from '../components/BookingSessionsCard';
 import { NextSessionItem } from '../components/NextSessionItem';
 import { EmptyCoachingState } from '../components/EmptyCoachingState';
-
 export const MyCoachingDashboardScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const { data: coaching, isLoading, refetch } = useGetActiveCoaching();
-
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch])
   );
-
   if (isLoading) {
     return (
       <AppScreen isLoading={true} loadingMessage="Loading your coaching dashboard...">
@@ -31,7 +28,6 @@ export const MyCoachingDashboardScreen = () => {
       </AppScreen>
     );
   }
-
   if (!coaching) {
     return (
       <AppScreen safeArea={true} style={{ backgroundColor: colors.background }}>
@@ -43,7 +39,6 @@ export const MyCoachingDashboardScreen = () => {
       </AppScreen>
     );
   }
-
   return (
     <AppScreen 
       safeArea={false} 
@@ -54,11 +49,9 @@ export const MyCoachingDashboardScreen = () => {
           name={coaching.coach.name}
           image={coaching.coach.image}
         />
-
         <BookingSessionsCard 
           onBookPress={() => navigation.navigate(ROUTES.MAIN.BOOK_SESSION)}
         />
-
         <View>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>NEXT SESSIONS</Text>
           {coaching.sessions.map((session: any) => (
@@ -73,7 +66,6 @@ export const MyCoachingDashboardScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   scrollContent: {
     paddingVertical: 20,

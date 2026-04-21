@@ -4,17 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { LightColors, DarkColors } from '@shared/constants/colors';
-
 interface Props {
   children: ReactNode;
 }
-
 interface State {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
 }
-
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -24,47 +21,34 @@ export class ErrorBoundary extends Component<Props, State> {
       errorInfo: null,
     };
   }
-
   static getDerivedStateFromError(error: Error): State {
-    
     return { hasError: true, error, errorInfo: null };
   }
-
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    
     console.error('Uncaught error:', error, errorInfo);
     this.setState({
       error,
       errorInfo,
     });
   }
-
   handleRestart = () => {
     this.setState({ hasError: false, error: null, errorInfo: null });
   };
-
   render() {
     if (this.state.hasError) {
-      
-      
-      
       const colors = DarkColors; 
-
       return (
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
           <View style={styles.content}>
             <View style={[styles.iconContainer, { backgroundColor: colors.card }]}>
               <Ionicons name="alert-circle" size={80} color={colors.error} />
             </View>
-
             <Text style={[styles.title, { color: colors.textPrimary }]}>
               Oops! Something went wrong
             </Text>
-            
             <Text style={[styles.message, { color: colors.textSecondary }]}>
               We encountered an unexpected error. Don't worry, your data is safe.
             </Text>
-
             <View style={[styles.errorDetailContainer, { backgroundColor: colors.cardSecondary }]}>
               <ScrollView style={styles.errorScroll}>
                 <Text style={[styles.errorText, { color: colors.error }]}>
@@ -72,7 +56,6 @@ export class ErrorBoundary extends Component<Props, State> {
                 </Text>
               </ScrollView>
             </View>
-
             <TouchableOpacity
               style={[styles.retryButton, { backgroundColor: colors.primary }]}
               onPress={this.handleRestart}
@@ -83,7 +66,6 @@ export class ErrorBoundary extends Component<Props, State> {
                 Try Again
               </Text>
             </TouchableOpacity>
-
             <Text style={[styles.footer, { color: colors.textMuted }]}>
               If the problem persists, please contact support.
             </Text>
@@ -91,11 +73,9 @@ export class ErrorBoundary extends Component<Props, State> {
         </SafeAreaView>
       );
     }
-
     return this.props.children;
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

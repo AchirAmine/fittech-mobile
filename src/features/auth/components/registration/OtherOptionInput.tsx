@@ -2,9 +2,7 @@ import React, { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Controller, Control } from 'react-hook-form';
 import { Input } from '@shared/components';
-
 interface OtherOptionInputProps {
-  
   control: Control<any>;
   name: string;
   label: string;
@@ -13,7 +11,6 @@ interface OtherOptionInputProps {
   maxLength?: number;
   onChangeText?: (text: string) => void;
 }
-
 export const OtherOptionInput: React.FC<OtherOptionInputProps> = memo(({
   control,
   name,
@@ -46,11 +43,9 @@ export const OtherOptionInput: React.FC<OtherOptionInputProps> = memo(({
     </View>
   );
 });
-
 const styles = StyleSheet.create({
   container: {
     marginTop: 8,
     marginBottom: 8,
   },
 });
-

@@ -4,14 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { Course } from '@appTypes/course';
-
 interface Props {
   course: Course;
 }
-
 const DetailsInfoGrid: React.FC<Props> = ({ course }) => {
   const { colors } = useTheme();
-
   return (
     <View style={styles.grid}>
       <View style={[styles.gridItem, { backgroundColor: colors.card, shadowColor: colors.shadow }]}>
@@ -21,7 +18,6 @@ const DetailsInfoGrid: React.FC<Props> = ({ course }) => {
           <Text style={[styles.gridValue, { color: colors.textPrimary }]}>{course.category}</Text>
         </View>
       </View>
-      
       <View style={[styles.gridItem, { backgroundColor: colors.card, shadowColor: colors.shadow }]}>
         <Ionicons name="calendar-outline" size={20} color={colors.primary} />
         <View style={styles.gridTextContainer}>
@@ -29,7 +25,6 @@ const DetailsInfoGrid: React.FC<Props> = ({ course }) => {
           <Text style={[styles.gridValue, { color: colors.textPrimary }]}>{course.days.split(' ')[0]}</Text>
         </View>
       </View>
-
       <View style={[styles.gridItem, { backgroundColor: colors.card, shadowColor: colors.shadow }]}>
         <Ionicons name="time-outline" size={20} color={colors.primary} />
         <View style={styles.gridTextContainer}>
@@ -37,7 +32,6 @@ const DetailsInfoGrid: React.FC<Props> = ({ course }) => {
           <Text style={[styles.gridValue, { color: colors.textPrimary }]}>{course.startTime} ({course.duration} min)</Text>
         </View>
       </View>
-
       <View style={[styles.gridItem, { backgroundColor: colors.card, shadowColor: colors.shadow }]}>
         <Ionicons name="location-outline" size={20} color={colors.primary} />
         <View style={styles.gridTextContainer}>
@@ -48,7 +42,6 @@ const DetailsInfoGrid: React.FC<Props> = ({ course }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
@@ -80,5 +73,4 @@ const styles = StyleSheet.create({
     fontFamily: Theme.Typography.fontFamily.bold,
   },
 });
-
 export default DetailsInfoGrid;

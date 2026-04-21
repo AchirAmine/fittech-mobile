@@ -2,7 +2,6 @@ import React, { memo } from 'react';
 import { View, Text, StyleSheet, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
-
 interface StepHeadingProps {
   title: string;
   subtitle?: string;
@@ -10,7 +9,6 @@ interface StepHeadingProps {
   titleStyle?: StyleProp<TextStyle>;
   subtitleStyle?: StyleProp<TextStyle>;
 }
-
 export const StepHeading: React.FC<StepHeadingProps> = memo(({
   title,
   subtitle,
@@ -19,7 +17,6 @@ export const StepHeading: React.FC<StepHeadingProps> = memo(({
   subtitleStyle,
 }) => {
   const { colors } = useTheme();
-
   return (
     <View style={[styles.container, containerStyle]}>
       <Text style={[styles.title, { color: colors.primaryMid }, titleStyle]}>
@@ -33,7 +30,6 @@ export const StepHeading: React.FC<StepHeadingProps> = memo(({
     </View>
   );
 });
-
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',

@@ -19,29 +19,22 @@ import { getErrorMessage } from '@shared/constants/errorMessages';
 import { resetPasswordSchema } from '@shared/utils/validators';
 import { authService } from '@features/auth/services/authService';
 import logger from '@shared/utils/logger';
-
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@appTypes/navigation.types';
 import { useTheme } from '@shared/hooks/useTheme';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'ResetPassword'>;
-
 const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
   const { colors } = useTheme();
   const { email } = route.params;
   const [showPass, setShowPass] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
-  
   const RESET_PASSWORD_IMAGE = require('@features/auth/assets/reset-password-illustration.png') as number;
-
   const { control, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: yupResolver(resetPasswordSchema),
     defaultValues: { password: '', confirmPassword: '' },
   });
-
   const password = watch('password', '');
-
   const onSubmit = useCallback(async (data: { password: string; confirmPassword: string }) => {
     setLoading(true);
     setApiError(null);
@@ -60,11 +53,9 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
       setLoading(false);
     }
   }, [navigation, email]);
-
   const toggleShowPass = useCallback(() => {
     setShowPass((prev) => !prev);
   }, []);
-
   return (
     <AppScreen
       isLoading={loading}
@@ -75,15 +66,12 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
       scrollable={true}
     >
       <View style={{ paddingTop: 20 }}>
-
         <AuthHeader
           title="Set a new password!"
           showLogo={true}
           logoSize="large" 
         />
-
         <IllustrationPlaceholder image={RESET_PASSWORD_IMAGE} />
-
         <View style={styles.form}>
           <View>
             <Controller
@@ -106,7 +94,6 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
             />
             <PasswordStrengthIndicator password={password} />
           </View>
-
           <Controller
             control={control}
             name="confirmPassword"
@@ -125,7 +112,6 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
               />
             )}
           />
-
           <NeonButton
             title={loading ? 'Resetting...' : 'Set New Password'}
             onPress={handleSubmit(onSubmit)}
@@ -137,7 +123,6 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   form: { gap: 20 },
   submitBtn: {
@@ -146,5 +131,4 @@ const styles = StyleSheet.create({
     height: 56,
   },
 });
-
 export default memo(ResetPasswordScreen);

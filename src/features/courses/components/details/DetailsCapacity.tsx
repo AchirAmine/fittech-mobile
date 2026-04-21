@@ -5,16 +5,12 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import { Course } from '@appTypes/course';
-
 interface Props {
   course: Course;
 }
-
 const DetailsCapacity: React.FC<Props> = ({ course }) => {
   const { colors, isDark } = useTheme();
-  
   const enrolledPercent = (course.enrolled / course.maxSlots) * 100;
-
   return (
     <View style={[styles.capacityCard, { backgroundColor: colors.card, shadowColor: colors.shadow }]}>
       <View style={styles.capacityHeader}>
@@ -27,19 +23,16 @@ const DetailsCapacity: React.FC<Props> = ({ course }) => {
           <Text style={[styles.deadlineValue, { color: colors.error }]}>2HRS BEFORE</Text>
         </View>
       </View>
-      
       <View style={styles.attendeesRow}>
         <Text style={[styles.attendeesCount, { color: colors.textPrimary }]}>{course.enrolled} / {course.maxSlots}</Text>
         <Text style={[styles.attendeesLabel, { color: colors.textSecondary }]}> Attendees</Text>
       </View>
-
       <View style={[styles.progressBarBg, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.1) : hexToRGBA(colors.black, 0.05) }]}>
         <View style={[styles.progressBarFill, { width: `${enrolledPercent}%`, backgroundColor: colors.primary }]} />
       </View>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   capacityCard: {
     padding: 20,
@@ -102,5 +95,4 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
 });
-
 export default DetailsCapacity;

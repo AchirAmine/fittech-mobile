@@ -4,16 +4,13 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string, InferType } from 'yup';
-
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { useTheme } from '@shared/hooks/useTheme';
 import { AppScreen, NeonButton, Input } from '@shared/components';
 import { StepHeading, RegisterStepHeader, PasswordRequirements, PasswordStrengthIndicator } from '@features/auth/components';
 import { PASSWORD_RULES } from '@shared/constants/authConstants';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep2'>;
-
 const registerStep2Schema = object().shape({
   email: string().trim().required('Email is required').email('Enter a valid email'),
   password: string()
@@ -33,11 +30,9 @@ const registerStep2Schema = object().shape({
       return value === context.parent.password;
     }),
 });
-
 const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
   const { colors } = useTheme();
   const { data: prevData } = route.params;
-
   const { control, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: yupResolver(registerStep2Schema),
     defaultValues: {
@@ -46,11 +41,9 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
       confirmPassword: '',
     },
   });
-
   const password = watch('password');
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
   const onSubmit = useCallback((data: InferType<typeof registerStep2Schema>) => {
     const signupData: SignupData = {
       ...prevData,
@@ -59,7 +52,6 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
     };
     navigation.navigate(ROUTES.AUTH.REGISTER_STEP3, { data: signupData });
   }, [navigation, prevData]);
-
   return (
     <AppScreen
       header={
@@ -73,10 +65,7 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
         <NeonButton title="Continue" onPress={handleSubmit(onSubmit)} style={styles.continueBtn} />
       }
     >
-
       <StepHeading title="Secure Your Account" />
-
-
       <View style={styles.illustrationWrap}>
         <Image
           source={require('../../assets/secure-account-illustration.png')}
@@ -84,8 +73,6 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
           resizeMode="contain"
         />
       </View>
-
-
       <View style={styles.form}>
         <Controller
           control={control}
@@ -104,7 +91,6 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
             />
           )}
         />
-
         <Controller
           control={control}
           name="password"
@@ -123,9 +109,7 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
             />
           )}
         />
-
         <PasswordStrengthIndicator password={password} />
-
         <Controller
           control={control}
           name="confirmPassword"
@@ -144,13 +128,11 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
             />
           )}
         />
-
         <PasswordRequirements password={password} rules={PASSWORD_RULES} />
       </View>
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   illustrationWrap: {
     alignSelf: 'center',
@@ -166,5 +148,4 @@ const styles = StyleSheet.create({
   form: { gap: 16 },
   continueBtn: { marginTop: 16, marginBottom: 8 },
 });
-
 export default memo(RegisterStep2Screen);

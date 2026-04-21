@@ -22,22 +22,17 @@ import { selectAuthLoading, selectAuthError } from '@features/auth/store/authSel
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@appTypes/navigation.types';
 import { useTheme } from '@shared/hooks/useTheme';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
-
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectAuthLoading);
   const error = useAppSelector(selectAuthError);
-
   const [showPass, setShowPass] = useState<boolean>(false);
-
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   });
-
   const onSubmit = useCallback(async (data: { email: string; password: string }) => {
     try {
       const resultAction = await dispatch(login(data));
@@ -47,25 +42,20 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     } catch (err: unknown) {
     }
   }, [dispatch, navigation]);
-
   const navigateToForgot = useCallback(() => {
     navigation.navigate(ROUTES.AUTH.FORGOT_PASSWORD);
   }, [navigation]);
-
   const navigateToRegister = useCallback(() => {
     navigation.navigate(ROUTES.AUTH.REGISTER_STEP1);
   }, [navigation]);
-
   const toggleShowPass = useCallback(() => {
     setShowPass((prev) => !prev);
   }, []);
-
   useEffect(() => {
     return () => {
       dispatch(clearError());
     };
   }, [dispatch]);
-
   return (
     <AppScreen
       isLoading={loading}
@@ -82,7 +72,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           showLogo={true}
           logoSize="large"
         />
-
         <View style={styles.form}>
           <Controller
             control={control}
@@ -101,7 +90,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               />
             )}
           />
-
           <Controller
             control={control}
             name="password"
@@ -120,11 +108,9 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               />
             )}
           />
-
           <TouchableOpacity style={styles.forgotRow} onPress={navigateToForgot}>
             <Text style={[styles.forgotText, { color: colors.primary }]}>Forgot password</Text>
           </TouchableOpacity>
-
           <NeonButton
             title={loading ? 'Signing in...' : 'Sign in'}
             onPress={handleSubmit(onSubmit)}
@@ -132,7 +118,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             style={styles.loginBtn}
           />
         </View>
-
         <View style={styles.registerRow}>
           <Text style={[styles.registerText, { color: colors.textPrimary }]}>Don't have an account? </Text>
           <TouchableOpacity onPress={navigateToRegister}>
@@ -143,7 +128,6 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   form: {
     gap: 20,
@@ -175,5 +159,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
 export default memo(LoginScreen);

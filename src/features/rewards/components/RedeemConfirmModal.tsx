@@ -15,11 +15,8 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
-
 const { width } = Dimensions.get('window');
-
 export type RedemptionState = 'confirm' | 'loading' | 'success' | 'error';
-
 interface RedeemConfirmModalProps {
   visible: boolean;
   onClose: () => void;
@@ -32,7 +29,6 @@ interface RedeemConfirmModalProps {
   error?: string | null;
   expiryDate?: string;
 }
-
 export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
   visible,
   onClose,
@@ -48,21 +44,16 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
   const { colors, isDark } = useTheme();
   const [internalState, setInternalState] = useState<RedemptionState>('confirm');
   const [copied, setCopied] = useState(false);
-  
   const remainingBalance = currentBalance - starsRequired;
-
   const getExpiryLabel = () => {
     if (!expiryDate) return 'N/A';
     const date = new Date(expiryDate);
     if (isNaN(date.getTime())) return 'N/A';
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
-
   const expiryStr = getExpiryLabel();
-
   const opacity = React.useRef(new Animated.Value(0)).current;
   const scale = React.useRef(new Animated.Value(0.9)).current;
-
   useEffect(() => {
     if (visible) {
       setInternalState('confirm');
@@ -75,7 +66,6 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
       Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true }).start();
     }
   }, [visible]);
-
   useEffect(() => {
     if (isLoading) {
       setInternalState('loading');
@@ -85,7 +75,6 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
       setInternalState('error');
     }
   }, [isLoading, promoCode, error]);
-
   const handleCopy = () => {
     if (promoCode) {
       Clipboard.setString(promoCode);
@@ -93,7 +82,6 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
       setTimeout(() => setCopied(false), 2000);
     }
   };
-
   const renderContent = () => {
     switch (internalState) {
       case 'confirm':
@@ -102,12 +90,10 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
             <View style={[styles.iconContainer, { backgroundColor: hexToRGBA(colors.primary, 0.1) }]}>
               <Ionicons name="cart" size={40} color={colors.primary} />
             </View>
-            
             <Text style={[styles.title, { color: colors.textPrimary }]}>Redeem Offer</Text>
             <Text style={[styles.message, { color: colors.textSecondary }]}>
               Confirm your redemption for the {rewardName}.
             </Text>
-
             <View style={styles.table}>
               <View style={styles.tableRow}>
                 <Text style={[styles.label, { color: colors.textSecondary }]}>Current Balance</Text>
@@ -116,7 +102,6 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
                   <Ionicons name="star" size={12} color={colors.textPrimary} style={{ marginLeft: 4 }} />
                 </View>
               </View>
-
               <View style={styles.tableRow}>
                 <Text style={[styles.label, { color: colors.textSecondary }]}>Cost</Text>
                 <View style={styles.pointsValue}>
@@ -124,9 +109,7 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
                   <Ionicons name="star" size={12} color={colors.error} style={{ marginLeft: 4 }} />
                 </View>
               </View>
-
               <View style={[styles.divider, { backgroundColor: hexToRGBA(colors.textSecondary, 0.1) }]} />
-
               <View style={styles.tableRow}>
                 <Text style={[styles.labelBold, { color: colors.textPrimary }]}>Remaining Balance</Text>
                 <View style={styles.pointsValue}>
@@ -135,7 +118,6 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
                 </View>
               </View>
             </View>
-
             <TouchableOpacity style={styles.mainButton} onPress={onRedeem}>
               <LinearGradient
                 colors={[colors.primary, colors.primaryMid]}
@@ -145,13 +127,11 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
               />
               <Text style={styles.mainButtonText}>Confirm Redemption</Text>
             </TouchableOpacity>
-            
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
               <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>Cancel</Text>
             </TouchableOpacity>
           </>
         );
-
       case 'loading':
         return (
           <View style={styles.centerContent}>
@@ -159,21 +139,17 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
             <Text style={[styles.loadingText, { color: colors.textPrimary }]}>Processing redemption...</Text>
           </View>
         );
-
       case 'success':
         return (
           <>
             <View style={[styles.iconContainer, { backgroundColor: hexToRGBA(colors.success, 0.1) }]}>
               <Ionicons name="checkmark-circle" size={40} color={colors.success} />
             </View>
-            
             <Text style={[styles.title, { color: colors.textPrimary }]}>Redemption Successful!</Text>
             <Text style={[styles.message, { color: colors.textSecondary }]}>
               Your promo code is ready to use
             </Text>
-
             <View style={[styles.divider, { backgroundColor: hexToRGBA(colors.textSecondary, 0.05), width: '100%', marginVertical: 15 }]} />
-
             <View style={styles.offerSummary}>
               <View style={[styles.offerIcon, { backgroundColor: colors.primary }]}>
                 <Ionicons name="star" size={14} color={colors.white} />
@@ -183,7 +159,6 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
                 <Text style={[styles.offerExpiry, { color: colors.textSecondary }]}>Valid until: {expiryStr}</Text>
               </View>
             </View>
-
             <View style={[styles.balanceBar, { backgroundColor: hexToRGBA(colors.primary, 0.05) }]}>
               <Text style={[styles.balanceLabel, { color: colors.textSecondary }]}>Your New Balance:</Text>
               <View style={styles.balanceValueContainer}>
@@ -191,21 +166,18 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
                 <Text style={[styles.balanceValue, { color: "#FFBA08" }]}>{remainingBalance} Stars</Text>
               </View>
             </View>
-
             <View style={[styles.codeContainer, { backgroundColor: colors.cardSecondary, borderColor: colors.primary, marginTop: 15 }]}>
               <Text style={[styles.codeText, { color: colors.textPrimary }]}>{promoCode}</Text>
               <TouchableOpacity onPress={handleCopy} style={styles.copyBtn}>
                 <Ionicons name={copied ? "checkmark" : "copy-outline"} size={20} color={colors.primary} />
               </TouchableOpacity>
             </View>
-
             <TouchableOpacity style={styles.mainButton} onPress={onClose}>
               <LinearGradient colors={[colors.primary, colors.primaryMid]} style={StyleSheet.absoluteFill} />
               <Text style={styles.mainButtonText}>Done</Text>
             </TouchableOpacity>
           </>
         );
-
       case 'error':
         return (
           <>
@@ -222,9 +194,7 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
         );
     }
   };
-
   if (!visible) return null;
-
   return (
     <Modal transparent visible={visible} animationType="none" onRequestClose={onClose}>
       <View style={[styles.overlay, { backgroundColor: 'rgba(0,0,0,0.7)' }]}>
@@ -247,7 +217,6 @@ export const RedeemConfirmModal: React.FC<RedeemConfirmModalProps> = ({
     </Modal>
   );
 };
-
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,

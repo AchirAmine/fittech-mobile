@@ -3,16 +3,13 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 interface RewardsEmptyStateProps {
   icon: keyof typeof Ionicons.glyphMap;
   title: string;
   subtitle: string;
 }
-
 export const RewardsEmptyState: React.FC<RewardsEmptyStateProps> = ({ icon, title, subtitle }) => {
   const { colors } = useTheme();
-
   return (
     <View style={styles.container}>
       <View style={[styles.iconCircle, { backgroundColor: colors.cardSecondary }]}>
@@ -23,7 +20,6 @@ export const RewardsEmptyState: React.FC<RewardsEmptyStateProps> = ({ icon, titl
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

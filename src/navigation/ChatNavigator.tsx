@@ -5,17 +5,13 @@ import { ROUTES } from './routes';
 import { Theme } from '../shared/constants/theme';
 import ChatListScreen from '@features/chat/screens/ChatListScreen';
 import ChatRoomScreen from '@features/chat/screens/ChatRoomScreen';
-
 export type ChatStackParamList = {
   [ROUTES.MAIN.CHAT_MAIN]: undefined;
   [ROUTES.MAIN.CHAT_ROOM]: { conversationId: string };
 };
-
 const Stack = createNativeStackNavigator<ChatStackParamList>();
-
 export const ChatNavigator = () => {
   const { colors } = useTheme();
-
   return (
     <Stack.Navigator
       screenOptions={{

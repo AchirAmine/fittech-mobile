@@ -5,17 +5,14 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import { Coach } from '../hooks/useCoaching';
-
 interface MyCoachingCardProps {
   coach: Coach;
   planTitle: string;
   onPress: () => void;
   onDashboardPress: () => void;
 }
-
 export const MyCoachingCard = ({ coach, planTitle, onPress, onDashboardPress }: MyCoachingCardProps) => {
   const { colors, isDark } = useTheme();
-
   return (
     <View style={styles.outerContainer}>
       <View style={styles.headerRow}>
@@ -25,7 +22,6 @@ export const MyCoachingCard = ({ coach, planTitle, onPress, onDashboardPress }: 
           <Ionicons name="arrow-forward" size={14} color={colors.primaryMid} />
         </TouchableOpacity>
       </View>
-
       <TouchableOpacity 
         style={[
           styles.cardContainer, 
@@ -38,26 +34,21 @@ export const MyCoachingCard = ({ coach, planTitle, onPress, onDashboardPress }: 
         onPress={onPress}
       >
         <View style={styles.cardContent}>
-          
           <View style={[styles.avatarWrapper, { borderColor: colors.primaryMid }]}>
             <Image source={coach.image} style={styles.avatar} />
           </View>
-          
           <View style={styles.textContainer}>
             <Text style={[styles.coachName, { color: colors.textPrimary }]}>{coach.name.toUpperCase()}</Text>
             <Text style={[styles.planTitle, { color: colors.primaryMid }]}>{planTitle}</Text>
           </View>
-
           <TouchableOpacity style={[styles.chatBtn, { backgroundColor: isDark ? hexToRGBA(colors.primaryMid, 0.2) : hexToRGBA(colors.primaryMid, 0.1) }]}>
             <Ionicons name="chatbubble-ellipses" size={20} color={colors.primaryMid} />
           </TouchableOpacity>
-
         </View>
       </TouchableOpacity>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   outerContainer: {
     marginBottom: 24,

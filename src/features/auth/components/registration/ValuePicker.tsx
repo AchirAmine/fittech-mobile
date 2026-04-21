@@ -2,7 +2,6 @@ import React, { useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, ListRenderItemInfo, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 export interface ValuePickerProps<T> {
   data: T[];
   selectedIndex: number;
@@ -13,7 +12,6 @@ export interface ValuePickerProps<T> {
   unit?: string;
   unitOverlayMarginLeft?: number;
 }
-
 export function ValuePicker<T>({
   data,
   selectedIndex,
@@ -27,7 +25,6 @@ export function ValuePicker<T>({
   const { colors } = useTheme();
   const flatListRef = useRef<FlatList<T>>(null);
   const pickerHeight = itemHeight * visibleItems;
-
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const offsetY = event.nativeEvent.contentOffset.y;
@@ -36,13 +33,11 @@ export function ValuePicker<T>({
     },
     [data.length, itemHeight, onIndexChange]
   );
-
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
       const diff = Math.abs(index - selectedIndex);
       const opacity = diff === 0 ? 1 : diff === 1 ? 0.6 : diff === 2 ? 0.35 : 0.15;
       const fontSize = diff === 0 ? 40 : diff === 1 ? 30 : diff === 2 ? 24 : 18;
-
       return (
         <View style={[styles.item, { height: itemHeight }]}>
           <Text
@@ -58,7 +53,6 @@ export function ValuePicker<T>({
     },
     [selectedIndex, colors, itemHeight, formatValue]
   );
-
   return (
     <View style={[styles.pickerContainer, { height: pickerHeight }]}>
       <View
@@ -73,7 +67,6 @@ export function ValuePicker<T>({
           { borderColor: colors.primaryMid, top: pickerHeight / 2 + itemHeight / 2 },
         ]}
       />
-
       <FlatList
         ref={flatListRef}
         data={data}
@@ -95,7 +88,6 @@ export function ValuePicker<T>({
         })}
         initialScrollIndex={selectedIndex}
       />
-
       {unit && (
         <View
           style={[
@@ -114,7 +106,6 @@ export function ValuePicker<T>({
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   pickerContainer: {
     position: 'relative',

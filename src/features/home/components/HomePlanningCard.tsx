@@ -4,20 +4,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-
 interface HomePlanningCardProps {
   onPress?: () => void;
 }
-
 export const HomePlanningCard: React.FC<HomePlanningCardProps> = ({ onPress }) => {
   const { colors, isDark } = useTheme();
-
   return (
     <View style={styles.outerContainer}>
       <View style={styles.headerRow}>
         <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>WEEKLY PLANNING</Text>
       </View>
-
       <TouchableOpacity 
         style={[
           styles.container, 
@@ -32,14 +28,12 @@ export const HomePlanningCard: React.FC<HomePlanningCardProps> = ({ onPress }) =
         <View style={[styles.iconContainer, { backgroundColor: colors.cardSecondary }]}>
           <Ionicons name="calendar-outline" size={24} color={colors.primary} />
         </View>
-        
         <View style={styles.textContent}>
           <Text style={[styles.title, { color: colors.textPrimary }]}>Full Schedule</Text>
           <Text style={[styles.description, { color: colors.textSecondary }]}>
             View your full workout schedule and upcoming sessions
           </Text>
         </View>
-        
         <View style={[styles.arrowContainer, { backgroundColor: colors.background }]}>
           <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
         </View>
@@ -47,7 +41,6 @@ export const HomePlanningCard: React.FC<HomePlanningCardProps> = ({ onPress }) =
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   outerContainer: {
     marginBottom: 24,

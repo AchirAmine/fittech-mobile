@@ -4,14 +4,11 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import { Course } from '@appTypes/course';
-
 interface Props {
   course: Course;
 }
-
 const DetailsHeader: React.FC<Props> = ({ course }) => {
   const { colors, isDark } = useTheme();
-  
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'OPEN': return colors.success;
@@ -20,9 +17,7 @@ const DetailsHeader: React.FC<Props> = ({ course }) => {
       default: return colors.textSecondary;
     }
   };
-
   const statusColor = getStatusColor(course.status);
-
   return (
     <View style={[styles.titleCard, { backgroundColor: colors.card, shadowColor: colors.shadow }]}>
       <View style={styles.cardHeader}>
@@ -30,9 +25,7 @@ const DetailsHeader: React.FC<Props> = ({ course }) => {
           <Text style={[styles.statusText, { color: statusColor }]}>{course.status}</Text>
         </View>
       </View>
-      
       <Text style={[styles.title, { color: colors.textPrimary }]}>{course.title}</Text>
-      
       <View style={[styles.coachContainer, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : hexToRGBA(colors.black, 0.02) }]}>
         <Image 
           source={{ uri: course.coach.avatar }} 
@@ -46,7 +39,6 @@ const DetailsHeader: React.FC<Props> = ({ course }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   titleCard: {
     padding: 18,
@@ -103,5 +95,4 @@ const styles = StyleSheet.create({
     fontFamily: Theme.Typography.fontFamily.bold,
   },
 });
-
 export default DetailsHeader;

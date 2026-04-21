@@ -3,7 +3,6 @@ import { View, Text, StyleSheet } from 'react-native';
 import { HEALTH_CONCERNS } from '@shared/constants/healthConstants';
 import { ThemeColors } from '@shared/constants/colors';
 import { EditableCard } from './EditableCard';
-
 interface RestrictionSelectorProps {
   selectedRestrictions: string[];
   isEditing: boolean;
@@ -13,7 +12,6 @@ interface RestrictionSelectorProps {
   otherValue?: string;
   onChangeOtherText?: (text: string) => void;
 }
-
 export const RestrictionSelector = ({ 
   selectedRestrictions, 
   isEditing, 
@@ -24,11 +22,9 @@ export const RestrictionSelector = ({
   onChangeOtherText,
 }: RestrictionSelectorProps) => {
   const visibleConcerns = isEditing ? HEALTH_CONCERNS : HEALTH_CONCERNS.filter(c => (selectedRestrictions || []).includes(c.id));
-
   if (visibleConcerns.length === 0) {
     return <Text style={[styles.emptyText, { color: colors.textMuted }]}>None reported</Text>;
   }
-
   return (
     <View style={styles.cardsContainer}>
       {visibleConcerns.map((concern, index) => (
@@ -53,7 +49,6 @@ export const RestrictionSelector = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,

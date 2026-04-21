@@ -1,18 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAppSelector } from '@shared/hooks/useReduxHooks';
 import { coursesService } from '../services/coursesService';
-
 export const useCourses = (category?: string) => {
   const user = useAppSelector((state) => state.auth.user);
   const gender = user?.gender;
-
   return useQuery({
     queryKey: ['courses', category, gender],
     queryFn: () => coursesService.getCourses(category, gender),
     staleTime: 5 * 60 * 1000, 
   });
 };
-
 export const useCourseDetail = (id: string) => {
   return useQuery({
     queryKey: ['course', id],
@@ -21,7 +18,6 @@ export const useCourseDetail = (id: string) => {
     staleTime: 5 * 60 * 1000,
   });
 };
-
 export const useReserveCourse = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -33,7 +29,6 @@ export const useReserveCourse = () => {
     },
   });
 };
-
 export const useCancelReservation = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -45,7 +40,6 @@ export const useCancelReservation = () => {
     },
   });
 };
-
 export const useJoinWaitingList = () => {
   const queryClient = useQueryClient();
   return useMutation({

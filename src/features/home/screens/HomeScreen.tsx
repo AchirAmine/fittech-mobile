@@ -19,28 +19,27 @@ import { FindCoachCard } from '../components/FindCoachCard';
 import { HomeCheckInCard } from '../components/HomeCheckInCard';
 import { PointsBadge } from '@features/rewards/components/PointsBadge';
 import { getImageSource } from '@shared/utils/imageUtils';
-
+import { useUnreadCount } from '@features/notifications/hooks/useNotifications';
+import { useNotificationSocket } from '@features/notifications/hooks/useNotificationSocket';
 export const HomeScreen = () => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const authUser = useAppSelector((state) => state.auth.user);
   const { data: summary, isLoading: isSummaryLoading, refetch } = useHomeSummary();
-
+  const unreadCount = useUnreadCount();
+  useNotificationSocket();
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch])
   );
-
   const user = summary ? {
     firstName: summary.fullName.split(' ')[0],
     lastName: summary.fullName.split(' ').slice(1).join(' '),
     profilePicture: getImageSource(summary.profilePicture),
   } : authUser;
-
   const hasActivePlan = !!summary?.activeSubscription;
   const activeSubscription = summary?.activeSubscription;
-
   const coaching = summary?.personalCoachName ? {
     coach: {
       id: 'active',
@@ -54,7 +53,6 @@ export const HomeScreen = () => {
     },
     planTitle: 'Personal Coaching'
   } : null;
-
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -71,11 +69,17 @@ export const HomeScreen = () => {
             balance={summary?.starBalance ?? (isSummaryLoading ? '...' : undefined)}
             onPress={() => navigation.navigate(ROUTES.MAIN.REWARDS as any)} 
           />
-          <TouchableOpacity style={styles.notificationBtn} activeOpacity={0.7}>
+          <TouchableOpacity
+            style={styles.notificationBtn}
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate(ROUTES.MAIN.NOTIFICATIONS as any)}
+          >
             <Ionicons name="notifications-outline" size={24} color={colors.textPrimary} />
-            <View style={[styles.notificationBadge, { borderColor: colors.card }]}>
-              <View style={[styles.notificationDot, { backgroundColor: colors.error }]} />
-            </View>
+            {summary?.hasUnreadNotifications && (
+              <View style={[styles.notificationBadge, { borderColor: colors.card }]}>
+                <View style={[styles.notificationDot, { backgroundColor: colors.error }]} />
+              </View>
+            )}
           </TouchableOpacity>
           <TouchableOpacity 
             style={[styles.avatarContainer, { backgroundColor: colors.cardSecondary }]} 
@@ -97,7 +101,6 @@ export const HomeScreen = () => {
       },
     });
   }, [navigation, user, colors]);
-
   return (
     <AppScreen 
       safeArea={false}
@@ -125,7 +128,6 @@ export const HomeScreen = () => {
                 />
               )}
             </View>
-
             {summary?.nearestCourse && (
               <NearestCourseCard 
                 title={summary.nearestCourse.title}
@@ -137,7 +139,6 @@ export const HomeScreen = () => {
                 })}
               />
             )}
-
             {coaching ? (
               <MyCoachingCard 
                 coach={coaching.coach}
@@ -150,11 +151,9 @@ export const HomeScreen = () => {
                 onPress={() => navigation.navigate(ROUTES.MAIN.PERSONAL_COACHES as any)} 
               />
             )}
-
             <HomePlanningCard 
               onPress={() => navigation.navigate(ROUTES.MAIN.PLANNING as any)}
             />
-
             <HomeCheckInCard />
           </View>
         </ScrollView>
@@ -162,7 +161,6 @@ export const HomeScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   headerLeft: {
     paddingLeft: 4,

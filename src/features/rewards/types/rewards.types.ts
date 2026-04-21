@@ -11,7 +11,6 @@ export interface Reward {
   starsNeeded: number;
   promoCode: Voucher | null;
 }
-
 export interface Voucher {
   id: string;
   code: string;
@@ -22,9 +21,7 @@ export interface Voucher {
   createdAt: string;
   promoOffer?: Reward;
 }
-
 export type StarTransactionReason = 'PLAN_PURCHASE' | 'PROMO_REDEMPTION' | 'STAR_EXPIRY' | 'PROMO_REFUND' | 'PROMO_CODE_DELETED';
-
 export interface StarTransaction {
   id: string;
   changeAmount: number;
@@ -33,13 +30,11 @@ export interface StarTransaction {
   description: string;
   createdAt: string;
 }
-
 export interface RewardsSummary {
   starBalance: number;
   starsExpireAt: string | null;
   offers: Reward[];
 }
-
 export interface MyPromoCode {
   id: string;
   code: string;
@@ -55,7 +50,6 @@ export interface MyPromoCode {
     endDate: string;
   };
 }
-
 export interface ApplyPromoCodeResult {
   code: string;
   offerName: string;

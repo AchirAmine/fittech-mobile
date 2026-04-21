@@ -1,14 +1,11 @@
 import axiosClient from '@shared/services/axiosClient';
 import { API_ENDPOINTS } from '@shared/constants/apiEndpoints';
 import { Session } from '@appTypes/planning';
-
 const getBackendDayOfWeek = (date: Date): string => {
   return date.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
 };
-
 const mapBackendSlotsToSessions = (slots: any[]): Session[] => {
   const sessions: Session[] = [];
-
   slots.forEach((slot) => {
     if (slot.slotType === 'OPEN_SESSION') {
       sessions.push({
@@ -24,7 +21,6 @@ const mapBackendSlotsToSessions = (slots: any[]): Session[] => {
         const [startH, startM] = slot.startTime.split(':').map(Number);
         const [endH, endM] = slot.endTime.split(':').map(Number);
         const durationMin = (endH * 60 + endM) - (startH * 60 + startM);
-
         sessions.push({
           id: course.id,
           time: slot.startTime,
@@ -33,7 +29,7 @@ const mapBackendSlotsToSessions = (slots: any[]): Session[] => {
           duration: `${durationMin} min`,
           zone: course.gymZone || 'Main Zone',
           coach: course.coach.fullName,
-          coachAvatar: course.coach.profilePicture || `https://i.pravatar.cc/150?u=${course.coach.firstName}`,
+          coachAvatar: course.coach.profilePicture,
           enrolled: course.enrolledCount,
           capacity: course.maxCapacity,
           statusBadge: course.isReservedByMember ? 'RESERVED' : (course.isWaitlistedByMember ? 'WAITLISTED' : (course.isFull ? 'FULL' : undefined)),
@@ -41,14 +37,11 @@ const mapBackendSlotsToSessions = (slots: any[]): Session[] => {
       });
     }
   });
-
   return sessions.sort((a, b) => a.time.localeCompare(b.time));
 };
-
 export const planningService = {
   async getSessions(date: Date, category: string = 'all', gender?: string): Promise<Session[]> {
     const dayOfWeek = getBackendDayOfWeek(date);
-    
     const getBackendSport = (cat: string, g?: string) => {
       if (cat === 'pool') return 'POOL';
       if (cat === 'gym') {
@@ -58,7 +51,6 @@ export const planningService = {
       }
       return cat.toUpperCase();
     };
-
     const sportsToFetch: string[] = [];
     if (category === 'all') {
       sportsToFetch.push(getBackendSport('gym', gender), 'POOL');
@@ -67,7 +59,6 @@ export const planningService = {
     } else if (category === 'swimming') {
       sportsToFetch.push('POOL');
     }
-
     try {
       const results = await Promise.all(
         sportsToFetch.map(sport => 
@@ -78,7 +69,6 @@ export const planningService = {
             })
         )
       );
-
       const allSlots = results.flatMap(res => res.data.data || []);
       return mapBackendSlotsToSessions(allSlots);
     } catch (error) {

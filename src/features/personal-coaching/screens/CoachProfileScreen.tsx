@@ -6,27 +6,21 @@ import { AppScreen } from '@shared/components';
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { useCallback } from 'react';
-
 import { useGetCoach } from '../hooks/useCoaching';
 import { CoachHero } from '../components/CoachHero';
 import { CoachDetailsSection } from '../components/CoachDetailsSection';
 import { CoachActionFooter } from '../components/CoachActionFooter';
-
 type ProfileRouteProp = RouteProp<HomeStackParamList, typeof ROUTES.MAIN.COACH_PROFILE>;
-
 export const CoachProfileScreen = () => {
   const { colors } = useTheme();
   const route = useRoute<ProfileRouteProp>();
   const { coachId } = route.params;
-
   const { data: coach, isLoading, refetch } = useGetCoach(coachId);
-
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch])
   );
-
   if (isLoading) {
     return (
       <AppScreen isLoading={true} loadingMessage="Loading coach profile...">
@@ -34,7 +28,6 @@ export const CoachProfileScreen = () => {
       </AppScreen>
     );
   }
-
   if (!coach) {
     return (
       <AppScreen errorMessage="Coach not found">
@@ -46,7 +39,6 @@ export const CoachProfileScreen = () => {
       </AppScreen>
     );
   }
-
   const getInitialStatus = () => {
     if (!coach.invitation) return 'idle';
     switch (coach.invitation.status) {
@@ -56,9 +48,7 @@ export const CoachProfileScreen = () => {
       default: return 'idle';
     }
   };
-
   const initialStatus = getInitialStatus();
-
   return (
     <AppScreen 
       safeArea={false} 
@@ -90,7 +80,6 @@ export const CoachProfileScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 40,

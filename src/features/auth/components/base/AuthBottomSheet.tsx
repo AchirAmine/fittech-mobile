@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@shared/hooks/useTheme';
-
 export interface AuthBottomSheetProps {
   children: React.ReactNode;
   onDismiss?: () => void;
@@ -18,7 +17,6 @@ export interface AuthBottomSheetProps {
   minHeight?: string | number;
   showOverlay?: boolean;
 }
-
 export const AuthBottomSheet: React.FC<AuthBottomSheetProps> = ({
   children,
   onDismiss,
@@ -27,19 +25,16 @@ export const AuthBottomSheet: React.FC<AuthBottomSheetProps> = ({
   showOverlay = false,
 }) => {
   const { colors } = useTheme();
-
   const isModal = variant === 'modal';
   const containerBg = isModal ? 'transparent' : 'transparent';
   const sheetStyle: ViewStyle = isModal
     ? { height: minHeight as ViewStyle['height'] }
     : styles.sheetFull;
-
   const topArea = isModal && onDismiss ? (
     <Pressable style={styles.topArea} onPress={onDismiss} />
   ) : (
     <SafeAreaView style={styles.topAreaSafe} edges={['top']} />
   );
-
   return (
     <KeyboardAvoidingView
       style={[
@@ -63,7 +58,6 @@ export const AuthBottomSheet: React.FC<AuthBottomSheetProps> = ({
     </KeyboardAvoidingView>
   );
 };
-
 const styles = StyleSheet.create({
   container: { flex: 1 },
   containerModal: { justifyContent: 'flex-end' },

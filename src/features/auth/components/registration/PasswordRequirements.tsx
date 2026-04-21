@@ -3,20 +3,16 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
-
 export interface PasswordRule {
   label: string;
   test: (pw: string) => boolean;
 }
-
 interface PasswordRequirementsProps {
   password: string;
   rules: PasswordRule[];
 }
-
 export const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({ password, rules }) => {
   const { colors } = useTheme();
-
   return (
     <View style={styles.container}>
       {rules.map((rule, idx) => {
@@ -37,7 +33,6 @@ export const PasswordRequirements: React.FC<PasswordRequirementsProps> = ({ pass
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     gap: 8,

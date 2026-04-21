@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-
 interface CoachCardProps {
   name: string;
   specialty: string;
@@ -12,10 +11,8 @@ interface CoachCardProps {
   image: any;
   onPress?: () => void;
 }
-
 export const CoachCard = ({ name, specialty, clientsCount, image, onPress }: CoachCardProps) => {
   const { colors, isDark } = useTheme();
-
   return (
     <TouchableOpacity 
       style={[
@@ -32,7 +29,6 @@ export const CoachCard = ({ name, specialty, clientsCount, image, onPress }: Coa
       <View style={[styles.imageContainer, { borderColor: colors.primary }]}>
         <Image source={image} style={styles.image} />
       </View>
-      
       <View style={styles.content}>
         <Text style={[styles.name, { color: colors.textPrimary }]}>{name}</Text>
         <Text style={[styles.specialty, { color: colors.textSecondary }]}>{specialty}</Text>
@@ -43,12 +39,10 @@ export const CoachCard = ({ name, specialty, clientsCount, image, onPress }: Coa
           </Text>
         </View>
       </View>
-      
       <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

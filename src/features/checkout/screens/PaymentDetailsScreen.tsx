@@ -17,11 +17,9 @@ import { usePayCoaching } from '@features/personal-coaching/hooks/useCoaching';
 import { useApplyPromoCode } from '@features/rewards/hooks/useRewards';
 import { ROUTES } from '@navigation/routes';
 import { ApplyPromoCodeResult } from '@features/rewards/types/rewards.types';
-
 type RouteParams = {
   plan: any;
 };
-
 type ModalState = {
   visible: boolean;
   type: 'success' | 'error';
@@ -29,22 +27,17 @@ type ModalState = {
   message: string;
   onConfirm: () => void;
 };
-
 export const PaymentDetailsScreen = () => {
   const route = useRoute();
   const navigation = useNavigation<any>();
   const { colors } = useTheme();
-
   const { mutate: subscribe, isPending: isSubscribing } = useSubscribe();
   const { mutate: payCoaching, isPending: isPayingCoaching } = usePayCoaching();
-
   const { plan } = (route.params as RouteParams) || {};
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('credit_card');
   const [promoCode, setPromoCode] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState<ApplyPromoCodeResult | null>(null);
-  
   const { mutate: applyPromo, isPending: isApplyingPromo } = useApplyPromoCode();
-
   const [modal, setModal] = useState<ModalState>({
     visible: false,
     type: 'success',
@@ -52,7 +45,6 @@ export const PaymentDetailsScreen = () => {
     message: '',
     onConfirm: () => {},
   });
-
   const showModal = (
     type: 'success' | 'error',
     title: string,
@@ -61,12 +53,9 @@ export const PaymentDetailsScreen = () => {
   ) => {
     setModal({ visible: true, type, title, message, onConfirm });
   };
-
   const hideModal = () => setModal((prev) => ({ ...prev, visible: false }));
-
   const handleApplyPromoCode = () => {
     if (!promoCode.trim() || isApplyingPromo) return;
-    
     applyPromo({ code: promoCode, planPrice: plan.price }, {
       onSuccess: (data) => {
         setAppliedDiscount(data);
@@ -77,12 +66,10 @@ export const PaymentDetailsScreen = () => {
       }
     });
   };
-
   const handleRemovePromoCode = () => {
     setAppliedDiscount(null);
     setPromoCode('');
   };
-
   if (!plan) {
     return (
       <AppScreen errorMessage="Plan data is missing">
@@ -92,12 +79,9 @@ export const PaymentDetailsScreen = () => {
       </AppScreen>
     );
   }
-
   const isPending = isSubscribing || isPayingCoaching;
-
   const handleConfirmPay = () => {
     const backendMethod = selectedMethod === 'credit_card' ? 'ONLINE' : 'AT_CLUB';
-
     if (plan.type === 'coaching') {
       if (backendMethod === 'ONLINE') {
         if (!plan.invitationId) {
@@ -142,7 +126,6 @@ export const PaymentDetailsScreen = () => {
       }
       return;
     }
-
     subscribe(
       { offerId: plan.id, paymentMethod: backendMethod, promoCode: appliedDiscount?.code },
       {
@@ -187,18 +170,15 @@ export const PaymentDetailsScreen = () => {
       }
     );
   };
-
   return (
     <AppScreen
       scrollable={true}
       errorMessage={null}
       backgroundColor={colors.background}
       safeArea={false}
-
     >
       <PaymentPlanHeader plan={plan} />
       <PaymentMethods selectedMethod={selectedMethod} onSelectMethod={setSelectedMethod} />
-
       <Input
         label="Enter Promo Code"
         value={promoCode}
@@ -212,13 +192,11 @@ export const PaymentDetailsScreen = () => {
         editable={!appliedDiscount && !isApplyingPromo}
         status={appliedDiscount ? 'success' : undefined}
       />
-
       <PaymentSummary 
         plan={plan} 
         discountPercentage={appliedDiscount?.discountPercentage}
         discountAmount={appliedDiscount?.discountAmount}
       />
-
       <View style={styles.footerContainer}>
         <Text style={[styles.termsText, { color: colors.textMuted }]}>
           By confirming, you agree to our{' '}
@@ -242,7 +220,6 @@ export const PaymentDetailsScreen = () => {
           }
         />
       </View>
-
       <StatusModal
         visible={modal.visible}
         type={modal.type}
@@ -255,7 +232,6 @@ export const PaymentDetailsScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   errorContainer: {
     flex: 1,

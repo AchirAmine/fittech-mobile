@@ -3,18 +3,15 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
 import { SubscriptionPlan } from '@appTypes/index';
-
 interface PaymentSummaryProps {
   plan: SubscriptionPlan;
   discountPercentage?: number;
   discountAmount?: number;
 }
-
 export const PaymentSummary: React.FC<PaymentSummaryProps> = ({ plan, discountPercentage, discountAmount }) => {
   const { colors } = useTheme();
   const subtotal = plan.price;
   const finalTotal = discountAmount !== undefined ? Math.max(subtotal - discountAmount, 0) : subtotal;
-
   return (
     <View style={[
       styles.summaryCard,
@@ -29,14 +26,12 @@ export const PaymentSummary: React.FC<PaymentSummaryProps> = ({ plan, discountPe
           {subtotal.toLocaleString()} {plan.currency}
         </Text>
       </View>
-      
       <View style={styles.summaryRow}>
         <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Promo Code</Text>
         <Text style={[styles.summaryValue, { color: discountPercentage ? colors.success : colors.textMuted }]}>
           {discountPercentage ? `-${discountPercentage}%` : '0%'}
         </Text>
       </View>
-
       {discountAmount !== undefined && discountAmount > 0 && (
         <View style={styles.summaryRow}>
           <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Discount</Text>
@@ -45,7 +40,6 @@ export const PaymentSummary: React.FC<PaymentSummaryProps> = ({ plan, discountPe
           </Text>
         </View>
       )}
-
       {plan.starsAwarded > 0 && (
         <View style={styles.summaryRow}>
           <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Stars Reward</Text>
@@ -54,9 +48,7 @@ export const PaymentSummary: React.FC<PaymentSummaryProps> = ({ plan, discountPe
           </Text>
         </View>
       )}
-      
       <View style={[styles.summaryDivider, { backgroundColor: colors.border }]} />
-      
       <View style={styles.summaryTotalRow}>
         <Text style={[styles.summaryTotalLabel, { color: colors.textPrimary }]}>
           TOTAL AMOUNT
@@ -68,7 +60,6 @@ export const PaymentSummary: React.FC<PaymentSummaryProps> = ({ plan, discountPe
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   summaryCard: {
     borderRadius: 16,

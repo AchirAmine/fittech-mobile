@@ -1,12 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { accountService } from '../services/accountService';
 import { User } from '@appTypes/index';
-
 export const accountKeys = {
   all: ['account'] as const,
   me: () => [...accountKeys.all, 'me'] as const,
 };
-
 export const useGetAccount = () => {
   return useQuery({
     queryKey: accountKeys.me(),
@@ -33,10 +31,8 @@ export const useGetAccount = () => {
     }),
   });
 };
-
 export const useUpdateAccount = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (data: Partial<User>) => {
       return accountService.updateMe(data);

@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 interface BookingSummaryCardProps {
   coach: {
     name: string;
@@ -12,10 +11,8 @@ interface BookingSummaryCardProps {
   date: string;
   timeSlot: string;
 }
-
 export const BookingSummaryCard = ({ coach, date, timeSlot }: BookingSummaryCardProps) => {
   const { colors, isDark } = useTheme();
-
   return (
     <View style={[styles.confirmCard, { backgroundColor: isDark ? colors.card : '#FFF' }, styles.shadow]}>
       <View style={styles.coachSummary}>
@@ -28,7 +25,6 @@ export const BookingSummaryCard = ({ coach, date, timeSlot }: BookingSummaryCard
           </View>
         </View>
       </View>
-
       <View style={styles.summaryFooter}>
         <View style={styles.summaryItem}>
           <Text style={[styles.summaryLabel, { color: colors.primary }]}>DATE</Text>
@@ -52,7 +48,6 @@ export const BookingSummaryCard = ({ coach, date, timeSlot }: BookingSummaryCard
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   confirmCard: {
     padding: 24,

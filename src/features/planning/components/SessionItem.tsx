@@ -9,19 +9,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HomeStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
-
-
 interface Props {
   session: Session;
 }
-
 const SessionItem: React.FC<Props> = ({ session }) => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
-  
   const isClass = session.type === 'class';
   const isFull = session.statusBadge === 'FULL';
-
   const handlePress = () => {
     if (isClass) {
       navigation.navigate(ROUTES.MAIN.COURSE_DETAILS as any, { 
@@ -30,15 +25,11 @@ const SessionItem: React.FC<Props> = ({ session }) => {
       });
     }
   };
-  
   const cardBg = isDark ? colors.card : colors.white;
-  
   const cardBorderColor = isClass 
     ? hexToRGBA(colors.primary, 0.3) 
     : (isDark ? hexToRGBA(colors.white, 0.05) : hexToRGBA(colors.black, 0.05));
-
   const accentColor = isClass ? colors.primary : colors.textSecondary;
-
   const getStatusColor = (status?: string) => {
     switch (status) {
       case 'FULL': return colors.error;
@@ -48,7 +39,6 @@ const SessionItem: React.FC<Props> = ({ session }) => {
       default: return colors.primary;
     }
   };
-
   return (
     <View style={styles.container}>
       {}
@@ -69,13 +59,11 @@ const SessionItem: React.FC<Props> = ({ session }) => {
             <Text style={[styles.statusBadgeText, { color: colors.white }]}>{session.statusBadge}</Text>
           </View>
         )}
-
         <View style={styles.mainContent}>
           <View style={styles.textDetails}>
             <Text style={[styles.title, { color: colors.textPrimary }]} numberOfLines={1}>
               {session.title}
             </Text>
-            
             {isClass ? (
               <View style={styles.infoRow}>
                 <View style={styles.infoItem}>
@@ -100,7 +88,6 @@ const SessionItem: React.FC<Props> = ({ session }) => {
                 </Text>
               </View>
             )}
-
             {isClass && session.zone && (
               <View style={styles.zoneRow}>
                 <Ionicons name="location-outline" size={14} color={colors.primary} />
@@ -108,12 +95,10 @@ const SessionItem: React.FC<Props> = ({ session }) => {
               </View>
             )}
           </View>
-
           {isClass && session.coachAvatar && (
             <Image source={{ uri: session.coachAvatar }} style={[styles.avatar, { borderColor: colors.white }]} />
           )}
         </View>
-
         {isClass && session.enrolled !== undefined && session.capacity !== undefined && (
           <View style={styles.footer}>
             <View style={styles.enrollmentSection}>
@@ -137,7 +122,6 @@ const SessionItem: React.FC<Props> = ({ session }) => {
                 />
               </View>
             </View>
-
             <TouchableOpacity 
               style={[
                 styles.joinButton, 
@@ -158,11 +142,8 @@ const SessionItem: React.FC<Props> = ({ session }) => {
         )}
       </View>
     </View>
-
-
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     marginBottom: 4, 
@@ -296,5 +277,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
 export default memo(SessionItem);

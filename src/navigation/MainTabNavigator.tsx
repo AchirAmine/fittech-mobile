@@ -2,23 +2,18 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
-
 import { ROUTES } from '@navigation/routes';
 import { MainTabParamList } from '@appTypes/navigation.types';
 import { Theme } from '../shared/constants/theme';
-
 import { HomeNavigator } from './HomeNavigator';
 import { MembershipNavigator } from './MembershipNavigator';
 import { AccountNavigator } from './AccountNavigator';
 import { CoursesNavigator } from './CoursesNavigator';
 import { ChatNavigator } from './ChatNavigator';
 import PlanningScreen from '@features/planning/screens/PlanningScreen';
-
 const Tab = createBottomTabNavigator<MainTabParamList>();
-
 export const MainTabNavigator = () => {
   const { colors } = useTheme();
-
   return (
     <Tab.Navigator
       initialRouteName={ROUTES.MAIN.HOME}

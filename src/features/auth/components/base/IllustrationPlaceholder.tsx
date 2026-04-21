@@ -2,9 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Image, ImageSourcePropType, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
-
 type IoniconsName = keyof typeof Ionicons.glyphMap;
-
 export interface IllustrationPlaceholderProps {
   icon?: IoniconsName;
   image?: ImageSourcePropType;
@@ -13,7 +11,6 @@ export interface IllustrationPlaceholderProps {
   height?: number;
   iconStyle?: object;
 }
-
 export const IllustrationPlaceholder: React.FC<IllustrationPlaceholderProps> = ({
   icon,
   image,
@@ -24,18 +21,15 @@ export const IllustrationPlaceholder: React.FC<IllustrationPlaceholderProps> = (
 }) => {
   const { colors } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
-
   const baseWidth = 320;
   const baseHeight = 225;
   const scale = screenWidth >= 360 ? 1 : screenWidth / 360;
   const responsiveWidth = baseWidth * scale;
   const responsiveHeight = baseHeight * scale;
-
   const isCircular = !image;
   const containerSize = isCircular ? size : undefined;
   const containerWidth = width ?? (isCircular ? size : responsiveWidth);
   const containerHeight = height ?? (isCircular ? size : responsiveHeight);
-
   if (image) {
     return (
       <View style={[styles.imageWrap, { width: containerWidth, height: containerHeight }]}>
@@ -43,7 +37,6 @@ export const IllustrationPlaceholder: React.FC<IllustrationPlaceholderProps> = (
       </View>
     );
   }
-
   return (
     <View
       style={[
@@ -67,7 +60,6 @@ export const IllustrationPlaceholder: React.FC<IllustrationPlaceholderProps> = (
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   iconWrap: {
     alignSelf: 'center',

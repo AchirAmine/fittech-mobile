@@ -1,21 +1,16 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import secureStorage from '@store/secureStorage';
-
 import authReducer from '@features/auth/store/authSlice';
-
 const rootReducer = combineReducers({
   auth: authReducer,
 });
-
 const persistConfig = {
   key: 'root',
   storage: secureStorage,
   whitelist: ['auth'], 
 };
-
 const persistedReducer = persistReducer(persistConfig, rootReducer);
-
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
@@ -25,8 +20,6 @@ export const store = configureStore({
       },
     }),
 });
-
 export const persistor = persistStore(store);
-
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

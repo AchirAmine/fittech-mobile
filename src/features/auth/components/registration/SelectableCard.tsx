@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
-
 export interface SelectableCardProps {
   label: string;
   subtitle?: string;
@@ -12,7 +11,6 @@ export interface SelectableCardProps {
   isSelected: boolean;
   onPress: () => void;
 }
-
 export const SelectableCard: React.FC<SelectableCardProps> = ({
   label,
   subtitle,
@@ -22,7 +20,6 @@ export const SelectableCard: React.FC<SelectableCardProps> = ({
   onPress,
 }) => {
   const { colors } = useTheme();
-
   return (
     <TouchableOpacity
       style={[
@@ -63,7 +60,6 @@ export const SelectableCard: React.FC<SelectableCardProps> = ({
           ) : null}
         </View>
       </View>
-
       <View
         style={[
           styles.checkCircle,
@@ -78,7 +74,6 @@ export const SelectableCard: React.FC<SelectableCardProps> = ({
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

@@ -3,13 +3,11 @@ export interface Category {
   label: string;
   emoji: string;
 }
-
 export interface DayInfo {
   day: string;
   date: string;
   hasEvent: boolean;
 }
-
 export interface Session {
   id: string;
   time: string;
@@ -25,7 +23,6 @@ export interface Session {
   statusBadge?: 'RESERVED' | 'WAITLISTED' | 'FULL' | string;
   statusColor?: string;
 }
-
 export const PLANNING_CATEGORIES: Category[] = [
   { id: 'all', label: 'All', emoji: '✨' },
   { id: 'gym', label: 'Gym', emoji: '🏋️' },

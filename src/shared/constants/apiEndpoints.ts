@@ -48,4 +48,16 @@ export const API_ENDPOINTS = {
     LIST: "/offers",
     PUBLIC: "/offers/public",
   },
+  NOTIFICATIONS: {
+    LIST: "/notifications",
+    READ: (id: string) => `/notifications/${id}/read`,
+    READ_ALL: "/notifications/read-all",
+  },
+  CHAT: {
+    CONVERSATIONS: "/chat/conversations",
+    MESSAGES: (id: string) => `/chat/conversations/${id}/messages`,
+    MEDIA: (id: string) => `/chat/conversations/${id}/media`,
+    UPLOADS: "/chat/uploads",
+    MY_COACHES: "/chat/my-coaches",
+  },
 } as const;

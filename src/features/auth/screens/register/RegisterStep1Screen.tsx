@@ -7,7 +7,6 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string, InferType } from 'yup';
-
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { useTheme } from '@shared/hooks/useTheme';
@@ -16,9 +15,7 @@ import { Theme } from '@shared/constants/theme';
 import { GENDER_OPTIONS } from '@shared/constants/authConstants';
 import { AppScreen, Input, NeonButton } from '@shared/components';
 import { StepHeading, RegisterStepHeader } from '@features/auth/components';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep1'>;
-
 const registerStep1Schema = object().shape({
   firstName: string().trim()
     .required('First name is required')
@@ -54,10 +51,8 @@ const registerStep1Schema = object().shape({
   gender: string().required('Please select your gender'),
   photo: string().optional(),
 });
-
 const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
-
   const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     resolver: yupResolver(registerStep1Schema),
     defaultValues: {
@@ -69,12 +64,9 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
       photo: undefined as string | undefined,
     },
   });
-
   const photoUri = watch('photo');
   const dateOfBirth = watch('dateOfBirth');
-
   const [showDatePicker, setShowDatePicker] = useState(false);
-
   const handlePickImage = useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
@@ -102,27 +94,21 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
       logger.error('Image picking error:', error);
     }
   }, [setValue]);
-
   const handleDateChange = useCallback((text: string, currentVal: string, onChange: (val: string) => void) => {
     const isDeleting = text.length < currentVal.length;
     let cleaned = text.replace(/\D/g, '');
-    
     if (cleaned.length > 8) cleaned = cleaned.slice(0, 8);
-    
     let formatted = cleaned;
     if (cleaned.length > 4) {
       formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4)}`;
     } else if (cleaned.length > 2) {
       formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
     }
-    
     if (!isDeleting && (cleaned.length === 2 || cleaned.length === 4)) {
       formatted += '/';
     }
-    
     onChange(formatted);
   }, []);
-
   const handleDateSelect = useCallback((event: DateTimePickerEvent, selectedDate?: Date) => {
     setShowDatePicker(false);
     if (event.type === 'set' && selectedDate) {
@@ -133,7 +119,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
       setValue('dateOfBirth', formatted, { shouldValidate: true });
     }
   }, [setValue]);
-
   const onSubmit = useCallback((data: InferType<typeof registerStep1Schema>) => {
     const signupData: SignupData = {
       ...data,
@@ -141,7 +126,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
     };
     navigation.navigate(ROUTES.AUTH.REGISTER_STEP2, { data: signupData });
   }, [navigation]);
-
   return (
     <AppScreen
       header={
@@ -155,10 +139,7 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
         <NeonButton title="Continue" onPress={handleSubmit(onSubmit)} style={styles.continueBtn} />
       }
     >
-
       <StepHeading title="Introduce yourself !" />
-
-
       <TouchableOpacity
         style={styles.avatarWrap}
         onPress={handlePickImage}
@@ -185,8 +166,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
           <Ionicons name="camera-outline" size={14} color={colors.white} />
         </View>
       </TouchableOpacity>
-
-
       <View style={styles.form}>
         <Controller
           control={control}
@@ -203,7 +182,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
             />
           )}
         />
-
         <Controller
           control={control}
           name="lastName"
@@ -219,7 +197,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
             />
           )}
         />
-
         <Controller
           control={control}
           name="phone"
@@ -236,7 +213,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
             />
           )}
         />
-
         <Controller
           control={control}
           name="dateOfBirth"
@@ -255,7 +231,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
             />
           )}
         />
-
         {showDatePicker && (
           <DateTimePicker
             value={(() => {
@@ -281,8 +256,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
             })()}
           />
         )}
-
-
         <View>
           <Text style={[styles.label, { color: colors.textPrimary }]}>Gender</Text>
           <Controller
@@ -323,7 +296,6 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   avatarWrap: {
     alignSelf: 'center',
@@ -391,5 +363,4 @@ const styles = StyleSheet.create({
   },
   continueBtn: { marginTop: 32 },
 });
-
 export default RegisterStep1Screen;

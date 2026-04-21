@@ -19,25 +19,19 @@ import { getErrorMessage } from '@shared/constants/errorMessages';
 import { forgotPasswordSchema } from '@shared/utils/validators';
 import { authService } from '@features/auth/services/authService';
 import logger from '@shared/utils/logger';
-
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@appTypes/navigation.types';
 import { useTheme } from '@shared/hooks/useTheme';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'ForgotPassword'>;
-
 const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
   const [loading, setLoading] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
-
   const FORGOT_PASSWORD_IMAGE = require('@features/auth/assets/forgot-password-illustration.png') as number;
-
   const { control, handleSubmit, formState: { errors } } = useForm<{ email: string }>({
     resolver: yupResolver(forgotPasswordSchema),
     defaultValues: { email: '' },
   });
-
   const onSubmit = useCallback(async (data: { email: string }) => {
     setLoading(true);
     setApiError(null);
@@ -52,7 +46,6 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
       setLoading(false);
     }
   }, [navigation]);
-
   return (
     <AppScreen
       isLoading={loading}
@@ -68,14 +61,11 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
             <Logo size="large" color={colors.primary} />
           </View>
         </View>
-
         <AuthHeader
           title="Forgot your password ?"
           subtitle={`Enter your email address below${'\n'}and we'll send you a code to give back`}
         />
-
         <IllustrationPlaceholder image={FORGOT_PASSWORD_IMAGE} />
-
         <View style={styles.form}>
           <Controller
             control={control}
@@ -94,7 +84,6 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
               />
             )}
           />
-
           <NeonButton
             title={loading ? 'Sending...' : 'Send Verification Code'}
             onPress={handleSubmit(onSubmit)}
@@ -106,7 +95,6 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
@@ -123,5 +111,4 @@ const styles = StyleSheet.create({
     height: 56,
   },
 });
-
 export default memo(ForgotPasswordScreen);

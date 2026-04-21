@@ -5,17 +5,13 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Palette } from '@shared/constants/colors';
 import { Message, FileAttachmentType } from '../services/chatApi';
 import { getImageSource } from '@shared/utils/imageUtils';
-
 type Props = {
   message: Message;
   currentUserId: string;
 };
-
 export const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
   const { colors } = useTheme();
-
   const isMine = message.senderId === currentUserId;
-
   return (
     <View style={[styles.wrapper, isMine ? styles.wrapperRight : styles.wrapperLeft]}>
       {!isMine && message.senderName && (
@@ -48,7 +44,6 @@ export const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
             resizeMode="cover"
           />
         )}
-
         {message.fileUrl && message.fileType === FileAttachmentType.FILE && (
           <View style={[styles.fileContainer, { backgroundColor: isMine ? Palette.translucent.white(0.15) : colors.cardSecondary }]}>
             <Ionicons name="document-outline" size={24} color={isMine ? colors.white : colors.primary} />
@@ -57,13 +52,11 @@ export const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
             </Text>
           </View>
         )}
-
         {message.textContent ? (
           <Text style={[styles.text, { color: isMine ? colors.white : colors.textPrimary }]}>
             {message.textContent}
           </Text>
         ) : null}
-
         <View style={styles.footer}>
           <Text style={[styles.time, { color: isMine ? Palette.translucent.white(0.7) : colors.textMuted }]}>
             {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -73,7 +66,6 @@ export const MessageBubble: React.FC<Props> = ({ message, currentUserId }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   wrapper: {
     marginVertical: 4,

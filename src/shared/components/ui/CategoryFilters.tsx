@@ -3,23 +3,19 @@ import { ScrollView, TouchableOpacity, Text, StyleSheet, View } from 'react-nati
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-
 export interface Category {
   id: string;
   label: string;
   emoji?: string;
 }
-
 interface Props {
   categories: Category[];
   selectedId: string;
   onSelect: (id: string) => void;
   containerStyle?: any;
 }
-
 const CategoryFilters: React.FC<Props> = ({ categories, selectedId, onSelect, containerStyle }) => {
   const { colors, isDark } = useTheme();
-
   return (
     <View style={[styles.container, containerStyle]}>
       <ScrollView 
@@ -30,7 +26,6 @@ const CategoryFilters: React.FC<Props> = ({ categories, selectedId, onSelect, co
       >
         {categories.map((cat) => {
           const isSelected = selectedId === cat.id;
-
           return (
             <TouchableOpacity
               key={cat.id}
@@ -61,7 +56,6 @@ const CategoryFilters: React.FC<Props> = ({ categories, selectedId, onSelect, co
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
@@ -98,5 +92,4 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 });
-
 export default memo(CategoryFilters);

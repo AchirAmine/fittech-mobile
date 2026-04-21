@@ -2,14 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 interface Props {
   description: string;
 }
-
 const DetailsAbout: React.FC<Props> = ({ description }) => {
   const { colors } = useTheme();
-
   return (
     <View style={styles.aboutSection}>
       <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>About this session</Text>
@@ -19,7 +16,6 @@ const DetailsAbout: React.FC<Props> = ({ description }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   aboutSection: {
     marginTop: 10,
@@ -35,5 +31,4 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
 });
-
 export default DetailsAbout;

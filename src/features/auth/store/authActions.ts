@@ -2,7 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { authService } from "@features/auth/services/authService";
 import { accountService } from "@features/account/services/accountService";
 import { User } from "@appTypes/index";
-
 export const login = createAsyncThunk<
   { user: User; token: string; refreshToken: string },
   { email: string; password: string }
@@ -10,7 +9,6 @@ export const login = createAsyncThunk<
   try {
     const response = await authService.login(email, password);
     const { token, refreshToken, user: basicUser } = response.data.data;
-    
     try {
       const fullProfile = await accountService.getMe();
       return {
@@ -25,7 +23,6 @@ export const login = createAsyncThunk<
     return rejectWithValue(error);
   }
 });
-
 export const register = createAsyncThunk<
   { email: string },
   Partial<User> & { password?: string }
@@ -38,4 +35,3 @@ export const register = createAsyncThunk<
     return rejectWithValue(error);
   }
 });
-

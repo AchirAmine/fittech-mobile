@@ -17,34 +17,24 @@ import { FileAttachmentType, ConversationType } from '../services/chatApi';
 import { ChatStackParamList } from '@navigation/ChatNavigator';
 import { getImageSource } from '@shared/utils/imageUtils';
 import { hexToRGBA } from '@shared/constants/colors';
-
 type Props = NativeStackScreenProps<ChatStackParamList, 'ChatRoom'>;
-
 export default function ChatRoomScreen({ route, navigation }: Props) {
   const { conversationId } = route.params;
   const { colors } = useTheme();
-
   const currentUser = useSelector(selectUser);
   const currentUserId = currentUser?.id ?? '';
-
   const { data: messages = [], isLoading } = useMessages(conversationId);
   const { data: conversations } = useConversations();
   const { sendMessage } = useChatSocket();
   const { mutateAsync: uploadAttachment, isPending: isUploading } = useUploadAttachment();
-
   const flatListRef = React.useRef<FlatList>(null);
-
   const conversation = conversations?.find((c) => c.id === conversationId);
-
   const [text, setText] = useState('');
-
   const { title, profilePic } = React.useMemo(() => {
     let t = 'Chat';
     let p: string | null = null;
-    
     if (conversation) {
       t = conversation.title;
-      
       if (conversation.type === ConversationType.COURSE_PRIVATE || 
           conversation.type === ConversationType.PERSONAL_COACHING ||
           conversation.type === ConversationType.ADMIN_COACH_PRIVATE) {
@@ -53,7 +43,6 @@ export default function ChatRoomScreen({ route, navigation }: Props) {
     }
     return { title: t, profilePic: p };
   }, [conversation]);
-
   React.useLayoutEffect(() => {
     navigation.setOptions({ 
       headerTitle: () => (
@@ -82,24 +71,19 @@ export default function ChatRoomScreen({ route, navigation }: Props) {
       )
     });
   }, [navigation, title, profilePic, conversation?.isLocked, conversation?.type, colors]);
-
   const handleSendText = useCallback(() => {
     const trimmed = text.trim();
     if (!trimmed) return;
     setText('');
     sendMessage({ conversationId, textContent: trimmed });
   }, [text, conversationId, sendMessage]);
-
   const handlePickImage = useCallback(async () => {
     if (conversation?.isLocked) return;
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       quality: 0.8,
     });
-
     if (result.canceled || !result.assets[0]) return;
-
     try {
       const { uri } = result.assets[0];
       const fileName = uri.split('/').pop() || 'image.jpg';
@@ -109,23 +93,19 @@ export default function ChatRoomScreen({ route, navigation }: Props) {
       Alert.alert('Error', 'Failed to send image. Please try again.');
     }
   }, [conversation, conversationId, uploadAttachment, sendMessage]);
-
   const sortedMessages = React.useMemo(() => {
     console.log('[ChatRoom] Items in messages:', messages.length);
-    
     const messageMap = new Map(messages.map(m => [m.id, m]));
     return Array.from(messageMap.values()).sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }, [messages]);
-
   React.useEffect(() => {
     console.log('[ChatRoom] sortedMessages updated, length:', sortedMessages.length);
     if (sortedMessages.length > 0) {
       flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
     }
   }, [sortedMessages.length]);
-
   if (isLoading) {
     return (
       <View style={[styles.centered, { backgroundColor: colors.background }]}>
@@ -133,7 +113,6 @@ export default function ChatRoomScreen({ route, navigation }: Props) {
       </View>
     );
   }
-
   return (
     <KeyboardAvoidingView
       style={[styles.container, { backgroundColor: colors.background }]}
@@ -176,7 +155,6 @@ export default function ChatRoomScreen({ route, navigation }: Props) {
         contentContainerStyle={[styles.listContent, messages.length === 0 && { flexGrow: 1 }]}
         showsVerticalScrollIndicator={false}
       />
-
       {(!conversation?.canWrite || conversation?.isLocked) ? (
         <View style={[styles.lockedBar, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
           <Ionicons name="lock-closed-outline" size={16} color={colors.textMuted} />
@@ -197,7 +175,6 @@ export default function ChatRoomScreen({ route, navigation }: Props) {
               <Ionicons name="add" size={26} color={colors.primary} />
             )}
           </TouchableOpacity>
-
           <View style={[styles.inputContainer, { backgroundColor: colors.background }]}>
             <TextInput
               style={[styles.input, { color: colors.textPrimary }]}
@@ -209,7 +186,6 @@ export default function ChatRoomScreen({ route, navigation }: Props) {
               maxLength={500}
             />
           </View>
-
           <TouchableOpacity
             style={[styles.sendBtn, { backgroundColor: text.trim() ? colors.primary : colors.cardSecondary }]}
             onPress={handleSendText}
@@ -222,7 +198,6 @@ export default function ChatRoomScreen({ route, navigation }: Props) {
     </KeyboardAvoidingView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

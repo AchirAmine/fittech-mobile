@@ -12,25 +12,20 @@ import { HomeStackParamList } from '@appTypes/navigation.types';
 import { useGetCoaches, Coach } from '../hooks/useCoaching';
 import { hexToRGBA } from '@shared/constants/colors';
 import { useCallback } from 'react';
-
 export const PersonalCoachesScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const [searchQuery, setSearchQuery] = useState('');
-  
   const { data: coaches = [], isLoading, refetch } = useGetCoaches();
-
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch])
   );
-
   const filteredCoaches = (coaches as Coach[]).filter(coach => 
     coach.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     coach.specialty.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -46,7 +41,6 @@ export const PersonalCoachesScreen = () => {
       ),
     });
   }, [navigation, filteredCoaches.length, colors]);
-
   return (
     <AppScreen 
       safeArea={false} 
@@ -83,7 +77,6 @@ export const PersonalCoachesScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   content: {
     flex: 1,

@@ -11,27 +11,21 @@ import { Theme } from '@shared/constants/theme';
 import { AppScreen } from '@shared/components/layout/AppScreen';
 import { useGetMySubscriptions } from '../hooks/useMembership';
 import { Subscription } from '@appTypes/index';
-
 import { ActivePlanCard } from '../components/ActivePlanCard';
 import { NeonButton } from '@shared/components/ui/NeonButton';
-
 export const MyPlansScreen = () => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<MembershipStackParamList>>();
   const { data: subscriptions, isLoading, isError, error, refetch } = useGetMySubscriptions();
-
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch])
   );
-
   const handleCheck = (planId: string, planName: string) => {
     navigation.navigate(ROUTES.MAIN.PLAN_DETAILS, { planId, planName });
   };
-
   const activeSubscriptions = (subscriptions || []).filter((s: Subscription) => s.status === 'ACTIVE');
-
   return (
     <AppScreen 
       safeArea={false}
@@ -80,7 +74,6 @@ export const MyPlansScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 30,

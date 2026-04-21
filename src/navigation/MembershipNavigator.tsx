@@ -8,12 +8,9 @@ import { SubscriptionScreen } from '@features/membership/screens/SubscriptionScr
 import { PaymentDetailsScreen } from '@features/checkout/screens/PaymentDetailsScreen';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 const Stack = createNativeStackNavigator<MembershipStackParamList>();
-
 export const MembershipNavigator = () => {
   const { colors } = useTheme();
-
   return (
     <Stack.Navigator
       initialRouteName={ROUTES.MAIN.MY_PLANS}

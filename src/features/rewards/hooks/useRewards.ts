@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosClient from '@shared/services/axiosClient';
 import { API_ENDPOINTS } from '@shared/constants/apiEndpoints';
 import { RewardsSummary, StarTransaction, Voucher, MyPromoCode, ApplyPromoCodeResult } from '../types/rewards.types';
-
 export const useRewards = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ['rewardsSummary'],
@@ -13,7 +12,6 @@ export const useRewards = (enabled: boolean = true) => {
     enabled,
   });
 };
-
 export const useRewardHistory = () => {
   return useQuery({
     queryKey: ['rewardHistory'],
@@ -23,10 +21,8 @@ export const useRewardHistory = () => {
     },
   });
 };
-
 export const useRedeemReward = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (rewardId: string) => {
       const response = await axiosClient.post<{ success: boolean; data: Voucher }>(API_ENDPOINTS.PROMO.REDEEM(rewardId));
@@ -39,7 +35,6 @@ export const useRedeemReward = () => {
     },
   });
 };
-
 export const useMyCodes = () => {
   return useQuery({
     queryKey: ['myPromoCodes'],
@@ -49,7 +44,6 @@ export const useMyCodes = () => {
     },
   });
 };
-
 export const useApplyPromoCode = () => {
   return useMutation({
     mutationFn: async ({ code, planPrice }: { code: string; planPrice: number }) => {
