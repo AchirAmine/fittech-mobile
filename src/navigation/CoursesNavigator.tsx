@@ -4,15 +4,11 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { ROUTES } from '@navigation/routes';
 import { CoursesStackParamList } from '@appTypes/navigation.types';
-
 import CoursesScreen from '@features/courses/screens/CoursesScreen';
 import CourseDetailsScreen from '@features/courses/screens/CourseDetailsScreen';
-
 const Stack = createNativeStackNavigator<CoursesStackParamList>();
-
 export const CoursesNavigator = () => {
   const { colors } = useTheme();
-
   return (
     <Stack.Navigator
       screenOptions={{

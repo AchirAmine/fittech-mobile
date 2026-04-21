@@ -11,39 +11,30 @@ import { NeonButton } from '@shared/components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@appTypes/navigation.types';
 import { useTheme } from '@shared/hooks/useTheme';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'Success'>;
-
 const SuccessScreen: React.FC<Props> = ({ navigation, route }) => {
   const { colors } = useTheme();
-
   const { type, title: customTitle, subtitle: customSubtitle } = route.params || { type: 'login' };
-
   const scale = useSharedValue(0);
   const opacity = useSharedValue(0);
-
   useEffect(() => {
     scale.value = withDelay(200, withSpring(1, { damping: 10, stiffness: 100 }));
     opacity.value = withDelay(200, withSpring(1));
   }, []);
-
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
     opacity: opacity.value,
   }));
-
   const navigateToHome = useCallback(() => {
     navigation.reset({
       index: 0,
       routes: [{ name: ROUTES.AUTH.WELCOME as keyof AuthStackParamList }],
     });
   }, [navigation]);
-
   const defaultTitle = type === 'login' ? 'Login Successful' : 'Registration Successful';
   const defaultSubtitle = type === 'login' 
     ? 'Welcome back to FitTech!\nWe are glad to see you again.' 
     : 'Your account has been created successfully.\nWelcome to FitTech!';
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Animated.View style={animatedStyle}>
@@ -51,7 +42,6 @@ const SuccessScreen: React.FC<Props> = ({ navigation, route }) => {
           <Ionicons name="checkmark-outline" size={64} color={colors.white} />
         </View>
       </Animated.View>
-
       <Text style={[styles.heading, { color: colors.textPrimary }]}>Yey! 🎉</Text>
       <Text style={[styles.title, { color: colors.textPrimary }]}>
         {customTitle || defaultTitle}
@@ -59,7 +49,6 @@ const SuccessScreen: React.FC<Props> = ({ navigation, route }) => {
       <Text style={[styles.subheading, { color: colors.textSecondary }]}>
         {customSubtitle || defaultSubtitle}
       </Text>
-
       <NeonButton
         title="Go to Home"
         onPress={navigateToHome}
@@ -69,7 +58,6 @@ const SuccessScreen: React.FC<Props> = ({ navigation, route }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -110,5 +98,4 @@ const styles = StyleSheet.create({
   },
   btn: { width: '100%' },
 });
-
 export default memo(SuccessScreen);

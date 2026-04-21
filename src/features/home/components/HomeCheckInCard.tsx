@@ -4,16 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-
 export const HomeCheckInCard = () => {
   const { colors, isDark } = useTheme();
-
   return (
     <View style={styles.outerContainer}>
       <View style={styles.headerRow}>
         <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>QUICK CHECK-IN</Text>
       </View>
-
       <TouchableOpacity 
         style={[
           styles.container, 
@@ -27,19 +24,16 @@ export const HomeCheckInCard = () => {
         <View style={[styles.iconContainer, { backgroundColor: colors.cardSecondary }]}>
           <Ionicons name="radio-outline" size={28} color={colors.primaryMid} />
         </View>
-
         <View style={styles.textContent}>
           <Text style={[styles.title, { color: colors.textPrimary }]}>Ready to check in?</Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             Tap your NFC card at the entrance
           </Text>
-          
           <View style={styles.statusRow}>
             <View style={[styles.dot, { backgroundColor: colors.success }]} />
             <Text style={[styles.statusText, { color: colors.success }]}>OPEN NOW</Text>
           </View>
         </View>
-
         <View style={[styles.nfcBadge, { backgroundColor: hexToRGBA(colors.primaryMid, 0.1) }]}>
           <Ionicons name="infinite-outline" size={20} color={colors.primaryMid} />
         </View>
@@ -47,7 +41,6 @@ export const HomeCheckInCard = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   outerContainer: {
     marginBottom: 40,

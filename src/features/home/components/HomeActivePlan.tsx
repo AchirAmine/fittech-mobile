@@ -5,16 +5,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-
 interface HomeActivePlanProps {
   title: string;
   endDate?: string;
   onPress: () => void;
 }
-
 export const HomeActivePlan: React.FC<HomeActivePlanProps> = ({ title, endDate, onPress }) => {
   const { colors } = useTheme();
-
   return (
     <TouchableOpacity 
       activeOpacity={0.9}
@@ -39,7 +36,6 @@ export const HomeActivePlan: React.FC<HomeActivePlanProps> = ({ title, endDate, 
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   activePlanSummary: {
     padding: 20,

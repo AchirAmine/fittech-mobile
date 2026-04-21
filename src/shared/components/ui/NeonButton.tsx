@@ -3,7 +3,6 @@ import { Text, TouchableOpacity, StyleSheet, StyleProp, ViewStyle, TextStyle, Ac
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
-
 export interface NeonButtonProps {
   title: string;
   onPress: () => void;
@@ -15,10 +14,8 @@ export interface NeonButtonProps {
   icon?: React.ComponentProps<typeof Ionicons>['name'];
   content?: React.ReactNode;
 }
-
 export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, textStyle, outlined, disabled, loading, icon, content }) => {
   const { colors, isDark } = useTheme();
-
   const innerContent = loading ? (
     <ActivityIndicator color={outlined ? colors.success : colors.white} />
   ) : (
@@ -43,7 +40,6 @@ export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, t
       {content}
     </>
   );
-
   if (outlined || disabled) {
     return (
       <TouchableOpacity
@@ -62,7 +58,6 @@ export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, t
       </TouchableOpacity>
     );
   }
-
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -77,7 +72,6 @@ export const NeonButton: React.FC<NeonButtonProps> = ({ title, onPress, style, t
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   neonBtn: {
     borderRadius: Theme.Radius.md,

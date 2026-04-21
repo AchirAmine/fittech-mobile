@@ -1,6 +1,3 @@
-
-
-
 export const generateWeights = (): number[] => {
   const weights: number[] = [];
   for (let i = 20; i <= 200; i++) {
@@ -8,10 +5,6 @@ export const generateWeights = (): number[] => {
   }
   return weights;
 };
-
-
-
-
 export const generateHeightsCm = (): number[] => {
   const heights: number[] = [];
   for (let i = 100; i <= 220; i++) {
@@ -19,6 +12,4 @@ export const generateHeightsCm = (): number[] => {
   }
   return heights;
 };
-
-
 export const formatCm = (cm: number): string => String(cm);

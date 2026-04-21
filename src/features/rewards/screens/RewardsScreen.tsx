@@ -14,7 +14,6 @@ import { RewardItem } from '../components/RewardItem';
 import { HistoryItem } from '../components/HistoryItem';
 import { RewardsEmptyState } from '../components/RewardsEmptyState';
 import { RedeemConfirmModal } from '../components/RedeemConfirmModal';
-
 export const RewardsScreen = () => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation();
@@ -22,56 +21,45 @@ export const RewardsScreen = () => {
   const [selectedReward, setSelectedReward] = useState<{ id: string; name: string; stars: number; endDate?: string } | null>(null);
   const [redeemedCode, setRedeemedCode] = useState<string | null>(null);
   const [redeemError, setRedeemError] = useState<string | null>(null);
-
   const { data, isLoading } = useRewards();
   const { data: historyData, isLoading: isHistoryLoading } = useRewardHistory();
   const { data: myCodes, isLoading: isCodesLoading } = useMyCodes();
   const { mutate: redeem, isPending: isRedeeming } = useRedeemReward();
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => <PointsBadge balance={data?.starBalance} />,
     });
   }, [navigation, data]);
-
   if (isLoading || (activeTab === 'history' && isHistoryLoading)) {
     return <Loader />;
   }
-
   const balance = data?.starBalance || 0;
   const lockedRewards = data?.offers.filter(r => !r.canRedeem) || [];
   const unlockedRewards = data?.offers.filter(r => r.canRedeem) || [];
   const ownedVouchersCount = myCodes?.length || 0;
-  
   const transactions = historyData || [];
-
   const groupTransactionsByDate = (transactions: any[]) => {
     const groups: { [key: string]: any[] } = {};
     const today = new Date().toLocaleDateString();
     const yesterday = new Date(Date.now() - 86400000).toLocaleDateString();
-
     transactions.forEach(tx => {
       const date = new Date(tx.createdAt).toLocaleDateString();
       let label = date;
       if (date === today) label = 'TODAY';
       else if (date === yesterday) label = 'YESTERDAY';
       else label = new Date(tx.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
-      
       if (!groups[label]) groups[label] = [];
       groups[label].push(tx);
     });
     return groups;
   };
-
   const handleRedeemPress = (rewardId: string, name: string, stars: number, endDate?: string) => {
     setRedeemedCode(null);
     setRedeemError(null);
     setSelectedReward({ id: rewardId, name, stars, endDate });
   };
-
   const handleConfirmRedeem = () => {
     if (!selectedReward) return;
-    
     redeem(selectedReward.id, {
       onSuccess: (data) => {
         setRedeemedCode(data.code);
@@ -81,7 +69,6 @@ export const RewardsScreen = () => {
       }
     });
   };
-
   const renderContent = () => {
     switch (activeTab) {
       case 'unlocked':
@@ -147,7 +134,6 @@ export const RewardsScreen = () => {
         );
     }
   };
-
   return (
     <AppScreen safeArea={false} backgroundColor={colors.background}>
       <ScrollView 
@@ -172,13 +158,10 @@ export const RewardsScreen = () => {
             <Text style={[styles.viewButtonText, { color: colors.white }]}>VIEW</Text>
           </View>
         </TouchableOpacity>
-
         <RewardsTabSelector activeTab={activeTab} onTabChange={setActiveTab} />
-
         {renderContent()}
         <View style={{ height: 40 }} />
       </ScrollView>
-
       <RedeemConfirmModal 
         visible={!!selectedReward}
         onClose={() => setSelectedReward(null)}
@@ -194,9 +177,7 @@ export const RewardsScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
-
   sectionHeader: {
     fontSize: 13,
     fontFamily: Theme.Typography.fontFamily.bold,

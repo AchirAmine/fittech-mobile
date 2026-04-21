@@ -15,14 +15,11 @@ import { ProfileStackParamList } from '@navigation/AccountNavigator';
 import { useDispatch } from 'react-redux';
 import { logout } from '@features/auth/store/authSlice';
 import { Palette } from '@shared/constants/colors';
-
 export const AccountMenu = () => {
   const { colors, theme, setTheme } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
   const dispatch = useDispatch();
-
   const handleLogout = () => { dispatch(logout()); };
-
   const navItems = [
     {
       id: 'profile',
@@ -43,7 +40,6 @@ export const AccountMenu = () => {
       onPress: () => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS),
     },
   ];
-
   const themeOptions = [
     { id: 'light', label: 'Light', icon: 'sunny-outline' as keyof typeof Ionicons.glyphMap },
     { id: 'dark', label: 'Dark', icon: 'moon-outline' as keyof typeof Ionicons.glyphMap },
@@ -51,10 +47,8 @@ export const AccountMenu = () => {
     { id: 'purple', label: 'Purple', icon: 'leaf-outline' as keyof typeof Ionicons.glyphMap },
     { id: 'system', label: 'Auto', icon: 'settings-outline' as keyof typeof Ionicons.glyphMap },
   ];
-
   return (
     <View style={styles.section}>
-
       {navItems.map((item) => (
         <TouchableOpacity
           key={item.id}
@@ -70,8 +64,6 @@ export const AccountMenu = () => {
           <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
         </TouchableOpacity>
       ))}
-
-
       <View style={[styles.themeSection, { borderBottomColor: colors.border }]}>
         <View style={styles.themeHeader}>
           <View style={[styles.iconContainer, { backgroundColor: colors.info + '15' }]}>
@@ -79,7 +71,6 @@ export const AccountMenu = () => {
           </View>
           <Text style={[styles.menuItemText, { color: colors.textPrimary }]}>Appearance</Text>
         </View>
-        
         <View style={[styles.themeSelector, { backgroundColor: colors.card, borderColor: colors.border }]}>
           {themeOptions.map((option) => {
             const isActive = theme === option.id;
@@ -108,8 +99,6 @@ export const AccountMenu = () => {
           })}
         </View>
       </View>
-
-
       <TouchableOpacity
         style={[styles.menuItem, { borderBottomColor: 'transparent' }]}
         onPress={handleLogout}
@@ -125,7 +114,6 @@ export const AccountMenu = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   section: {
     borderRadius: Theme.Radius.xl,

@@ -6,7 +6,6 @@ import { selectToken } from '@features/auth/store/authSelectors';
 import { initializeSocket, disconnectSocket, getSocket, registerOnce } from '../services/socketClient';
 import { chatKeys } from './useChatQueries';
 import { Message, Conversation } from '../services/chatApi';
-
 type SendMessagePayload = {
   conversationId: string;
   textContent?: string;
@@ -15,34 +14,25 @@ type SendMessagePayload = {
   fileName?: string;
   fileMimeType?: string;
 };
-
 export function useChatSocket() {
   const queryClient = useQueryClient();
   const token = useSelector(selectToken);
-
   useEffect(() => {
     if (!token) return;
-
     const socket = initializeSocket(token);
-
     const onConnect = () => {
       socket.emit('chat:sync-rooms');
     };
-
     if (socket.connected) {
       onConnect();
     }
-
     registerOnce('connect', onConnect);
-
     registerOnce('chat:message', (newMessage: Message) => {
       console.log('[Chat] Message received:', newMessage.id, newMessage.textContent);
-      
       queryClient.setQueryData<Message[]>(
         chatKeys.messages(newMessage.conversationId),
         (old) => {
           const list = old ?? [];
-          
           const messageMap = new Map(list.map(m => [m.id, m]));
           messageMap.set(newMessage.id, newMessage);
           return Array.from(messageMap.values()).sort(
@@ -50,15 +40,12 @@ export function useChatSocket() {
           );
         }
       );
-
-      
       queryClient.setQueryData<Conversation[]>(
         chatKeys.conversations(),
         (old) => {
           if (!old) return old;
           const convMap = new Map(old.map(c => [c.id, c]));
           const existing = convMap.get(newMessage.conversationId);
-          
           if (existing) {
             convMap.set(newMessage.conversationId, {
               ...existing,
@@ -66,7 +53,6 @@ export function useChatSocket() {
               lastMessageAt: newMessage.createdAt,
             });
           }
-          
           return Array.from(convMap.values()).sort((a, b) => {
             const timeA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
             const timeB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
@@ -74,32 +60,23 @@ export function useChatSocket() {
           });
         }
       );
-
-      
     });
-
     registerOnce('chat:conversation-locked', ({ conversationId, isLocked }: { conversationId: string; isLocked: boolean }) => {
       queryClient.setQueryData<Conversation[]>(
         chatKeys.conversations(),
         (old) => old?.map((conv) => conv.id === conversationId ? { ...conv, isLocked } : conv)
       );
     });
-
     registerOnce('connect_error', (error: any) => {
       console.error('[Chat] Connection error:', error?.message);
     });
-
     registerOnce('chat:error', (error: unknown) => {
       console.error('[Chat] Socket error:', error);
       Alert.alert('Chat Error', 'An error occurred with the chat connection.');
     });
-
     return () => {
-      
-      
     };
   }, [token, queryClient]);
-
   const sendMessage = useCallback(
     (
       payload: SendMessagePayload,
@@ -113,7 +90,6 @@ export function useChatSocket() {
         onError?.({ message: 'Not connected to chat server' });
         return;
       }
-
       console.log('[Chat] Sending message to conversation:', payload.conversationId);
       socket.emit('chat:send-message', payload, (response: { success: boolean; data?: Message; message?: string }) => {
         if (response.success && response.data) {
@@ -129,8 +105,6 @@ export function useChatSocket() {
               );
             }
           );
-          
-          
           onSuccess?.(response.data);
         } else {
           console.error('[Chat] Failed to send message:', response.message);
@@ -141,6 +115,5 @@ export function useChatSocket() {
     },
     [queryClient]
   );
-
   return { sendMessage };
 }

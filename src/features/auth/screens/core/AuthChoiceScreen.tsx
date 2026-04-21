@@ -6,26 +6,19 @@ import { Logo, NeonButton } from '@shared/components/ui';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'AuthChoice'>;
-
 const { width, height } = Dimensions.get('window');
-
 const AuthChoiceScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
-
   const handleLogin = () => {
     navigation.navigate(ROUTES.AUTH.LOGIN);
   };
-
   const handleSignUp = () => {
     navigation.navigate(ROUTES.AUTH.REGISTER_STEP1);
   };
-
   const handleLearnMore = () => {
     navigation.navigate(ROUTES.AUTH.ABOUT_US);
   };
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.topSection, { backgroundColor: colors.primaryMid }]}>
@@ -36,8 +29,6 @@ const AuthChoiceScreen: React.FC<Props> = ({ navigation }) => {
               textColor={colors.white} 
               size="large"
             />
-
-            
             <View style={styles.illustrationContainer}>
               <Image 
                 source={require('@features/auth/assets/auth-home-illustration.png')} 
@@ -47,10 +38,8 @@ const AuthChoiceScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           </View>
         </SafeAreaView>
-
         <View style={[styles.diagonalCut, { backgroundColor: colors.primaryMid }]} />
       </View>
-
       <View style={[styles.bottomSection, { backgroundColor: colors.background }]}>
         <View style={styles.buttonContainer}>
           <NeonButton 
@@ -58,13 +47,11 @@ const AuthChoiceScreen: React.FC<Props> = ({ navigation }) => {
             onPress={handleLearnMore} 
             style={styles.actionButton}
           />
-          
           <NeonButton 
             title="SignUp" 
             onPress={handleSignUp} 
             style={styles.actionButton}
           />
-
           <NeonButton 
             title="Login" 
             onPress={handleLogin} 
@@ -75,7 +62,6 @@ const AuthChoiceScreen: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -132,5 +118,4 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-
 export default AuthChoiceScreen;

@@ -3,7 +3,6 @@ import { View, Text, StyleSheet } from 'react-native';
 import { GOALS } from '@shared/constants/healthConstants';
 import { ThemeColors } from '@shared/constants/colors';
 import { EditableCard } from './EditableCard';
-
 interface GoalSelectorProps {
   selectedGoals: string[];
   isEditing: boolean;
@@ -13,7 +12,6 @@ interface GoalSelectorProps {
   otherValue?: string;
   onChangeOtherText?: (text: string) => void;
 }
-
 export const GoalSelector = ({ 
   selectedGoals, 
   isEditing, 
@@ -24,11 +22,9 @@ export const GoalSelector = ({
   onChangeOtherText,
 }: GoalSelectorProps) => {
   const visibleGoals = isEditing ? GOALS : GOALS.filter(g => (selectedGoals || []).includes(g.id));
-
   if (visibleGoals.length === 0) {
     return <Text style={[styles.emptyText, { color: colors.textMuted }]}>No goal selected</Text>;
   }
-
   return (
     <View style={styles.cardsContainer}>
       {visibleGoals.map((goal, index) => (
@@ -53,7 +49,6 @@ export const GoalSelector = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,

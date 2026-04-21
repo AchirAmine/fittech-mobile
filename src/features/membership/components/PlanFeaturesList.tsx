@@ -3,25 +3,20 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
 import { PlanFeature } from '@appTypes/index';
-
 interface PlanFeaturesListProps {
   features: PlanFeature[];
   alignment?: 'center' | 'start';
-  
   forceDarkText?: boolean;
 }
-
 export const PlanFeaturesList: React.FC<PlanFeaturesListProps> = ({ 
   features, 
   alignment = 'center',
   forceDarkText = false 
 }) => {
   const { colors, isDark } = useTheme();
-
   const isCenter = alignment === 'center';
   const labelColor = forceDarkText ? colors.white : colors.textSecondary;
   const dividerColor = forceDarkText ? colors.border : (isDark ? colors.cardSecondary : colors.border);
-
   return (
     <View style={[styles.featuresRow, { justifyContent: isCenter ? 'center' : 'flex-start' }]}>
       {features.map((feature, i) => (
@@ -65,7 +60,6 @@ export const PlanFeaturesList: React.FC<PlanFeaturesListProps> = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   featuresRow: {
     flexDirection: 'row',

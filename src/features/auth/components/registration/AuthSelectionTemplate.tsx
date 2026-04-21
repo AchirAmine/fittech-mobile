@@ -4,7 +4,6 @@ import { Theme } from '@shared/constants/theme';
 import { AppScreen, BackButton, NeonButton } from '@shared/components';
 import { StepIndicator } from './StepIndicator';
 import { StepHeading } from './StepHeading';
-
 interface AuthSelectionTemplateProps {
   title: string;
   subtitle?: string;
@@ -18,7 +17,6 @@ interface AuthSelectionTemplateProps {
   onDismissError?: () => void;
   children: React.ReactNode;
 }
-
 export const AuthSelectionTemplate: React.FC<AuthSelectionTemplateProps> = ({
   title,
   subtitle,
@@ -56,14 +54,12 @@ export const AuthSelectionTemplate: React.FC<AuthSelectionTemplateProps> = ({
       }
     >
       <StepHeading title={title} subtitle={subtitle} />
-      
       <View style={styles.listContent}>
         {children}
       </View>
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',

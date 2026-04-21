@@ -14,10 +14,8 @@ import { Theme } from '@shared/constants/theme';
 import { ThemeColors, hexToRGBA } from '@shared/constants/colors';
 import { SubscriptionPlan } from '@appTypes/index';
 import { PlanFeaturesList } from './PlanFeaturesList';
-
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = width - 40;
-
 interface PlanCardProps {
   plan: SubscriptionPlan;
   colors: ThemeColors;
@@ -25,15 +23,12 @@ interface PlanCardProps {
   onPress: () => void;
   index: number;
 }
-
 export const PlanCard = ({ plan, colors, isDark, onPress, index }: PlanCardProps) => {
   const BADGE_COLORS: Record<string, { bg: string; text: string }> = {
     'BEST VALUE': { bg: colors.error, text: colors.white },
     'POPULAR': { bg: colors.info, text: colors.white },
   };
-
   const badgeColors = plan.badge ? BADGE_COLORS[plan.badge] ?? { bg: colors.textMuted, text: colors.white } : null;
-
   return (
     <Animated.View
       entering={FadeInDown.delay(index * 150).duration(600)}
@@ -69,14 +64,12 @@ export const PlanCard = ({ plan, colors, isDark, onPress, index }: PlanCardProps
             </View>
           </View>
         </LinearGradient>
-
         {}
         {plan.badge && badgeColors && (
           <View style={[styles.badge, { backgroundColor: badgeColors.bg }]}>
             <Text style={[styles.badgeText, { color: badgeColors.text }]}>{plan.badge}</Text>
           </View>
         )}
-
         {}
         <View style={[
           styles.starsBadge, 
@@ -89,12 +82,10 @@ export const PlanCard = ({ plan, colors, isDark, onPress, index }: PlanCardProps
           <Text style={styles.starsBadgeText}>{plan.starsAwarded}</Text>
         </View>
       </View>
-
       {}
       <View style={styles.body}>
         {}
         <PlanFeaturesList features={plan.features} alignment="center" />
-
         {}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: colors.primary }]}
@@ -108,7 +99,6 @@ export const PlanCard = ({ plan, colors, isDark, onPress, index }: PlanCardProps
     </Animated.View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,

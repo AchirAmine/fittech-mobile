@@ -4,15 +4,12 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import SessionList from './SessionList';
 import { Session } from '@appTypes/planning';
-
 interface Props {
   sessions: Session[];
   isLoading: boolean;
 }
-
 const PlanningContent: React.FC<Props> = ({ sessions, isLoading }) => {
   const { colors } = useTheme();
-
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -21,10 +18,8 @@ const PlanningContent: React.FC<Props> = ({ sessions, isLoading }) => {
       </View>
     );
   }
-
   return <SessionList sessions={sessions} />;
 };
-
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
@@ -38,5 +33,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
 export default PlanningContent;

@@ -3,14 +3,11 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, array, string, InferType } from 'yup';
-
 import { AuthStackParamList, SignupData } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
 import { AuthSelectionTemplate, SelectableCard, OtherOptionInput } from '@features/auth/components';
 import { GOALS } from '@shared/constants/healthConstants';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'RegisterStep5'>;
-
 const registerStep5Schema = object().shape({
   selectedGoals: array().of(string().required()).min(1, 'Please select at least one goal'),
   customGoal: string().when('selectedGoals', {
@@ -19,10 +16,8 @@ const registerStep5Schema = object().shape({
     otherwise: (schema) => schema.notRequired(),
   }),
 });
-
 const RegisterStep5Screen: React.FC<Props> = ({ navigation, route }) => {
   const { data: prevData } = route.params;
-
   const { control, handleSubmit, watch, clearErrors, formState: { errors } } = useForm({
     resolver: yupResolver(registerStep5Schema),
     defaultValues: {
@@ -30,22 +25,18 @@ const RegisterStep5Screen: React.FC<Props> = ({ navigation, route }) => {
       customGoal: '',
     },
   });
-
   const selectedGoals = watch('selectedGoals');
-
   const onSubmit = useCallback((data: InferType<typeof registerStep5Schema>) => {
     const finalGoals = (data.selectedGoals || []).map((id: string) => {
       if (id === 'other') return `Other: ${data.customGoal?.trim() ?? ''}`;
       return id;
     });
-    
     const signupData: SignupData = {
       ...prevData,
       goals: finalGoals,
     };
     navigation.navigate(ROUTES.AUTH.REGISTER_STEP6, { data: signupData });
   }, [navigation, prevData]);
-
   return (
     <AuthSelectionTemplate
       title="What is your Goal?"
@@ -84,7 +75,6 @@ const RegisterStep5Screen: React.FC<Props> = ({ navigation, route }) => {
           </>
         )}
       />
-
       {selectedGoals?.includes('other') && (
         <OtherOptionInput
           control={control}
@@ -97,6 +87,4 @@ const RegisterStep5Screen: React.FC<Props> = ({ navigation, route }) => {
     </AuthSelectionTemplate>
   );
 };
-
 export default memo(RegisterStep5Screen);
-

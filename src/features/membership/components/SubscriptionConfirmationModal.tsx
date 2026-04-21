@@ -6,14 +6,12 @@ import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Modal } from '@shared/components/ui/Modal';
 import { SubscriptionPlan } from '@appTypes/index';
-
 interface SubscriptionConfirmationModalProps {
   visible: boolean;
   onClose: () => void;
   plan: SubscriptionPlan | null;
   onConfirm: () => void;
 }
-
 export const SubscriptionConfirmationModal: React.FC<SubscriptionConfirmationModalProps> = ({
   visible,
   onClose,
@@ -21,9 +19,7 @@ export const SubscriptionConfirmationModal: React.FC<SubscriptionConfirmationMod
   onConfirm,
 }) => {
   const { colors, isDark } = useTheme();
-
   if (!plan) return null;
-
   const rows = [
     ...plan.features.map(f => ({
       icon: f.icon,
@@ -50,10 +46,8 @@ export const SubscriptionConfirmationModal: React.FC<SubscriptionConfirmationMod
       highlight: true,
     },
   ];
-
   return (
     <Modal visible={visible} onClose={onClose} contentStyle={styles.modalContent} hideHeader={true}>
-
       {}
       <View style={styles.header}>
         <View style={[styles.iconWrap, { backgroundColor: colors.cardSecondary }]}>
@@ -70,7 +64,6 @@ export const SubscriptionConfirmationModal: React.FC<SubscriptionConfirmationMod
           <Ionicons name="close" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
       </View>
-
       {}
       <View style={[styles.detailsContainer, { backgroundColor: colors.cardSecondary, borderColor: colors.border }]}>
         {rows.map((row, index) => (
@@ -98,8 +91,6 @@ export const SubscriptionConfirmationModal: React.FC<SubscriptionConfirmationMod
           </View>
         ))}
       </View>
-
-
       {}
       <LinearGradient
         colors={[colors.primaryDark, colors.primaryMid]}
@@ -121,7 +112,6 @@ export const SubscriptionConfirmationModal: React.FC<SubscriptionConfirmationMod
     </Modal>
   );
 };
-
 const styles = StyleSheet.create({
   modalContent: {
     paddingTop: 24,

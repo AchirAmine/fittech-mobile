@@ -2,9 +2,7 @@ import React, { useEffect } from 'react';
 import {
   View,
   StyleSheet,
-
 } from 'react-native';
-
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { object, string, InferType } from 'yup';
@@ -15,30 +13,24 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { SectionCard, InfoRow, ProfileAvatar, SaveButton } from '../components';
 import { AppScreen } from '@shared/components';
 import { getErrorMessage } from '@shared/constants/errorMessages';
-
 import { useEditableHeader } from '../hooks/useEditableHeader';
-
 const profileSchema = object().shape({
   email: string().email('Invalid email').required('Email is required'),
   phone: string().required('Phone number is required'),
 });
-
 export const ProfileScreen = () => {
   const { colors, isDark } = useTheme();
   const { data: userData, isLoading: loading, error: fetchError, refetch } = useGetAccount();
-
   const { 
     mutate: updateMe, 
     isPending: updating, 
     error: updateError, 
     reset: resetMutation 
   } = useUpdateAccount();
-  
   const { isEditing, setIsEditing } = useEditableHeader({ 
     colors,
     isUpdating: updating 
   });
-
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: yupResolver(profileSchema),
     defaultValues: {
@@ -54,7 +46,6 @@ export const ProfileScreen = () => {
       });
     }
   }, [userData, reset]);
-
   const onSubmit = (data: InferType<typeof profileSchema>) => {
     updateMe(data, {
       onSuccess: () => {
@@ -62,12 +53,10 @@ export const ProfileScreen = () => {
       },
     });
   };
-
   const handleDismissError = () => {
     if (updateError) resetMutation();
     if (fetchError) refetch();
   };
-
   return (
     <AppScreen 
       isLoading={loading}
@@ -76,7 +65,6 @@ export const ProfileScreen = () => {
       contentContainerStyle={styles.scrollContent}
     >
       <ProfileAvatar userData={userData} colors={colors} />
-
       <View style={styles.form}>
         <Animated.View entering={FadeInDown.delay(200).duration(600)}>
           <SectionCard title="Personal Information" colors={colors} isDark={isDark}>
@@ -92,7 +80,6 @@ export const ProfileScreen = () => {
             />
           </SectionCard>
         </Animated.View>
-
         <Animated.View entering={FadeInDown.delay(400).duration(600)}>
           <SectionCard title="Contact Details" colors={colors} isDark={isDark}>
             <Controller
@@ -129,7 +116,6 @@ export const ProfileScreen = () => {
             />
           </SectionCard>
         </Animated.View>
-
         <SaveButton
           isEditing={isEditing}
           onPress={handleSubmit(onSubmit)}
@@ -139,7 +125,6 @@ export const ProfileScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   scrollContent: { 
     paddingHorizontal: 20, 

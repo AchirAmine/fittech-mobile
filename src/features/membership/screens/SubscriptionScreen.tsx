@@ -19,10 +19,8 @@ import { SubscriptionConfirmationModal } from '../components/SubscriptionConfirm
 import { useGetOffers } from '../hooks/useMembership';
 import { SubscriptionPlan } from '@appTypes/index';
 import { transformOffer } from '../utils/subscriptionUtils';
-
 const TABS = ['All Plans', 'Monthly', 'Annual'] as const;
 type TabType = typeof TABS[number];
-
 export const SubscriptionScreen = () => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -31,11 +29,9 @@ export const SubscriptionScreen = () => {
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const indicatorAnim = useRef(new Animated.Value(0)).current;
-
   const transformedPlans = useMemo(() => {
     return (offers || []).map(transformOffer);
   }, [offers]);
-
   const filteredPlans = useMemo(() => {
     return transformedPlans.filter(plan => {
       if (activeTab === 'All Plans') return true;
@@ -43,7 +39,6 @@ export const SubscriptionScreen = () => {
       return plan.billingCycle === 'annual';
     });
   }, [transformedPlans, activeTab]);
-
   const handleTabPress = (tab: TabType, index: number) => {
     setActiveTab(tab);
     Animated.spring(indicatorAnim, {
@@ -53,22 +48,18 @@ export const SubscriptionScreen = () => {
       friction: 10,
     }).start();
   };
-
   const handleJoinPress = (plan: SubscriptionPlan) => {
     setSelectedPlan(plan);
     setIsModalVisible(true);
   };
-
   const handleConfirmJoin = () => {
     setIsModalVisible(false);
     if (selectedPlan) {
-      
       requestAnimationFrame(() => {
         navigation.navigate(ROUTES.MAIN.PAYMENT_DETAILS as any, { plan: selectedPlan });
       });
     }
   };
-
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -79,7 +70,6 @@ export const SubscriptionScreen = () => {
       ),
     });
   }, [navigation, filteredPlans.length, isDark, colors]);
-
   return (
     <AppScreen 
       errorMessage={isError ? (error as any)?.message || 'Failed to load plans' : null} 
@@ -94,7 +84,6 @@ export const SubscriptionScreen = () => {
           Flexible options for every fitness goal
         </Text>
       </View>
-
       {}
       <View style={[styles.tabsWrapper, { backgroundColor: colors.cardSecondary, borderColor: colors.border }]}>
         {}
@@ -132,7 +121,6 @@ export const SubscriptionScreen = () => {
           );
         })}
       </View>
-
       {}
       <View style={styles.plansList}>
         {filteredPlans.length > 0 ? (
@@ -158,7 +146,6 @@ export const SubscriptionScreen = () => {
           </View>
         )}
       </View>
-
       <SubscriptionConfirmationModal
         visible={isModalVisible}
         plan={selectedPlan}
@@ -168,7 +155,6 @@ export const SubscriptionScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   statusChip: {
     flexDirection: 'row',

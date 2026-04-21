@@ -3,7 +3,6 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { Logo } from '@shared/components/ui/Logo';
-
 export interface AuthHeaderProps {
   title: string;
   subtitle?: string;
@@ -11,7 +10,6 @@ export interface AuthHeaderProps {
   logoSize?: 'small' | 'medium' | 'large';
   titleSize?: number;
 }
-
 export const AuthHeader: React.FC<AuthHeaderProps> = memo(({
   title,
   subtitle,
@@ -20,7 +18,6 @@ export const AuthHeader: React.FC<AuthHeaderProps> = memo(({
   titleSize = 26,
 }) => {
   const { colors } = useTheme();
-
   return (
     <View style={styles.container}>
       {showLogo && (
@@ -28,11 +25,9 @@ export const AuthHeader: React.FC<AuthHeaderProps> = memo(({
           <Logo size={logoSize} color={colors.primary} />
         </View>
       )}
-
       <Text style={[styles.heading, { color: colors.primaryMid, fontSize: titleSize }]}>
         {title}
       </Text>
-
       {subtitle && (
         <Text style={[styles.subheading, { color: colors.primary }]}>
           {subtitle}
@@ -41,7 +36,6 @@ export const AuthHeader: React.FC<AuthHeaderProps> = memo(({
     </View>
   );
 });
-
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',

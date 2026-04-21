@@ -16,11 +16,8 @@ import { AuthHeader } from '@features/auth/components';
 import { usePublicOffers } from '../../hooks/usePublicOffers';
 import { ROUTES } from '@navigation/routes';
 import { Loader } from '@shared/components';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'AboutUs'>;
-
 const { width } = Dimensions.get('window');
-
 const FEATURES = [
   {
     id: '1',
@@ -41,7 +38,6 @@ const FEATURES = [
     icon: 'bar-chart-outline',
   },
 ];
-
 const SERVICES = [
   {
     id: '1',
@@ -58,14 +54,12 @@ const SERVICES = [
     image: 'swimming',
   },
 ];
-
 const STATS = [
   { value: '2,000+', label: 'Active Members per year' },
   { value: '30+', label: 'Certified Coaches' },
   { value: '15+', label: 'Smart Locations' },
   { value: '98%', label: 'Success Rate' },
 ];
-
 const FEEDBACKS = [
   {
     id: '1',
@@ -82,17 +76,13 @@ const FEEDBACKS = [
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop',
   },
 ];
-
 const ABOUT_US_IMAGE = require('../../assets/about-us-hero-illustration.png') as number;
-
 const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
   const { data: offers, isLoading } = usePublicOffers();
-
   const handleGetStarted = () => {
     navigation.navigate(ROUTES.AUTH.REGISTER_STEP1);
   };
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <SafeAreaView style={styles.safeArea}>
@@ -101,7 +91,6 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
             title="About Us"
             showLogo={true}
             logoSize="large" />
-          
           <View style={styles.heroSection}>
             <View style={styles.heroImageContainer}>
               <Image 
@@ -117,7 +106,6 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
                 <Text style={styles.heroDescription}>
                   FitTech is Sidi Bel Abbés' first connected gym — blending cutting-edge equipment, personalized coaching, and smart technology to push every member beyond their limits.
                 </Text>
-                
                 <TouchableOpacity 
                   style={[styles.getStartedButton, { backgroundColor: colors.primaryMid, shadowColor: colors.primary }]}
                   onPress={handleGetStarted}
@@ -127,7 +115,6 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
               </LinearGradient>
             </View>
           </View>
-
           <View style={styles.statsSection}>
             {STATS.map((stat, i) => (
               <View key={i} style={styles.statBox}>
@@ -136,7 +123,6 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
               </View>
             ))}
           </View>
-
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, styles.centeredTitle, { color: colors.textPrimary }]}>Why Fit-Tech</Text>
             <View style={styles.featuresList}>
@@ -153,8 +139,7 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
               ))}
             </View>
           </View>
-
-          {/* New Section: Membership Plans */}
+          {}
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, styles.centeredTitle, { color: colors.textPrimary }]}>Membership Plans</Text>
             {isLoading ? (
@@ -171,7 +156,6 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
                       colors={[hexToRGBA(colors.primary, 0.05), 'transparent']}
                       style={StyleSheet.absoluteFill}
                     />
-                    
                     <View style={styles.planHeader}>
                       <Text style={[styles.planTitle, { color: colors.textPrimary }]}>{offer.title}</Text>
                       <View style={styles.priceContainer}>
@@ -180,7 +164,6 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
                         <Text style={[styles.duration, { color: colors.textSecondary }]}>/{offer.duration === 1 ? 'Month' : `${offer.duration} Mo`}</Text>
                       </View>
                     </View>
-
                     <View style={styles.planFeatureList}>
                       {offer.sports.map((sport, idx) => (
                         <View key={idx} style={[styles.sportTag, { backgroundColor: hexToRGBA(colors.primary, 0.08) }]}>
@@ -189,7 +172,6 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
                         </View>
                       ))}
                     </View>
-
                     <View style={[styles.starsRewardContainer, { borderTopColor: hexToRGBA(colors.white, 0.1) }]}>
                       <Ionicons name="star" size={18} color={colors.warning} />
                       <Text style={[styles.starsRewardText, { color: colors.textSecondary }]}>Earn {offer.starsAwarded} stars</Text>
@@ -199,7 +181,6 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
               </ScrollView>
             )}
           </View>
-
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, styles.centeredTitle, { color: colors.textPrimary }]}>Our Services</Text>
             <ScrollView 
@@ -226,7 +207,6 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
               ))}
             </ScrollView>
           </View>
-
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, styles.centeredTitle, { color: colors.textPrimary }]}>Best Feedbacks</Text>
             <View style={styles.feedbacksList}>
@@ -245,13 +225,11 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
               ))}
             </View>
           </View>
-
           <View style={styles.footer}>
             <View style={styles.footerBrand}>
               <Ionicons name="flash-outline" size={24} color={colors.primary} />
               <Text style={[styles.footerLogo, { color: colors.textPrimary }]}>FitTech</Text>
             </View>
-            
             <View style={styles.footerContactContainer}>
               <View style={styles.footerContactItem}>
                 <Ionicons name="call" size={18} color={colors.primary} />
@@ -264,13 +242,11 @@ const AboutUsScreen: React.FC<Props> = ({ navigation }) => {
             </View>
             <Text style={[styles.copyright, { color: colors.textMuted }]}>© {new Date().getFullYear()} FitTech Inc. All rights reserved.</Text>
           </View>
-
         </ScrollView>
       </SafeAreaView>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -593,5 +569,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
 export default memo(AboutUsScreen);

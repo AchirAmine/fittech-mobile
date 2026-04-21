@@ -21,12 +21,11 @@ import { BackButton } from '@shared/components/ui/BackButton';
 import CourseDetailsScreen from '@features/courses/screens/CourseDetailsScreen';
 import { RewardsScreen } from '@features/rewards/screens/RewardsScreen';
 import { MyVouchersScreen } from '@features/rewards/screens/MyVouchersScreen';
-
+import { NotificationScreen } from '@features/notifications/screens/NotificationScreen';
+import { NotificationDetailScreen } from '@features/notifications/screens/NotificationDetailScreen';
 const Stack = createNativeStackNavigator<HomeStackParamList>();
-
 export const HomeNavigator = () => {
   const { colors } = useTheme();
-
   return (
     <Stack.Navigator
       screenOptions={{
@@ -149,6 +148,22 @@ export const HomeNavigator = () => {
         component={MyVouchersScreen} 
         options={({ navigation }) => ({ 
           title: 'MY CODES',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.NOTIFICATIONS} 
+        component={NotificationScreen} 
+        options={({ navigation }) => ({ 
+          title: 'NOTIFICATIONS',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.NOTIFICATION_DETAIL} 
+        component={NotificationDetailScreen} 
+        options={({ navigation }) => ({ 
+          title: 'NOTIFICATION',
           headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         })} 
       />

@@ -9,15 +9,12 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CoursesStackParamList } from '@appTypes/navigation.types';
 import { ROUTES } from '@navigation/routes';
-
 interface Props {
   course: Course;
 }
-
 const CourseCard: React.FC<Props> = ({ course }) => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<CoursesStackParamList>>();
-
   const handlePress = () => {
     navigation.navigate(ROUTES.MAIN.COURSE_DETAILS, {
       courseId: course.id,
@@ -25,7 +22,6 @@ const CourseCard: React.FC<Props> = ({ course }) => {
       category: course.category
     });
   };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'OPEN': return colors.primary;
@@ -35,16 +31,13 @@ const CourseCard: React.FC<Props> = ({ course }) => {
       default: return colors.textSecondary;
     }
   };
-
   const enrollmentProgress = (course.enrolled / course.maxSlots) * 100;
   const isFull = course.status === 'FULL';
   const isReserved = course.status === 'RESERVED';
   const isWaitlisted = course.status === 'WAITLISTED';
-  
   const cardBg = isDark ? hexToRGBA(colors.primary, 0.15) : colors.white;
   const cardBorderColor = isDark ? hexToRGBA(colors.primary, 0.3) : hexToRGBA(colors.black, 0.05);
   const accentColor = isFull ? colors.error : (isReserved || isWaitlisted ? colors.success : colors.primary);
-
   return (
     <View 
       style={[
@@ -66,7 +59,6 @@ const CourseCard: React.FC<Props> = ({ course }) => {
           <Text style={[styles.statusText, { color: getStatusColor(course.status) }]}>{course.status}</Text>
         </View>
       </View>
-
       <View style={styles.badgeRow}>
         <View style={[styles.categoryBadge, { backgroundColor: hexToRGBA(colors.primary, 0.1) }]}>
           <Text style={[styles.categoryText, { color: colors.primary }]}>{course.category.toUpperCase()}</Text>
@@ -76,7 +68,6 @@ const CourseCard: React.FC<Props> = ({ course }) => {
           <Text style={[styles.locationText, { color: colors.primary }]}>Zone: {course.location}</Text>
         </View>
       </View>
-
       <View style={styles.detailsRow}>
         <View style={styles.dateTimeWrap}>
           <Ionicons name="calendar-outline" size={16} color={colors.textSecondary} />
@@ -88,7 +79,6 @@ const CourseCard: React.FC<Props> = ({ course }) => {
           </Text>
         </View>
       </View>
-
       <View style={styles.coachRow}>
         <View style={styles.coachMain}>
           <Image source={{ uri: course.coach.avatar }} style={styles.coachAvatar} />
@@ -111,7 +101,6 @@ const CourseCard: React.FC<Props> = ({ course }) => {
           />
         </View>
       </View>
-
       <TouchableOpacity 
         activeOpacity={0.8}
         onPress={handlePress}
@@ -132,7 +121,6 @@ const CourseCard: React.FC<Props> = ({ course }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     padding: 16,
@@ -283,5 +271,4 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
 });
-
 export default CourseCard;

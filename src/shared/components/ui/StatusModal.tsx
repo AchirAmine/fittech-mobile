@@ -5,11 +5,8 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import { LinearGradient } from 'expo-linear-gradient';
-
 const { width } = Dimensions.get('window');
-
 export type StatusModalType = 'success' | 'confirm' | 'error';
-
 interface StatusModalProps {
   visible: boolean;
   type: StatusModalType;
@@ -20,7 +17,6 @@ interface StatusModalProps {
   confirmText?: string;
   cancelText?: string;
 }
-
 export const StatusModal: React.FC<StatusModalProps> = ({
   visible,
   type,
@@ -32,11 +28,8 @@ export const StatusModal: React.FC<StatusModalProps> = ({
   cancelText = 'Cancel',
 }) => {
   const { colors, isDark } = useTheme();
-  
-  
   const opacity = React.useRef(new Animated.Value(0)).current;
   const scale = React.useRef(new Animated.Value(0.8)).current;
-
   useEffect(() => {
     if (visible) {
       Animated.parallel([
@@ -67,7 +60,6 @@ export const StatusModal: React.FC<StatusModalProps> = ({
       ]).start();
     }
   }, [visible]);
-
   const getIcon = () => {
     switch (type) {
       case 'success':
@@ -78,9 +70,7 @@ export const StatusModal: React.FC<StatusModalProps> = ({
         return <Ionicons name="alert-circle" size={80} color={colors.error} />;
     }
   };
-
   if (!visible) return null;
-
   return (
     <Modal transparent visible={visible} onRequestClose={onClose}>
       <View style={[styles.overlay, { backgroundColor: hexToRGBA(colors.black, 0.7) }]}>
@@ -104,14 +94,11 @@ export const StatusModal: React.FC<StatusModalProps> = ({
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
           />
-
           <View style={styles.iconContainer}>
             {getIcon()}
           </View>
-
           <Text style={[styles.title, { color: colors.textPrimary }]}>{title}</Text>
           <Text style={[styles.message, { color: colors.textSecondary }]}>{message}</Text>
-
           <View style={styles.buttonContainer}>
             {type === 'confirm' && (
               <TouchableOpacity 
@@ -121,7 +108,6 @@ export const StatusModal: React.FC<StatusModalProps> = ({
                 <Text style={[styles.buttonText, { color: colors.textSecondary }]}>{cancelText}</Text>
               </TouchableOpacity>
             )}
-
             <TouchableOpacity 
               style={[styles.button, styles.confirmButton]} 
               onPress={() => {
@@ -143,7 +129,6 @@ export const StatusModal: React.FC<StatusModalProps> = ({
     </Modal>
   );
 };
-
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
@@ -204,7 +189,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   confirmButton: {
-    
   },
   buttonText: {
     fontFamily: Theme.Typography.fontFamily.bold,

@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { coachingService } from '../services/coachingService';
-
 export interface Coach {
   id: string;
   name: string;
@@ -16,7 +15,6 @@ export interface Coach {
     createdAt: string;
   } | null;
 }
-
 export const coachingKeys = {
   all: ['coaching'] as const,
   lists: () => [...coachingKeys.all, 'list'] as const,
@@ -25,7 +23,6 @@ export const coachingKeys = {
   active: () => [...coachingKeys.all, 'active'] as const,
   slots: () => [...coachingKeys.all, 'slots'] as const,
 };
-
 export const useGetCoaches = () => {
   return useQuery<Coach[]>({
     queryKey: coachingKeys.lists(),
@@ -33,7 +30,6 @@ export const useGetCoaches = () => {
     staleTime: 5 * 60 * 1000, 
   });
 };
-
 export const useGetCoach = (id: string) => {
   return useQuery<Coach | null>({
     queryKey: coachingKeys.detail(id),
@@ -41,24 +37,20 @@ export const useGetCoach = (id: string) => {
     enabled: !!id,
   });
 };
-
 export const useGetActiveCoaching = () => {
   return useQuery({
     queryKey: coachingKeys.active(),
     queryFn: () => coachingService.getActiveCoaching() as any,
   });
 };
-
 export const useGetCoachSlots = () => {
   return useQuery({
     queryKey: coachingKeys.slots(),
     queryFn: () => coachingService.getCoachesSlots() as any,
   });
 };
-
 export const useHireCoach = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (coachId: string) => coachingService.hireCoach(coachId),
     onSuccess: (data, coachId) => {
@@ -66,10 +58,8 @@ export const useHireCoach = () => {
     },
   });
 };
-
 export const useBookSlot = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (slotId: string) => coachingService.bookSlot(slotId),
     onSuccess: () => {
@@ -78,7 +68,6 @@ export const useBookSlot = () => {
     },
   });
 };
-
 export const usePayCoaching = () => {
   return useMutation({
     mutationFn: (invitationId: string) => coachingService.payCoaching(invitationId),

@@ -9,7 +9,6 @@ import {
 import { User } from "@appTypes/index";
 import { AuthState } from "./authTypes";
 import { login, register } from "./authActions";
-
 const initialState: AuthState = {
   user: null,
   token: null,
@@ -18,7 +17,6 @@ const initialState: AuthState = {
   isFirstLaunch: true,
   ...initialRequestState,
 };
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -49,18 +47,15 @@ const authSlice = createSlice({
       queryClient.cancelQueries();
       queryClient.removeQueries();
       queryClient.clear();
-      
       import('@store/store').then(({ persistor }) => {
         persistor.purge();
       });
-      
       state.user = null;
       state.token = null;
       state.refreshToken = null;
       state.isAuthenticated = false;
       state.status = "idle";
       state.error = null;
-      
     },
     clearError: (state) => {
       state.error = null;
@@ -109,6 +104,5 @@ const authSlice = createSlice({
       })
   },
 });
-
 export const { setCredentials, logout, clearError, updateUser, setHasLaunched } = authSlice.actions;
 export default authSlice.reducer;

@@ -3,25 +3,20 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { EmptyCoachingState } from '@features/personal-coaching/components/EmptyCoachingState';
-
 interface FindCoachCardProps {
   onPress?: () => void;
 }
-
 export const FindCoachCard: React.FC<FindCoachCardProps> = ({ onPress }) => {
   const { colors, isDark } = useTheme();
-
   return (
     <View style={styles.outerContainer}>
       <View style={styles.headerRow}>
         <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>MY COACHING</Text>
       </View>
-
       <EmptyCoachingState onPress={onPress || (() => {})} />
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   outerContainer: {
     marginBottom: 24,

@@ -14,33 +14,25 @@ import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import { getImageSource } from '@shared/utils/imageUtils';
 import { ConversationType, Conversation } from '../services/chatApi';
-
 type Props = NativeStackScreenProps<ChatStackParamList, 'ChatMain'>;
-
 export default function ChatListScreen({ navigation }: Props) {
   const { colors } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
-
   useChatSocket();
-
   const { data: conversations, isLoading, isError, refetch, isFetching } = useConversations();
   const { data: contactableCoaches, isLoading: isLoadingCoaches } = useContactableCoaches();
-
   const categories = [
     { id: 'ALL', label: 'All' },
     { id: 'GROUPS', label: 'Groups' },
     { id: 'PRIVATE', label: 'Private' },
     { id: 'COACHING', label: 'Coaching' },
   ];
-
   const filteredConversations = useMemo(() => {
     if (!conversations) return [];
-    
     const filtered = conversations.filter(conv => {
       const matchSearch = conv.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           (conv.lastMessagePreview?.toLowerCase().includes(searchQuery.toLowerCase()));
-      
       let matchCategory = false;
       if (selectedCategory === 'ALL') {
         matchCategory = true;
@@ -51,33 +43,21 @@ export default function ChatListScreen({ navigation }: Props) {
       } else if (selectedCategory === 'COACHING') {
         matchCategory = conv.type === ConversationType.PERSONAL_COACHING;
       }
-
-      
-      
       const isActive = !!conv.lastMessagePreview || conv.type === ConversationType.COURSE_GROUP; 
-      
       return matchCategory && matchSearch && isActive;
     });
-
-    
     const deduped = new Map<string, Conversation>(filtered.map((c: Conversation) => [c.id, c]));
     return Array.from(deduped.values());
   }, [conversations, selectedCategory, searchQuery]);
-
   const newCoaches = useMemo(() => {
     if (!contactableCoaches) return [];
-    
     const filtered = contactableCoaches.filter(coach => {
-      
       const hasActiveChat = conversations?.some(conv => conv.id === coach.conversationId && !!conv.lastMessagePreview);
       return !hasActiveChat;
     });
-
-    
     const deduped = new Map<string, any>(filtered.map((c: any) => [c.coachId, c]));
     return Array.from(deduped.values());
   }, [contactableCoaches, conversations]);
-
   if (isLoading && !isFetching) {
     return (
       <View style={[styles.centered, { backgroundColor: colors.background }]}>
@@ -85,7 +65,6 @@ export default function ChatListScreen({ navigation }: Props) {
       </View>
     );
   }
-
   if (isError) {
     return (
       <View style={[styles.centered, { backgroundColor: colors.background }]}>
@@ -97,10 +76,8 @@ export default function ChatListScreen({ navigation }: Props) {
       </View>
     );
   }
-
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      
       {}
       <View style={[styles.header, { backgroundColor: colors.background }]}>
         <View style={[styles.searchBar, { backgroundColor: hexToRGBA(colors.textMuted, 0.08) }]}>
@@ -113,7 +90,6 @@ export default function ChatListScreen({ navigation }: Props) {
             onChangeText={setSearchQuery}
           />
         </View>
-
         {}
         <View style={styles.tabsWrapper}>
           <ScrollView 
@@ -141,7 +117,6 @@ export default function ChatListScreen({ navigation }: Props) {
           </ScrollView>
         </View>
       </View>
-
       <FlatList
         data={filteredConversations as Conversation[]}
         keyExtractor={(item) => item.id}
@@ -219,7 +194,6 @@ export default function ChatListScreen({ navigation }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

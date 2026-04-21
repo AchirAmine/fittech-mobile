@@ -17,38 +17,29 @@ import { IllustrationPlaceholder, AuthHeader } from '@features/auth/components';
 import { getErrorMessage } from '@shared/constants/errorMessages';
 import { authService } from '@features/auth/services/authService';
 import logger from '@shared/utils/logger';
-
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '@appTypes/navigation.types';
 import { useTheme } from '@shared/hooks/useTheme';
-
 type Props = NativeStackScreenProps<AuthStackParamList, 'OTPVerification'>;
-
 const OTP_LENGTH = 6;
 const OTP_IMAGE = require('@features/auth/assets/otp-verification-illustration.png') as number;
-
 const otpSchema = object().shape({
   otp: string()
     .required('Verification code is required')
     .matches(/^\d{6}$/, 'Code must be exactly 6 digits'),
 });
-
 type OTPFormValues = { otp: string };
-
 const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
   const { colors } = useTheme();
   const { email, mode } = route.params;
-
   const [timer, setTimer] = useState<number>(183);
   const [loading, setLoading] = useState<boolean>(false);
   const [resendLoading, setResendLoading] = useState<boolean>(false);
   const [apiError, setApiError] = useState<string | null>(null);
-
   const { control, handleSubmit, reset, formState: { errors } } = useForm<OTPFormValues>({
     resolver: yupResolver(otpSchema),
     defaultValues: { otp: '' },
   });
-
   useEffect(() => {
     if (timer <= 0) return;
     const interval = setInterval(() => {
@@ -56,13 +47,11 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
     }, 1000);
     return () => clearInterval(interval);
   }, [timer]);
-
   const formatTimer = (secs: number): string => {
     const m = Math.floor(secs / 60);
     const s = secs % 60;
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
-
   const onSubmit = useCallback(async (data: OTPFormValues) => {
     setLoading(true);
     setApiError(null);
@@ -80,7 +69,6 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
       setLoading(false);
     }
   }, [navigation, email, mode]);
-
   const handleResend = useCallback(async () => {
     if (timer > 0) return;
     setResendLoading(true);
@@ -95,7 +83,6 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
       setResendLoading(false);
     }
   }, [email, timer, reset]);
-
   return (
     <AppScreen
       isLoading={loading || resendLoading}
@@ -112,9 +99,7 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
           showLogo={true}
           logoSize="large"
         />
-
         <IllustrationPlaceholder image={OTP_IMAGE} />
-
         <View style={styles.formContainer}>
           <Controller
             control={control}
@@ -140,7 +125,6 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
               />
             )}
           />
-
           <TouchableOpacity
             onPress={handleResend}
             disabled={timer > 0 || resendLoading}
@@ -155,7 +139,6 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
               {resendLoading ? 'Sending...' : timer > 0 ? `Resend in ${formatTimer(timer)}` : 'Resend'}
             </Text>
           </TouchableOpacity>
-
           <NeonButton
             title={loading ? 'Verifying...' : 'Verify code'}
             onPress={handleSubmit(onSubmit)}
@@ -167,7 +150,6 @@ const OTPVerificationScreen: React.FC<Props> = ({ navigation, route }) => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   formContainer: { gap: 0 },
   resendContainer: {
@@ -184,5 +166,4 @@ const styles = StyleSheet.create({
     height: 56,
   },
 });
-
 export default memo(OTPVerificationScreen);

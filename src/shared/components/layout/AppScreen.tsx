@@ -22,7 +22,6 @@ import Animated, {
   FadeOutUp
 } from 'react-native-reanimated';
 import { Loader } from './Loader';
-
 interface AppScreenProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
@@ -38,7 +37,6 @@ interface AppScreenProps {
   onDismissError?: () => void;
   safeArea?: boolean;
 }
-
 export const AppScreen: React.FC<AppScreenProps> = ({
   children,
   style,
@@ -56,13 +54,11 @@ export const AppScreen: React.FC<AppScreenProps> = ({
 }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
-
   const containerStyle = [
     styles.container,
     { backgroundColor: backgroundColor || colors.background },
     style,
   ];
-
   const content = scrollable ? (
     <ScrollView
       style={styles.flex}
@@ -93,7 +89,6 @@ export const AppScreen: React.FC<AppScreenProps> = ({
       {children}
     </Animated.View>
   );
-
   return (
     <View style={containerStyle}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
@@ -122,7 +117,6 @@ export const AppScreen: React.FC<AppScreenProps> = ({
           </View>
         )}
       </View>
-
       {errorMessage && (
         <Animated.View 
           entering={FadeInUp} 
@@ -144,7 +138,6 @@ export const AppScreen: React.FC<AppScreenProps> = ({
           )}
         </Animated.View>
       )}
-
       {isLoading && (
         <View style={[styles.loadingOverlay, { backgroundColor: hexToRGBA(colors.background, 0.7) }]}>
           <Loader inline />
@@ -154,7 +147,6 @@ export const AppScreen: React.FC<AppScreenProps> = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 interface ActivePlanCardProps {
   title: string;
   subtitle: string;
@@ -11,10 +10,8 @@ interface ActivePlanCardProps {
   unit: string;
   onPress: () => void;
 }
-
 export const ActivePlanCard = ({ title, subtitle, image, value, unit, onPress }: ActivePlanCardProps) => {
   const { colors } = useTheme();
-  
   return (
     <View style={[styles.card, { backgroundColor: colors.card, shadowColor: colors.black }]}>
       <View style={styles.imageContainer}>
@@ -23,19 +20,16 @@ export const ActivePlanCard = ({ title, subtitle, image, value, unit, onPress }:
           <Text style={[styles.activeBadgeText, { color: colors.white }]}>ACTIVE</Text>
         </View>
       </View>
-      
       <View style={styles.cardContent}>
         <View style={styles.cardHeader}>
           <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>{title}</Text>
           <Text style={[styles.cardSubtitle, { color: colors.textSecondary }]}>{subtitle}</Text>
         </View>
-        
         <View style={styles.cardFooter}>
           <View>
             <Text style={[styles.valueText, { color: colors.primaryMid }]}>{value}</Text>
             <Text style={[styles.unitText, { color: colors.textMuted }]}>{unit}</Text>
           </View>
-          
           <TouchableOpacity 
             style={[styles.checkButton, { backgroundColor: colors.primaryMid }]} 
             onPress={onPress}
@@ -48,7 +42,6 @@ export const ActivePlanCard = ({ title, subtitle, image, value, unit, onPress }:
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   card: {
     borderRadius: 20,

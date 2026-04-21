@@ -7,21 +7,17 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import { Reward, Voucher } from '../types/rewards.types';
-
 interface RewardItemProps {
   item: Reward | Voucher;
   type: 'locked' | 'unlocked' | 'redeemed';
   onPress?: () => void;
 }
-
 export const RewardItem: React.FC<RewardItemProps> = ({ item, type, onPress }) => {
   const { colors } = useTheme();
   const [copied, setCopied] = useState(false);
-
   const isVoucher = type === 'redeemed';
   const reward = item as Reward;
   const voucher = item as Voucher;
-
   const handleCopy = async () => {
     if (!isVoucher) return;
     await Clipboard.setStringAsync(voucher.code);
@@ -29,13 +25,11 @@ export const RewardItem: React.FC<RewardItemProps> = ({ item, type, onPress }) =
     setTimeout(() => setCopied(false), 2000);
     if (onPress) onPress();
   };
-
   const validUntil = (reward.endDate || voucher.promoOffer?.endDate) 
     ? new Date(reward.endDate || voucher.promoOffer?.endDate!).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
     : 'N/A';
   const title = isVoucher ? (voucher.promoOffer?.name || 'Promo Code') : reward.name;
   const starsRequired = isVoucher ? (voucher.promoOffer?.starsRequired || 0) : reward.starsRequired;
-
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
       <LinearGradient
@@ -48,7 +42,6 @@ export const RewardItem: React.FC<RewardItemProps> = ({ item, type, onPress }) =
           {title}
         </Text>
       </LinearGradient>
-
       <View style={styles.infoContainer}>
         <View style={styles.topRow}>
           <View style={[styles.promoBadge, { backgroundColor: colors.cardSecondary }]}>
@@ -63,7 +56,6 @@ export const RewardItem: React.FC<RewardItemProps> = ({ item, type, onPress }) =
             </Text>
           </View>
         </View>
-
         <View style={styles.requirementRow}>
           <Ionicons name="star" size={22} color={colors.textSecondary} />
           {type === 'locked' ? (
@@ -76,7 +68,6 @@ export const RewardItem: React.FC<RewardItemProps> = ({ item, type, onPress }) =
             </Text>
           )}
         </View>
-
         {type === 'redeemed' ? (
           <View style={[styles.redeemedContainer, { borderColor: colors.primary, backgroundColor: hexToRGBA(colors.primary, 0.05) }]}>
             <Text style={[styles.buttonText, { color: colors.primary, flex: 1 }]}>
@@ -112,7 +103,6 @@ export const RewardItem: React.FC<RewardItemProps> = ({ item, type, onPress }) =
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     marginBottom: 24,
@@ -205,5 +195,3 @@ const styles = StyleSheet.create({
     fontFamily: Theme.Typography.fontFamily.bold,
   },
 });
-
-

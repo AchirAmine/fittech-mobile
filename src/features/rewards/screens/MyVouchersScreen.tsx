@@ -6,15 +6,12 @@ import { Theme } from '@shared/constants/theme';
 import { useMyCodes } from '../hooks/useRewards';
 import { RewardItem } from '../components/RewardItem';
 import { RewardsEmptyState } from '../components/RewardsEmptyState';
-
 export const MyVouchersScreen = () => {
   const { colors } = useTheme();
   const { data: myCodes, isLoading } = useMyCodes();
-
   if (isLoading) {
     return <Loader />;
   }
-
   const ownedVouchers = myCodes?.map(c => ({
     ...c,
     promoOffer: { 
@@ -24,7 +21,6 @@ export const MyVouchersScreen = () => {
       discountPercentage: c.offer.discountPercentage 
     }
   })) || [];
-
   return (
     <AppScreen safeArea={false} backgroundColor={colors.background}>
       <ScrollView 
@@ -35,7 +31,6 @@ export const MyVouchersScreen = () => {
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
           Copy your code and apply it during checkout to get your discount.
         </Text>
-
         <View style={styles.listContainer}>
           {ownedVouchers.length === 0 ? (
             <RewardsEmptyState 
@@ -54,7 +49,6 @@ export const MyVouchersScreen = () => {
     </AppScreen>
   );
 };
-
 const styles = StyleSheet.create({
   scrollContent: {
     paddingTop: 20,

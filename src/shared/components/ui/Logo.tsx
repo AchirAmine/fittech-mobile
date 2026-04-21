@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
-
 interface LogoProps {
   size?: 'small' | 'medium' | 'large';
   showText?: boolean;
@@ -11,20 +10,16 @@ interface LogoProps {
   textColor?: string;
   style?: ViewStyle;
 }
-
 export const Logo: React.FC<LogoProps> = ({ 
   size = 'medium', 
   textColor,
   style 
 }) => {
   const { colors } = useTheme();
-  
   const iconSize = size === 'large' ? 44 : size === 'medium' ? 28 : 20;
   const fontSize = size === 'large' ? 48 : size === 'medium' ? 32 : 24;
   const gap = size === 'large' ? 12 : size === 'medium' ? 8 : 6;
-  
   const activeColor = textColor || colors.primaryMid;
-
   return (
     <View style={[styles.container, { gap }, style]}>
       <View style={styles.textContainer}>
@@ -46,7 +41,6 @@ export const Logo: React.FC<LogoProps> = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

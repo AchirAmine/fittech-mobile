@@ -4,10 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { AccountMenu } from '@features/account/components/AccountMenu';
-
 export const AccountScreen = () => {
   const { colors } = useTheme();
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -16,7 +14,6 @@ export const AccountScreen = () => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { padding: Theme.Spacing.lg },

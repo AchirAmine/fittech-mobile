@@ -5,21 +5,17 @@ import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import { StarTransaction } from '../types/rewards.types';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
 interface HistoryItemProps {
   transaction: StarTransaction;
 }
-
 export const HistoryItem: React.FC<HistoryItemProps> = ({ transaction }) => {
   const { colors } = useTheme();
   const isEarned = transaction.changeAmount > 0;
-  
   const timeStr = new Date(transaction.createdAt).toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
   });
-
   const getTitle = () => {
     switch (transaction.reason) {
       case 'PLAN_PURCHASE':
@@ -32,7 +28,6 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({ transaction }) => {
         return 'Promo redemption';
     }
   };
-
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
       <View style={[
@@ -45,7 +40,6 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({ transaction }) => {
           color={isEarned ? colors.primary : colors.error} 
         />
       </View>
-      
       <View style={styles.content}>
         <Text style={[styles.description, { color: colors.textPrimary }]}>
           {getTitle()}
@@ -54,7 +48,6 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({ transaction }) => {
           • {timeStr}
         </Text>
       </View>
-
       <View style={styles.rightContent}>
         <Text style={[
           styles.points, 
@@ -72,7 +65,6 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({ transaction }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

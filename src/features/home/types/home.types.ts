@@ -2,6 +2,7 @@ export interface HomeSummary {
   fullName: string;
   profilePicture: string | null;
   starBalance: number;
+  hasUnreadNotifications: boolean;
   hasActivePlanning: boolean;
   paymentDone: boolean;
   actualPlanning: {
@@ -24,6 +25,8 @@ export interface HomeSummary {
     id: string;
     offerTitle: string;
     endDate: string | null;
+    remainingSessions: number | null;
+    remainingOpenSessions: number | null;
   } | null;
   nearestCourse: {
     id: string;

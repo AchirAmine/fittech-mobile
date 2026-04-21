@@ -1,12 +1,9 @@
-
-
 export interface OfferSport {
   id: string;
   sportType: string;
   freeSessions: number;
   coachSessions: number;
 }
-
 export interface Offer {
   id: string;
   title: string;
@@ -15,7 +12,6 @@ export interface Offer {
   picture?: string;
   sports: OfferSport[];
 }
-
 export interface Payment {
   id: string;
   amount: number;
@@ -24,13 +20,11 @@ export interface Payment {
   paidAt?: string;
   createdAt: string;
 }
-
 export interface SubscriptionSportBalance {
   id: string;
   sportType: string;
   remainingSessions: number;
 }
-
 export interface Subscription {
   id: string;
   paymentMethod: 'ONLINE' | 'AT_CLUB';
@@ -44,13 +38,11 @@ export interface Subscription {
   payment?: Payment;
   sportBalances?: SubscriptionSportBalance[];
 }
-
 export interface PlanFeature {
   label: string;
   icon: string;
   details: string[];
 }
-
 export interface SubscriptionPlan {
   id: string;
   title: string;
@@ -63,7 +55,6 @@ export interface SubscriptionPlan {
   starsAwarded: number;
   features: PlanFeature[];
 }
-
 export interface User {
   id: string;
   email: string;
@@ -105,4 +96,3 @@ export interface User {
   };
   absenceWarnings: number;
 }
-

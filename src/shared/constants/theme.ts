@@ -6,7 +6,6 @@ export const Spacing = {
   xl: 32,
   xxl: 48,
 } as const;
-
 export const Radius = {
   sm: 8,
   md: 12,
@@ -14,7 +13,6 @@ export const Radius = {
   xl: 24,
   full: 999,
 } as const;
-
 export const Typography = {
   fontFamily: {
     regular: 'Poppins_400Regular',
@@ -34,7 +32,6 @@ export const Typography = {
     micro: 10,
   },
 } as const;
-
 export const Theme = {
   Spacing,
   Radius,

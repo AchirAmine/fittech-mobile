@@ -6,15 +6,11 @@ import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
 import SessionItem from './SessionItem';
 import { Session } from '@appTypes/planning';
-
 interface Props {
   sessions: Session[];
 }
-
 const SessionList: React.FC<Props> = ({ sessions }) => {
   const { colors } = useTheme();
-  
-  
   const { grouped, sortedTimes } = useMemo(() => {
     const acc = sessions.reduce((acc, session) => {
       const time = session.time;
@@ -22,13 +18,11 @@ const SessionList: React.FC<Props> = ({ sessions }) => {
       acc[time].push(session);
       return acc;
     }, {} as Record<string, Session[]>);
-
     return {
       grouped: acc,
       sortedTimes: Object.keys(acc).sort(),
     };
   }, [sessions]);
-
   if (sessions.length === 0) {
     return (
       <View style={styles.emptyContainer}>
@@ -42,7 +36,6 @@ const SessionList: React.FC<Props> = ({ sessions }) => {
       </View>
     );
   }
-
   return (
     <View style={styles.container}>
       {sortedTimes.map((time) => (
@@ -60,7 +53,6 @@ const SessionList: React.FC<Props> = ({ sessions }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     paddingBottom: 20,
@@ -106,5 +98,4 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
 });
-
 export default memo(SessionList);

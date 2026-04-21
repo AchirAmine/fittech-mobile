@@ -2,21 +2,18 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Theme } from '@shared/constants/theme';
 import { ThemeColors } from '@shared/constants/colors';
-
 interface SectionCardProps {
   title: string;
   colors: ThemeColors;
   isDark: boolean;
   children: React.ReactNode;
 }
-
 export const SectionCard = ({ title, colors, isDark, children }: SectionCardProps) => (
   <View style={[styles.card, { backgroundColor: isDark ? colors.card : '#fff', borderColor: colors.border }]}>
     <Text style={[styles.cardTitle, { color: colors.primaryMid }]}>{title}</Text>
     {children}
   </View>
 );
-
 const styles = StyleSheet.create({
   card: {
     padding: 20,

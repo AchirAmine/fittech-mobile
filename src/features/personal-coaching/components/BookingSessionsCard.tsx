@@ -5,14 +5,11 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { NeonButton } from '@shared/components/ui/NeonButton';
 import { hexToRGBA } from '@shared/constants/colors';
-
 interface BookingSessionsCardProps {
   onBookPress: () => void;
 }
-
 export const BookingSessionsCard = ({ onBookPress }: BookingSessionsCardProps) => {
   const { colors, isDark } = useTheme();
-
   return (
     <View style={styles.section}>
       <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>BOOKING SESSIONS</Text>
@@ -30,7 +27,6 @@ export const BookingSessionsCard = ({ onBookPress }: BookingSessionsCardProps) =
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   section: {
     marginBottom: 32,

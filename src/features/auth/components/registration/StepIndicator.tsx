@@ -3,22 +3,18 @@ import { View, StyleSheet, Text } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
-
 interface StepIndicatorProps {
   currentStep: number;
   totalSteps: number;
 }
-
 export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, totalSteps }) => {
   const { colors } = useTheme();
-
   return (
     <View style={styles.container}>
       <View style={styles.barContainer}>
         {Array.from({ length: totalSteps }).map((_, index) => {
           const isActive = index < currentStep;
           const isCurrent = index === currentStep - 1;
-
           return (
             <Animated.View
               key={index}
@@ -39,7 +35,6 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, total
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

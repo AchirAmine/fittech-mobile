@@ -40,9 +40,10 @@ export const ROUTES = {
     CHAT: 'Chat',
     CHAT_MAIN: 'ChatMain',
     CHAT_ROOM: 'ChatRoom',
+    NOTIFICATIONS: 'Notifications',
+    NOTIFICATION_DETAIL: 'NotificationDetail',
   },
 } as const;
-
 export type CoursesStackParamList = {
   [ROUTES.MAIN.COURSES_MAIN]: undefined;
   [ROUTES.MAIN.COURSE_DETAILS]: { courseId: string; courseTitle?: string; category?: string };

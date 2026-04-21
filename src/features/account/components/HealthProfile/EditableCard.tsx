@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInRight } from 'react-native-reanimated';
 import { ThemeColors } from '@shared/constants/colors';
 import { Theme } from '@shared/constants/theme';
-
 interface EditableCardProps {
   label: string;
   subtitle: string;
@@ -21,7 +20,6 @@ interface EditableCardProps {
   onChangeOtherText?: (text: string) => void;
   otherPlaceholder?: string;
 }
-
 export const EditableCard = ({ 
   label, 
   subtitle, 
@@ -95,7 +93,6 @@ export const EditableCard = ({
     </Animated.View>
   );
 };
-
 const styles = StyleSheet.create({
   selectCard: {
     flexDirection: 'row',

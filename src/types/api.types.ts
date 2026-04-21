@@ -3,7 +3,6 @@ export interface ApiResponse<T = unknown> {
   message?: string;
   status: number;
 }
-
 export interface ApiError {
   message: string;
   status?: number;
@@ -11,7 +10,6 @@ export interface ApiError {
   field?: string | null;
   errors?: Record<string, string[]>;
 }
-
 export interface Member {
   id: string;
   firstName: string;

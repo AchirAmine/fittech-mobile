@@ -1,6 +1,5 @@
 import { ROUTES } from '@navigation/routes';
 import { SubscriptionPlan } from './index';
-
 export interface RegisterFormData {
   firstName: string;
   lastName: string;
@@ -22,7 +21,6 @@ export interface RegisterFormData {
     weightUnit?: string;
   };
 }
-
 export interface SignupData {
   firstName?: string;
   lastName?: string;
@@ -40,7 +38,6 @@ export interface SignupData {
   activities?: string[];
   healthConcerns?: string[];
 }
-
 export type AuthStackParamList = {
   Splash: undefined;
   Login: undefined;
@@ -63,19 +60,16 @@ export type AuthStackParamList = {
   Welcome: undefined;
   AuthChoice: undefined;
 };
-
 export type MembershipStackParamList = {
   [ROUTES.MAIN.MY_PLANS]: undefined;
   [ROUTES.MAIN.PLAN_DETAILS]: { planId: string; planName?: string };
   [ROUTES.MAIN.SUBSCRIPTION_OFFERS]: undefined;
   [ROUTES.MAIN.PAYMENT_DETAILS]: { plan: SubscriptionPlan };
 };
-
 export type CoursesStackParamList = {
   [ROUTES.MAIN.COURSES]: undefined;
   [ROUTES.MAIN.COURSE_DETAILS]: { courseId: string; courseTitle?: string; category?: string };
 };
-
 export type HomeStackParamList = {
   HomeMain: undefined;
   ProfileMain: undefined;
@@ -91,8 +85,9 @@ export type HomeStackParamList = {
   [ROUTES.MAIN.PLAN_DETAILS]: { planId: string; planName?: string };
   [ROUTES.MAIN.REWARDS]: undefined;
   [ROUTES.MAIN.MY_VOUCHERS]: undefined;
+  [ROUTES.MAIN.NOTIFICATIONS]: undefined;
+  [ROUTES.MAIN.NOTIFICATION_DETAIL]: { notificationId: string };
 };
-
 export type MainTabParamList = {
   [ROUTES.MAIN.HOME]: undefined; 
   [ROUTES.MAIN.COURSES]: undefined;
@@ -100,4 +95,3 @@ export type MainTabParamList = {
   [ROUTES.MAIN.ACCOUNT]: undefined;
   [ROUTES.MAIN.CHAT_MAIN]: undefined;
 };
-

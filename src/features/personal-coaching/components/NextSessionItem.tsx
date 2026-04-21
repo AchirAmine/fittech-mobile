@@ -4,15 +4,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
-
 interface NextSessionItemProps {
   day: string;
   time: string;
 }
-
 export const NextSessionItem = ({ day, time }: NextSessionItemProps) => {
   const { colors, isDark } = useTheme();
-
   return (
     <View style={[styles.sessionCard, { backgroundColor: isDark ? colors.card : '#FFF', shadowColor: colors.shadow }]}>
       <View style={[styles.sessionIconBg, { backgroundColor: isDark ? hexToRGBA(colors.primary, 0.1) : '#F0F4FF' }]}>
@@ -29,7 +26,6 @@ export const NextSessionItem = ({ day, time }: NextSessionItemProps) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   sessionCard: {
     flexDirection: 'row',

@@ -6,14 +6,11 @@ import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
 import { hexToRGBA } from '@shared/constants/colors';
 import { NeonButton } from '@shared/components/ui/NeonButton';
-
 interface HomeInactivePlanProps {
   onBrowsePlans: () => void;
 }
-
 export const HomeInactivePlan: React.FC<HomeInactivePlanProps> = ({ onBrowsePlans }) => {
   const { colors } = useTheme();
-
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -26,12 +23,10 @@ export const HomeInactivePlan: React.FC<HomeInactivePlanProps> = ({ onBrowsePlan
           <View style={[styles.iconContainer, { backgroundColor: hexToRGBA(colors.white, 0.15) }]}>
             <Ionicons name="basket-outline" size={32} color={colors.white} />
           </View>
-          
           <Text style={[styles.title, { color: colors.white }]}>NO ACTIVE PLANS YET</Text>
           <Text style={[styles.description, { color: hexToRGBA(colors.white, 0.8) }]}>
             You're not enrolled in any training plan. Pick a sport package and start your journey today.
           </Text>
-
           <View style={styles.chipsContainer}>
             <View style={[styles.chip, { backgroundColor: hexToRGBA(colors.white, 0.1), borderColor: hexToRGBA(colors.white, 0.15) }]}>
               <Text style={[styles.chipText, { color: colors.white }]}>🥊 Multi-Sport</Text>
@@ -43,7 +38,6 @@ export const HomeInactivePlan: React.FC<HomeInactivePlanProps> = ({ onBrowsePlan
               <Text style={[styles.chipText, { color: colors.white }]}>💪 Progress</Text>
             </View>
           </View>
-
           <View style={styles.buttonWrapper}>
             <NeonButton 
               title="Browse Plans" 
@@ -56,7 +50,6 @@ export const HomeInactivePlan: React.FC<HomeInactivePlanProps> = ({ onBrowsePlan
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     borderRadius: 24,

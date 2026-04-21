@@ -1,6 +1,4 @@
 import { Subscription, SubscriptionPlan } from '@appTypes/index';
-
-
 export const transformOffer = (offer: any): SubscriptionPlan => ({
   id: offer.id,
   title: offer.title,

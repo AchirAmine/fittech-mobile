@@ -5,16 +5,13 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import CourseCard from './CourseCard';
 import { Course } from '@appTypes/course';
-
 interface Props {
   courses: Course[];
   isLoading: boolean;
   isError: boolean;
 }
-
 const CourseList: React.FC<Props> = ({ courses, isLoading, isError }) => {
   const { colors } = useTheme();
-
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -23,7 +20,6 @@ const CourseList: React.FC<Props> = ({ courses, isLoading, isError }) => {
       </View>
     );
   }
-
   if (isError) {
     return (
       <View style={styles.emptyContainer}>
@@ -32,7 +28,6 @@ const CourseList: React.FC<Props> = ({ courses, isLoading, isError }) => {
       </View>
     );
   }
-
   if (courses.length === 0) {
     return (
       <View style={styles.emptyContainer}>
@@ -43,7 +38,6 @@ const CourseList: React.FC<Props> = ({ courses, isLoading, isError }) => {
       </View>
     );
   }
-
   return (
     <View style={styles.listContainer}>
       {courses.map((course) => (
@@ -52,7 +46,6 @@ const CourseList: React.FC<Props> = ({ courses, isLoading, isError }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
@@ -80,5 +73,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
 export default CourseList;
