@@ -44,7 +44,7 @@ export const CoachProfileScreen = () => {
     switch (coach.invitation.status) {
       case 'PENDING': return 'requested';
       case 'ACCEPTED_UNPAID': return 'accepted';
-      case 'ACTIVE': return 'accepted'; // Or maybe a new 'active' status
+      case 'ACTIVE': return 'accepted'; 
       default: return 'idle';
     }
   };

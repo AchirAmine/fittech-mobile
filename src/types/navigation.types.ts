@@ -87,6 +87,9 @@ export type HomeStackParamList = {
   [ROUTES.MAIN.MY_VOUCHERS]: undefined;
   [ROUTES.MAIN.NOTIFICATIONS]: undefined;
   [ROUTES.MAIN.NOTIFICATION_DETAIL]: { notificationId: string };
+  [ROUTES.MAIN.CHECK_IN]: undefined;
+  [ROUTES.MAIN.CHECK_IN_SELECTION]: { gymId?: string };
+  [ROUTES.MAIN.COURSE_ATTENDANCE]: undefined;
 };
 export type MainTabParamList = {
   [ROUTES.MAIN.HOME]: undefined; 

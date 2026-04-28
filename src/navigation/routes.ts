@@ -42,6 +42,9 @@ export const ROUTES = {
     CHAT_ROOM: 'ChatRoom',
     NOTIFICATIONS: 'Notifications',
     NOTIFICATION_DETAIL: 'NotificationDetail',
+    CHECK_IN: 'CheckIn',
+    CHECK_IN_SELECTION: 'CheckInSelection',
+    COURSE_ATTENDANCE: 'CourseAttendance',
   },
 } as const;
 export type CoursesStackParamList = {

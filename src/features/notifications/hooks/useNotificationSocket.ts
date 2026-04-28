@@ -11,7 +11,6 @@ export function useNotificationSocket() {
     if (!token) return;
     const socket = initializeSocket(token);
     registerOnce('notification:new', (newNotification: Notification) => {
-      console.log('[Notification] New event received:', newNotification.id);
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
       queryClient.setQueryData<Notification[]>(['notifications'], (old = []) => {
         if (old.some(n => n.id === newNotification.id)) return old;

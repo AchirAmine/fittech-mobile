@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: Theme.Typography.fontFamily.bold,
-    fontSize: 24,
+    fontSize: 20,
     textAlign: 'center',
     marginBottom: 12,
   },

@@ -11,7 +11,23 @@ import { AccountNavigator } from './AccountNavigator';
 import { CoursesNavigator } from './CoursesNavigator';
 import { ChatNavigator } from './ChatNavigator';
 import PlanningScreen from '@features/planning/screens/PlanningScreen';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+
 const Tab = createBottomTabNavigator<MainTabParamList>();
+
+const getTabBarVisibility = (route: any) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? ROUTES.MAIN.HOME;
+  
+  if (
+    routeName === ROUTES.MAIN.CHECK_IN || 
+    routeName === ROUTES.MAIN.CHECK_IN_SELECTION || 
+    routeName === ROUTES.MAIN.COURSE_ATTENDANCE
+  ) {
+    return 'none';
+  }
+  return 'flex';
+};
+
 export const MainTabNavigator = () => {
   const { colors } = useTheme();
   return (
@@ -27,7 +43,12 @@ export const MainTabNavigator = () => {
           fontSize: 20,
         },
         headerShadowVisible: false,
-        tabBarStyle: { backgroundColor: colors.card, borderTopWidth: 0, elevation: 5 },
+        tabBarStyle: { 
+          backgroundColor: colors.card, 
+          borderTopWidth: 0, 
+          elevation: 5,
+          display: getTabBarVisibility(route) as any
+        },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarIcon: ({ focused, color, size }) => {

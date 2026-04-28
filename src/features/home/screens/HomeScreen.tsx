@@ -14,9 +14,10 @@ import { HomeInactivePlan } from '../components/HomeInactivePlan';
 import { MyCoachingCard } from '@features/personal-coaching/components/MyCoachingCard';
 import { useHomeSummary } from '../hooks/useHomeSummary';
 import { NearestCourseCard } from '../components/NearestCourseCard';
+import { AttendanceCheckInCard } from '../components/AttendanceCheckInCard';
 import { HomePlanningCard } from '../components/HomePlanningCard';
 import { FindCoachCard } from '../components/FindCoachCard';
-import { HomeCheckInCard } from '../components/HomeCheckInCard';
+import { CheckInCard } from '@features/check-in/components/CheckInCard';
 import { PointsBadge } from '@features/rewards/components/PointsBadge';
 import { getImageSource } from '@shared/utils/imageUtils';
 import { useUnreadCount } from '@features/notifications/hooks/useNotifications';
@@ -112,6 +113,18 @@ export const HomeScreen = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.mainContainer}>
+            {summary?.nearestCourse && (
+              <View style={styles.discoverySection}>
+                <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>
+                  MARK ATTENDANCE
+                </Text>
+                <AttendanceCheckInCard 
+                  courseTitle={summary.nearestCourse.title}
+                  startTime={summary.nearestCourse.startTime}
+                  onPress={() => navigation.navigate(ROUTES.MAIN.COURSE_ATTENDANCE as any)}
+                />
+              </View>
+            )}
             <View style={styles.discoverySection}>
               <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>
                 YOUR SUBSCRIPTION
@@ -128,17 +141,6 @@ export const HomeScreen = () => {
                 />
               )}
             </View>
-            {summary?.nearestCourse && (
-              <NearestCourseCard 
-                title={summary.nearestCourse.title}
-                startTime={summary.nearestCourse.startTime}
-                gymZone={summary.nearestCourse.gymZone}
-                onPress={() => navigation.navigate(ROUTES.MAIN.COURSE_DETAILS as any, { 
-                  courseId: summary.nearestCourse?.id,
-                  courseTitle: summary.nearestCourse?.title 
-                })}
-              />
-            )}
             {coaching ? (
               <MyCoachingCard 
                 coach={coaching.coach}
@@ -154,7 +156,7 @@ export const HomeScreen = () => {
             <HomePlanningCard 
               onPress={() => navigation.navigate(ROUTES.MAIN.PLANNING as any)}
             />
-            <HomeCheckInCard />
+            <CheckInCard />
           </View>
         </ScrollView>
       )}

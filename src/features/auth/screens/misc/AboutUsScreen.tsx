@@ -66,14 +66,14 @@ const FEEDBACKS = [
     name: 'Sarah Jenkins',
     role: 'Professional Athlete',
     text: "The coaches here genuinely care. They looked at my health profile before every session and adjusted the workout around my back injury. I've never felt safer pushing my limits!",
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop',
+    avatar: 'https://i.pravatar.cc/150?u=sarah',
   },
   {
     id: '2',
     name: 'Marcus Thorne',
     role: 'Tech Entrepreneur',
     text: "As a busy professional, the easy class booking is a lifesaver. I can schedule a session between meetings and the AI trainer knows exactly what I need to focus on each day. It's like having a concierge for my health!",
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop',
+    avatar: 'https://i.pravatar.cc/150?u=marcus',
   },
 ];
 const ABOUT_US_IMAGE = require('../../assets/about-us-hero-illustration.png') as number;
