@@ -29,7 +29,7 @@ export const MyVouchersScreen = () => {
       >
         <Text style={[styles.title, { color: colors.textPrimary }]}>My Promo Codes</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-          Copy your code and apply it during checkout to get your discount.
+          Copy your code and apply it during payment to get your discount.
         </Text>
         <View style={styles.listContainer}>
           {ownedVouchers.length === 0 ? (

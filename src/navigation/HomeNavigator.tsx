@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { HomeScreen } from '@features/home/screens/HomeScreen';
 import { ProfileScreen } from '@features/account/screens/ProfileScreen';
 import { SubscriptionScreen } from '@features/membership/screens/SubscriptionScreen';
-import { PaymentDetailsScreen } from '@features/checkout/screens/PaymentDetailsScreen';
+import { PaymentDetailsScreen } from '@features/payment/screens/PaymentDetailsScreen';
 import { PersonalCoachesScreen } from '@features/personal-coaching/screens/PersonalCoachesScreen';
 import { CoachProfileScreen } from '@features/personal-coaching/screens/CoachProfileScreen';
 import { MyCoachingDashboardScreen } from '@features/personal-coaching/screens/MyCoachingDashboardScreen';
@@ -23,6 +23,9 @@ import { RewardsScreen } from '@features/rewards/screens/RewardsScreen';
 import { MyVouchersScreen } from '@features/rewards/screens/MyVouchersScreen';
 import { NotificationScreen } from '@features/notifications/screens/NotificationScreen';
 import { NotificationDetailScreen } from '@features/notifications/screens/NotificationDetailScreen';
+import { CheckInScreen } from '@features/check-in/screens/CheckInScreen';
+import { CheckInSelectionScreen } from '@features/check-in/screens/CheckInSelectionScreen';
+import { CourseAttendanceScreen } from '@features/check-in/screens/CourseAttendanceScreen';
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 export const HomeNavigator = () => {
   const { colors } = useTheme();
@@ -166,6 +169,36 @@ export const HomeNavigator = () => {
           title: 'NOTIFICATION',
           headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.CHECK_IN as any} 
+        component={CheckInScreen} 
+        options={({ navigation }) => ({ 
+          title: 'SCAN QR CODE',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+          headerTransparent: true,
+          headerStyle: { backgroundColor: 'transparent' },
+          headerTintColor: '#ffffff',
+          headerTitleStyle: {
+            fontFamily: Theme.Typography.fontFamily.bold,
+            fontSize: 16,
+            color: '#ffffff',
+          },
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.CHECK_IN_SELECTION as any} 
+        component={CheckInSelectionScreen} 
+        options={{ 
+          headerShown: false,
+        }} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.COURSE_ATTENDANCE as any} 
+        component={CourseAttendanceScreen} 
+        options={{ 
+          headerShown: false,
+        }} 
       />
     </Stack.Navigator>
   );

@@ -60,4 +60,8 @@ export const API_ENDPOINTS = {
     UPLOADS: "/chat/uploads",
     MY_COACHES: "/chat/my-coaches",
   },
+  PRESENCE: {
+    SCAN_DOOR: '/presence/scan/door',
+    SCAN_COACH: '/presence/scan/coach',
+  },
 } as const;

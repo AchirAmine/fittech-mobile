@@ -5,7 +5,7 @@ import { MembershipStackParamList } from '@appTypes/navigation.types';
 import { MyPlansScreen } from '@features/membership/screens/MyPlansScreen';
 import { PlanDetailsScreen } from '@features/membership/screens/PlanDetailsScreen';
 import { SubscriptionScreen } from '@features/membership/screens/SubscriptionScreen';
-import { PaymentDetailsScreen } from '@features/checkout/screens/PaymentDetailsScreen';
+import { PaymentDetailsScreen } from '@features/payment/screens/PaymentDetailsScreen';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 const Stack = createNativeStackNavigator<MembershipStackParamList>();
