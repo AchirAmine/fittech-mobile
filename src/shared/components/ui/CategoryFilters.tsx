@@ -7,6 +7,7 @@ export interface Category {
   id: string;
   label: string;
   emoji?: string;
+  icon?: (color: string) => React.ReactNode;
 }
 interface Props {
   categories: Category[];
@@ -18,9 +19,9 @@ const CategoryFilters: React.FC<Props> = ({ categories, selectedId, onSelect, co
   const { colors, isDark } = useTheme();
   return (
     <View style={[styles.container, containerStyle]}>
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false} 
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
         decelerationRate="fast"
       >
@@ -33,14 +34,18 @@ const CategoryFilters: React.FC<Props> = ({ categories, selectedId, onSelect, co
               onPress={() => onSelect(cat.id)}
               style={[
                 styles.chip,
-                { 
+                {
                   backgroundColor: isSelected ? colors.primary : (isDark ? colors.card : hexToRGBA(colors.black, 0.03)),
                   borderColor: isSelected ? colors.primary : (isDark ? hexToRGBA(colors.white, 0.1) : hexToRGBA(colors.black, 0.05)),
                 },
                 isSelected && styles.activeChipShift
               ]}
             >
-              {cat.emoji && <Text style={styles.emoji}>{cat.emoji}</Text>}
+              {cat.icon ? (
+                <View style={{ marginRight: 6 }}>{cat.icon(isSelected ? colors.white : colors.textPrimary)}</View>
+              ) : (
+                cat.emoji && <Text style={styles.emoji}>{cat.emoji}</Text>
+              )}
               <Text
                 style={[
                   styles.label,
@@ -62,7 +67,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   scroll: {
-    paddingHorizontal: 18,
+    paddingHorizontal: 8,
     gap: 10,
   },
   chip: {

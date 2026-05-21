@@ -21,14 +21,15 @@ import { CheckInCard } from '@features/check-in/components/CheckInCard';
 import { PointsBadge } from '@features/rewards/components/PointsBadge';
 import { getImageSource } from '@shared/utils/imageUtils';
 import { useUnreadCount } from '@features/notifications/hooks/useNotifications';
-import { useNotificationSocket } from '@features/notifications/hooks/useNotificationSocket';
+import { HomeExerciseCard } from '../components/HomeExerciseCard';
+
+
 export const HomeScreen = () => {
   const { colors, isDark } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
   const authUser = useAppSelector((state) => state.auth.user);
   const { data: summary, isLoading: isSummaryLoading, refetch } = useHomeSummary();
   const unreadCount = useUnreadCount();
-  useNotificationSocket();
   useFocusEffect(
     useCallback(() => {
       refetch();
@@ -157,7 +158,11 @@ export const HomeScreen = () => {
               onPress={() => navigation.navigate(ROUTES.MAIN.PLANNING as any)}
             />
             <CheckInCard />
+            <HomeExerciseCard 
+              onPress={() => navigation.navigate(ROUTES.MAIN.EXERCISES as any)} 
+            />
           </View>
+
         </ScrollView>
       )}
     </AppScreen>

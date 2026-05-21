@@ -11,6 +11,7 @@ import {
 } from '@expo-google-fonts/poppins';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@shared/services/queryClient';
 import { store, persistor } from '@store/store';
@@ -48,7 +49,9 @@ export default function App(): React.ReactElement {
             <GestureHandlerRootView style={{ flex: 1 }}>
               <StatusBar style="auto" />
               <PersistGate loading={<SplashScreen />} persistor={persistor}>
-                <AppNavigator />
+                <SafeAreaProvider>
+                  <AppNavigator />
+                </SafeAreaProvider>
               </PersistGate>
             </GestureHandlerRootView>
           </ThemeProvider>

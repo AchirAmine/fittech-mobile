@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { 
   View, Text, StyleSheet, FlatList, ActivityIndicator, 
   TouchableOpacity, ScrollView, TextInput, Image 
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { useConversations, useContactableCoaches } from '../hooks/useChatQueries';
@@ -21,7 +22,14 @@ export default function ChatListScreen({ navigation }: Props) {
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   useChatSocket();
   const { data: conversations, isLoading, isError, refetch, isFetching } = useConversations();
-  const { data: contactableCoaches, isLoading: isLoadingCoaches } = useContactableCoaches();
+  const { data: contactableCoaches, isLoading: isLoadingCoaches, refetch: refetchCoaches } = useContactableCoaches();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+      refetchCoaches();
+    }, [refetch, refetchCoaches])
+  );
   const categories = [
     { id: 'ALL', label: 'All' },
     { id: 'GROUPS', label: 'Groups' },

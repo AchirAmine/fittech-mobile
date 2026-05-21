@@ -68,6 +68,8 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: Theme.Typography.fontFamily.bold,
     fontSize: 18,
+    flex: 1,
+    marginRight: 16,
   },
   closeBtn: {
     padding: 4,

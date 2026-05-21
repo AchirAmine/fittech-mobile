@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useNavigation, NavigationProp, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppScreen, Loader } from '@shared/components';
 import { useTheme } from '@shared/hooks/useTheme';
@@ -47,9 +47,15 @@ const groupNotificationsByDate = (notifications: Notification[]) => {
 export const NotificationScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp<HomeStackParamList>>();
-  const { data, isLoading } = useNotifications();
+  const { data, isLoading, refetch } = useNotifications();
   const { mutate: markAsRead } = useMarkNotificationRead();
   const { mutate: markAllAsRead } = useMarkAllNotificationsRead();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
   const notifications = data?.items ?? [];
   const unreadCount = data?.unreadCount ?? 0;
   const groups = groupNotificationsByDate(notifications);
@@ -132,7 +138,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginHorizontal: 16,
     marginTop: 12,
     paddingHorizontal: 14,
     paddingVertical: 10,

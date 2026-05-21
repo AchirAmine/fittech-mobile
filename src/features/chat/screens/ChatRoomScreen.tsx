@@ -94,14 +94,12 @@ export default function ChatRoomScreen({ route, navigation }: Props) {
     }
   }, [conversation, conversationId, uploadAttachment, sendMessage]);
   const sortedMessages = React.useMemo(() => {
-    console.log('[ChatRoom] Items in messages:', messages.length);
     const messageMap = new Map(messages.map(m => [m.id, m]));
     return Array.from(messageMap.values()).sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }, [messages]);
   React.useEffect(() => {
-    console.log('[ChatRoom] sortedMessages updated, length:', sortedMessages.length);
     if (sortedMessages.length > 0) {
       flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
     }

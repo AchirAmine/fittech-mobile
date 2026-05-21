@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { AppScreen, ErrorBanner } from '@shared/components/layout';
 import CategoryFilters, { Category } from '@shared/components/ui/CategoryFilters';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useCourses } from '../hooks/useCourses';
 import CourseList from '../components/CourseList';
 const COURSE_CATEGORIES: Category[] = [
@@ -14,7 +15,13 @@ const COURSE_CATEGORIES: Category[] = [
 const CoursesScreen = () => {
   const { colors, isDark } = useTheme();
   const [activeCategory, setActiveCategory] = useState<string>('All');
-  const { data: filteredCourses = [], isLoading, isError, error } = useCourses(activeCategory);
+  const { data: filteredCourses = [], isLoading, isError, error, refetch } = useCourses(activeCategory);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
   return (
     <AppScreen 
       safeArea={false}

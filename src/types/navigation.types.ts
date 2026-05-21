@@ -90,6 +90,7 @@ export type HomeStackParamList = {
   [ROUTES.MAIN.CHECK_IN]: undefined;
   [ROUTES.MAIN.CHECK_IN_SELECTION]: { gymId?: string };
   [ROUTES.MAIN.COURSE_ATTENDANCE]: undefined;
+  [ROUTES.MAIN.EXERCISES]: undefined;
 };
 export type MainTabParamList = {
   [ROUTES.MAIN.HOME]: undefined; 

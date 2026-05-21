@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
@@ -13,59 +13,51 @@ interface AttendanceCheckInCardProps {
 
 export const AttendanceCheckInCard = ({ courseTitle, startTime, onPress }: AttendanceCheckInCardProps) => {
   const { colors } = useTheme();
-  const pulseAnim = React.useRef(new Animated.Value(1)).current;
-
-  React.useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.1,
-          duration: 1500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 1500,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, [pulseAnim]);
-
-  const gradientColors = [colors.primaryMid, colors.primary];
 
   return (
     <TouchableOpacity 
       activeOpacity={0.9} 
       onPress={onPress} 
-      style={[styles.container, { shadowColor: colors.primary }]}
+      style={styles.container}
     >
       <LinearGradient
-        colors={gradientColors as [string, string]}
+        colors={[colors.primaryLight, colors.primaryMid]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
       >
-        <View style={styles.content}>
-          <View style={styles.leftSection}>
-            <View style={[styles.iconBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
-              <MaterialCommunityIcons name="qrcode-scan" size={24} color="#FFFFFF" />
-            </View>
-            <View style={styles.textInfo}>
-              <Text style={styles.tagText}>ACTIVE CHECK-IN</Text>
-              <Text style={styles.courseTitle} numberOfLines={1}>
-                {courseTitle}
-              </Text>
-              <View style={styles.timeRow}>
-                <Ionicons name="time-outline" size={14} color="rgba(255,255,255,0.8)" />
-                <Text style={styles.timeText}>Starts at {startTime}</Text>
-              </View>
-            </View>
+        <View style={styles.bgIconContainer}>
+          <MaterialCommunityIcons name="shield-check-outline" size={80} color="rgba(255,255,255,0.05)" style={styles.shieldBg} />
+          <MaterialCommunityIcons name="clock-outline" size={100} color="rgba(255,255,255,0.05)" style={styles.clockBg} />
+        </View>
+
+        <View style={styles.header}>
+          <View style={[styles.availableBadge, { backgroundColor: 'rgba(255,255,255,0.15)' }]}>
+            <View style={[styles.greenDot, { backgroundColor: colors.success }]} />
+            <Text style={[styles.availableText, { color: colors.white }]}>AVAILABLE TO SCAN</Text>
+          </View>
+          <MaterialCommunityIcons name="focus-field" size={24} color="rgba(255,255,255,0.4)" />
+        </View>
+
+        <Text style={[styles.mainTitle, { color: colors.white }]}>Course Attendance</Text>
+
+        <View style={styles.infoRow}>
+          <MaterialCommunityIcons name="dumbbell" size={18} color={colors.white} />
+          <Text style={[styles.infoText, { color: colors.white }]}>{courseTitle}</Text>
+          <Text style={styles.separator}>|</Text>
+          <MaterialCommunityIcons name="clock-outline" size={18} color={colors.white} />
+          <Text style={[styles.infoText, { color: colors.white }]}>{startTime}</Text>
+        </View>
+
+        <View style={styles.footer}>
+          <View style={styles.ctaLink}>
+            <Text style={[styles.ctaText, { color: colors.white }]}>Check-in with Coach QR</Text>
+            <Ionicons name="chevron-forward" size={16} color={colors.white} />
           </View>
 
-          <Animated.View style={[styles.actionBtn, { transform: [{ scale: pulseAnim }] }]}>
-            <Text style={styles.actionBtnText}>MARK PRESENT</Text>
-          </Animated.View>
+          <View style={[styles.qrButton, { backgroundColor: colors.white }]}>
+            <MaterialCommunityIcons name="qrcode" size={28} color={colors.primaryMid} />
+          </View>
         </View>
       </LinearGradient>
     </TouchableOpacity>
@@ -74,73 +66,106 @@ export const AttendanceCheckInCard = ({ courseTitle, startTime, onPress }: Atten
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 0,
-    marginTop: 0,
-    marginBottom: 20,
-    borderRadius: 24,
-    elevation: 8,
-    shadowOffset: { width: 0, height: 6 },
+    marginTop: 10,
+    marginBottom: 25,
+    borderRadius: 30,
+    overflow: 'hidden',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
-    shadowRadius: 10,
+    shadowRadius: 15,
   },
   gradient: {
-    borderRadius: 24,
     padding: 20,
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    minHeight: 180,
     justifyContent: 'space-between',
   },
-  leftSection: {
+  bgIconContainer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: 'hidden',
+  },
+  shieldBg: {
+    position: 'absolute',
+    right: -10,
+    top: 10,
+    transform: [{ rotate: '-15deg' }],
+  },
+  clockBg: {
+    position: 'absolute',
+    left: -20,
+    bottom: -20,
+    transform: [{ rotate: '15deg' }],
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  availableBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
-  iconBadge: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
+  greenDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 8,
   },
-  textInfo: {
-    flex: 1,
-  },
-  tagText: {
-    color: 'rgba(255,255,255,0.7)',
+  availableText: {
     fontSize: 10,
     fontFamily: Theme.Typography.fontFamily.bold,
-    letterSpacing: 1,
-    marginBottom: 4,
+    letterSpacing: 0.5,
   },
-  courseTitle: {
-    color: '#FFFFFF',
-    fontSize: 18,
+  mainTitle: {
+    fontSize: 22,
     fontFamily: Theme.Typography.fontFamily.bold,
-    marginBottom: 4,
+    marginBottom: 8,
   },
-  timeRow: {
+  infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    marginBottom: 20,
   },
-  timeText: {
-    color: 'rgba(255,255,255,0.8)',
+  infoText: {
     fontSize: 13,
     fontFamily: Theme.Typography.fontFamily.medium,
+    marginLeft: 6,
   },
-  actionBtn: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-    elevation: 2,
+  separator: {
+    color: 'rgba(255,255,255,0.4)',
+    marginHorizontal: 10,
+    fontSize: 18,
   },
-  actionBtnText: {
-    color: '#000000',
-    fontSize: 11,
-    fontFamily: Theme.Typography.fontFamily.bold,
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+  },
+  ctaLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 10,
+  },
+  ctaText: {
+    fontSize: 14,
+    fontFamily: Theme.Typography.fontFamily.medium,
+    marginRight: 4,
+  },
+  qrButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
   },
 });

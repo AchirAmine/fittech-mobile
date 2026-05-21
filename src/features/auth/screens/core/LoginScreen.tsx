@@ -52,6 +52,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     setShowPass((prev) => !prev);
   }, []);
   useEffect(() => {
+    dispatch(clearError());
     return () => {
       dispatch(clearError());
     };

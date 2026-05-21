@@ -5,6 +5,7 @@ import { useAppSelector } from '@shared/hooks/useReduxHooks';
 import { useProfileSync } from '@shared/hooks/useProfileSync';
 import { MainTabNavigator } from './MainTabNavigator';
 import { AuthNavigator } from './AuthNavigator';
+import { InAppNotificationListener } from '@features/notifications/components/InAppNotificationListener';
 export const AppNavigator = () => {
   const { colors, isDark } = useTheme();
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
@@ -20,6 +21,7 @@ export const AppNavigator = () => {
   return (
     <NavigationContainer theme={navigationTheme}>
       {isAuthenticated ? <MainTabNavigator /> : <AuthNavigator />}
+      {isAuthenticated && <InAppNotificationListener />}
     </NavigationContainer>
   );
 };

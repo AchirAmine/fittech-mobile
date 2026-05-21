@@ -26,6 +26,8 @@ import { NotificationDetailScreen } from '@features/notifications/screens/Notifi
 import { CheckInScreen } from '@features/check-in/screens/CheckInScreen';
 import { CheckInSelectionScreen } from '@features/check-in/screens/CheckInSelectionScreen';
 import { CourseAttendanceScreen } from '@features/check-in/screens/CourseAttendanceScreen';
+import { ExerciseDatabaseScreen } from '@features/exercises/screens/ExerciseDatabaseScreen';
+
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 export const HomeNavigator = () => {
   const { colors } = useTheme();
@@ -199,6 +201,14 @@ export const HomeNavigator = () => {
         options={{ 
           headerShown: false,
         }} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.EXERCISES as any} 
+        component={ExerciseDatabaseScreen} 
+        options={({ navigation }) => ({ 
+          title: 'EXERCISE GUIDE',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })} 
       />
     </Stack.Navigator>
   );

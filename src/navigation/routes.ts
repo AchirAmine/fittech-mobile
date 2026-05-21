@@ -45,6 +45,7 @@ export const ROUTES = {
     CHECK_IN: 'CheckIn',
     CHECK_IN_SELECTION: 'CheckInSelection',
     COURSE_ATTENDANCE: 'CourseAttendance',
+    EXERCISES: 'Exercises',
   },
 } as const;
 export type CoursesStackParamList = {
