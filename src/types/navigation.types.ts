@@ -91,6 +91,10 @@ export type HomeStackParamList = {
   [ROUTES.MAIN.CHECK_IN_SELECTION]: { gymId?: string };
   [ROUTES.MAIN.COURSE_ATTENDANCE]: undefined;
   [ROUTES.MAIN.EXERCISES]: undefined;
+  [ROUTES.MAIN.PROGRESS_TRACKER]: undefined;
+  [ROUTES.MAIN.ADD_PROGRESS]: { progressId?: string; initialData?: any } | undefined;
+  [ROUTES.MAIN.PROGRESS_HISTORY]: undefined;
+  [ROUTES.MAIN.PROGRESS_GOAL]: undefined;
 };
 export type MainTabParamList = {
   [ROUTES.MAIN.HOME]: undefined; 

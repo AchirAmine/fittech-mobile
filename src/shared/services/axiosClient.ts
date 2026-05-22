@@ -4,7 +4,6 @@ interface StoreShape {
   getState(): {
     auth: {
       token: string | null;
-      refreshToken: string | null;
     };
   };
   dispatch(action: unknown): unknown;
@@ -68,34 +67,13 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError<ApiErrorResponseData>) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
-    if (error.response?.status === 401 && !originalRequest._retry && store) {
-      originalRequest._retry = true;
-      try {
-        const refreshToken = store.getState().auth.refreshToken;
-        if (!refreshToken) throw new Error('No refresh token');
-        const { data } = await axios.post(`${API_URL}/auth/refresh`, { refreshToken });
-        const { token, refreshToken: newRefreshToken, user } = data.data;
-        store.dispatch({
-          type: 'auth/setCredentials',
-          payload: { token, refreshToken: newRefreshToken, user },
-        });
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${token}`;
-        }
-        return axiosClient(originalRequest);
-      } catch (refreshError: any) {
-        store.dispatch({ type: 'auth/logout' });
-        const is404 = refreshError.response?.status === 404;
-        const message = is404 
-          ? 'Session expired (Support required: Refresh endpoint missing)' 
-          : 'Session expired. Please log in again.';
-        return Promise.reject({ 
-          message, 
-          code: 401, 
-          field: null 
-        });
-      }
+    if (error.response?.status === 401 && store) {
+      store.dispatch({ type: 'auth/logout' });
+      return Promise.reject({
+        message: 'Session expired. Please log in again.',
+        code: 401,
+        field: null,
+      });
     }
     return Promise.reject(handleApiError(error));
   }

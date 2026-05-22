@@ -27,7 +27,10 @@ import { CheckInScreen } from '@features/check-in/screens/CheckInScreen';
 import { CheckInSelectionScreen } from '@features/check-in/screens/CheckInSelectionScreen';
 import { CourseAttendanceScreen } from '@features/check-in/screens/CourseAttendanceScreen';
 import { ExerciseDatabaseScreen } from '@features/exercises/screens/ExerciseDatabaseScreen';
-
+import { ProgressDashboardScreen } from '@features/progress/screens/ProgressDashboardScreen';
+import { AddProgressScreen } from '@features/progress/screens/AddProgressScreen';
+import { ProgressHistoryScreen } from '@features/progress/screens/ProgressHistoryScreen';
+import { GoalScreen } from '@features/progress/screens/GoalScreen';
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 export const HomeNavigator = () => {
   const { colors } = useTheme();
@@ -208,6 +211,38 @@ export const HomeNavigator = () => {
         options={({ navigation }) => ({ 
           title: 'EXERCISE GUIDE',
           headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.PROGRESS_TRACKER as any} 
+        component={ProgressDashboardScreen} 
+        options={{ headerShown: false }} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.ADD_PROGRESS as any} 
+        component={AddProgressScreen} 
+        options={({ navigation, route }) => ({ 
+          title: (route.params as any)?.progressId ? 'Edit Entry' : 'Log Progress',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+          headerStyle: { backgroundColor: colors.background },
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.PROGRESS_HISTORY as any} 
+        component={ProgressHistoryScreen} 
+        options={({ navigation }) => ({ 
+          title: 'History & Charts',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+          headerStyle: { backgroundColor: colors.background },
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.PROGRESS_GOAL as any} 
+        component={GoalScreen} 
+        options={({ navigation }) => ({ 
+          title: 'My Fitness Goal',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+          headerStyle: { backgroundColor: colors.background },
         })} 
       />
     </Stack.Navigator>

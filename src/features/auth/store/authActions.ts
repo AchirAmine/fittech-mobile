@@ -3,21 +3,20 @@ import { authService } from "@features/auth/services/authService";
 import { accountService } from "@features/account/services/accountService";
 import { User } from "@appTypes/index";
 export const login = createAsyncThunk<
-  { user: User; token: string; refreshToken: string },
+  { user: User; token: string },
   { email: string; password: string }
 >("auth/login", async ({ email, password }, { rejectWithValue }) => {
   try {
     const response = await authService.login(email, password);
-    const { token, refreshToken, user: basicUser } = response.data.data;
+    const { token, user: basicUser } = response.data.data;
     try {
       const fullProfile = await accountService.getMe();
       return {
         token,
-        refreshToken,
         user: { ...basicUser, ...fullProfile }
       };
     } catch (profileError) {
-      return { token, refreshToken, user: basicUser };
+      return { token, user: basicUser };
     }
   } catch (error) {
     return rejectWithValue(error);

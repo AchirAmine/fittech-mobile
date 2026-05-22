@@ -12,7 +12,6 @@ import { login, register } from "./authActions";
 const initialState: AuthState = {
   user: null,
   token: null,
-  refreshToken: null,
   isAuthenticated: false,
   isFirstLaunch: true,
   ...initialRequestState,
@@ -26,13 +25,11 @@ const authSlice = createSlice({
       action: PayloadAction<{
         user: User;
         token: string;
-        refreshToken: string;
       }>,
     ) => {
-      const { user, token, refreshToken } = action.payload;
+      const { user, token } = action.payload;
       state.user = user;
       state.token = token;
-      state.refreshToken = refreshToken;
       state.isAuthenticated = !!token;
     },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
@@ -52,7 +49,6 @@ const authSlice = createSlice({
       });
       state.user = null;
       state.token = null;
-      state.refreshToken = null;
       state.isAuthenticated = false;
       state.status = "idle";
       state.error = null;
@@ -74,15 +70,13 @@ const authSlice = createSlice({
           action: PayloadAction<{
             user: User;
             token: string;
-            refreshToken: string;
           }>,
         ) => {
           handleFulfilled(state);
-          const { user, token, refreshToken } = action.payload;
+          const { user, token } = action.payload;
           state.isAuthenticated = true;
           state.user = user;
           state.token = token;
-          state.refreshToken = refreshToken;
         },
       )
       .addCase(login.rejected, (state, action) => {

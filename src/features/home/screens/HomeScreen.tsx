@@ -22,6 +22,7 @@ import { PointsBadge } from '@features/rewards/components/PointsBadge';
 import { getImageSource } from '@shared/utils/imageUtils';
 import { useUnreadCount } from '@features/notifications/hooks/useNotifications';
 import { HomeExerciseCard } from '../components/HomeExerciseCard';
+import { HomeProgressCard } from '../components/HomeProgressCard';
 
 
 export const HomeScreen = () => {
@@ -158,6 +159,9 @@ export const HomeScreen = () => {
               onPress={() => navigation.navigate(ROUTES.MAIN.PLANNING as any)}
             />
             <CheckInCard />
+            <HomeProgressCard 
+              onPress={() => navigation.navigate(ROUTES.MAIN.PROGRESS_TRACKER as any)} 
+            />
             <HomeExerciseCard 
               onPress={() => navigation.navigate(ROUTES.MAIN.EXERCISES as any)} 
             />

@@ -4,10 +4,10 @@ import { API_ENDPOINTS } from '@shared/constants/apiEndpoints';
 import { User } from '@appTypes/index';
 import { ApiResponse } from '@appTypes/api.types';
 export const authService = {
-  login: async (email: string, password: string): Promise<AxiosResponse<ApiResponse<{ user: User, token: string, refreshToken: string }>>> => {
+  login: async (email: string, password: string): Promise<AxiosResponse<ApiResponse<{ user: User, token: string }>>> => {
     return axiosClient.post(API_ENDPOINTS.AUTH.LOGIN, { email, password });
   },
-  register: async (userData: Partial<User> & { password?: string }): Promise<AxiosResponse<ApiResponse<{ user: User, token: string, refreshToken: string }>>> => {
+  register: async (userData: Partial<User> & { password?: string }): Promise<AxiosResponse<ApiResponse<{ message: string }>>> => {
     const formData = new FormData();
     formData.append('firstName', userData.firstName || '');
     formData.append('lastName', userData.lastName || '');
@@ -38,9 +38,6 @@ export const authService = {
   },
   logout: async (): Promise<AxiosResponse<ApiResponse<null>>> => {
     return axiosClient.post(API_ENDPOINTS.AUTH.LOGOUT);
-  },
-  refreshToken: async (refreshToken: string): Promise<AxiosResponse<ApiResponse<{ token: string, refreshToken: string }>>> => {
-    return axiosClient.post(API_ENDPOINTS.AUTH.REFRESH, { refreshToken });
   },
   forgotPassword: async (email: string): Promise<AxiosResponse<ApiResponse<null>>> => {
     return axiosClient.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email });
