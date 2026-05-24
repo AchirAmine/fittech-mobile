@@ -13,6 +13,7 @@ export type ProfileStackParamList = {
   AccountMain: undefined;
   ProfileMain: undefined;
   HealthProfile: undefined;
+  ActivityHistory: undefined;
   [ROUTES.MAIN.SUBSCRIPTION_OFFERS]: undefined;
   [ROUTES.MAIN.PAYMENT_DETAILS]: { plan: SubscriptionPlan };
 };
@@ -52,6 +53,14 @@ export const AccountNavigator = () => {
         component={HealthProfileScreen} 
         options={{ 
           title: 'Health Profile',
+          headerBackVisible: true,
+        }}
+      />
+      <Stack.Screen 
+        name="ActivityHistory" 
+        component={require('@features/account/screens/ActivityHistoryScreen').ActivityHistoryScreen} 
+        options={{ 
+          title: 'Activity History',
           headerBackVisible: true,
         }}
       />

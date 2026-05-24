@@ -34,6 +34,12 @@ export const AccountMenu = () => {
       onPress: () => navigation.navigate('HealthProfile'),
     },
     {
+      id: 'activity_history',
+      title: 'Activity History',
+      icon: 'time-outline' as keyof typeof Ionicons.glyphMap,
+      onPress: () => navigation.navigate('ActivityHistory'),
+    },
+    {
       id: 'offers',
       title: 'Subscription Offers',
       icon: 'star-outline' as keyof typeof Ionicons.glyphMap,
