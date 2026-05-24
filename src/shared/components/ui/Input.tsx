@@ -123,14 +123,14 @@ export const Input: React.FC<InputProps> = memo(({
     <View style={containerStyle}>
       <View style={[
         styles.inputWrap,
-        {  
+        {
           borderColor: error ? colors.error : (hasValue ? colors.primaryMid : colors.border),
           opacity: 1,
           backgroundColor: 'transparent',
         }
       ]}>
         {content}
-         {rightText && (
+        {rightText && (
           <TouchableOpacity onPress={onRightTextPress} style={styles.rightTextBtn}>
             <Text style={[styles.rightText, { color: rightTextColor || colors.primary }]}>{rightText}</Text>
           </TouchableOpacity>

@@ -5,6 +5,10 @@ import { ProfileScreen } from '@features/account/screens/ProfileScreen';
 import { HealthProfileScreen } from '@features/account/screens/HealthProfileScreen';
 import { SubscriptionScreen } from '@features/membership/screens/SubscriptionScreen';
 import { PaymentDetailsScreen } from '@features/payment/screens/PaymentDetailsScreen';
+import { SettingsScreen } from '@features/settings/screens/SettingsScreen';
+import { ChangePasswordScreen } from '@features/settings/screens/ChangePasswordScreen';
+import { NotificationPreferencesScreen } from '@features/settings/screens/NotificationPreferencesScreen';
+import { PrivacySettingsScreen } from '@features/settings/screens/PrivacySettingsScreen';
 import { SubscriptionPlan } from '@appTypes/index';
 import { ROUTES } from '@navigation/routes';
 import { useTheme } from '@shared/hooks/useTheme';
@@ -14,6 +18,10 @@ export type ProfileStackParamList = {
   ProfileMain: undefined;
   HealthProfile: undefined;
   ActivityHistory: undefined;
+  SettingsMain: undefined;
+  ChangePassword: undefined;
+  NotificationPreferences: undefined;
+  PrivacySettings: undefined;
   [ROUTES.MAIN.SUBSCRIPTION_OFFERS]: undefined;
   [ROUTES.MAIN.PAYMENT_DETAILS]: { plan: SubscriptionPlan };
 };
@@ -61,6 +69,38 @@ export const AccountNavigator = () => {
         component={require('@features/account/screens/ActivityHistoryScreen').ActivityHistoryScreen} 
         options={{ 
           title: 'Activity History',
+          headerBackVisible: true,
+        }}
+      />
+      <Stack.Screen 
+        name="SettingsMain" 
+        component={SettingsScreen} 
+        options={{ 
+          title: 'Settings',
+          headerBackVisible: true,
+        }}
+      />
+      <Stack.Screen 
+        name="ChangePassword" 
+        component={ChangePasswordScreen} 
+        options={{ 
+          title: 'Change Password',
+          headerBackVisible: true,
+        }}
+      />
+      <Stack.Screen 
+        name="NotificationPreferences" 
+        component={NotificationPreferencesScreen} 
+        options={{ 
+          title: 'Notification Preferences',
+          headerBackVisible: true,
+        }}
+      />
+      <Stack.Screen 
+        name="PrivacySettings" 
+        component={PrivacySettingsScreen} 
+        options={{ 
+          title: 'Privacy Settings',
           headerBackVisible: true,
         }}
       />

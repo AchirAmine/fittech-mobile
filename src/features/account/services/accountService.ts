@@ -9,5 +9,13 @@ export const accountService = {
   updateMe: async (data: any): Promise<Member> => {
     const response = await axiosClient.patch(API_ENDPOINTS.MEMBER.UPDATE_ME, data);
     return response.data.data;
+  },
+  getMedicalProfile: async (): Promise<any> => {
+    const response = await axiosClient.get(API_ENDPOINTS.MEMBER.MEDICAL_PROFILE);
+    return response.data.data;
+  },
+  updateMedicalProfile: async (data: any): Promise<any> => {
+    const response = await axiosClient.patch(API_ENDPOINTS.MEMBER.MEDICAL_PROFILE, data);
+    return response.data.data;
   }
 };

@@ -4,6 +4,7 @@ import { User } from '@appTypes/index';
 export const accountKeys = {
   all: ['account'] as const,
   me: () => [...accountKeys.all, 'me'] as const,
+  medicalProfile: () => [...accountKeys.all, 'medicalProfile'] as const,
 };
 export const useGetAccount = () => {
   return useQuery({
@@ -38,6 +39,25 @@ export const useUpdateAccount = () => {
       return accountService.updateMe(data);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: accountKeys.me() });
+      queryClient.invalidateQueries({ queryKey: ['homeSummary'] });
+    },
+  });
+};
+
+export const useMedicalProfile = () => {
+  return useQuery({
+    queryKey: accountKeys.medicalProfile(),
+    queryFn: accountService.getMedicalProfile,
+  });
+};
+
+export const useUpdateMedicalProfile = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: accountService.updateMedicalProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: accountKeys.medicalProfile() });
       queryClient.invalidateQueries({ queryKey: accountKeys.me() });
     },
   });

@@ -9,7 +9,7 @@ interface SectionCardProps {
   children: React.ReactNode;
 }
 export const SectionCard = ({ title, colors, isDark, children }: SectionCardProps) => (
-  <View style={[styles.card, { backgroundColor: isDark ? colors.card : '#fff', borderColor: colors.border }]}>
+  <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
     <Text style={[styles.cardTitle, { color: colors.primaryMid }]}>{title}</Text>
     {children}
   </View>

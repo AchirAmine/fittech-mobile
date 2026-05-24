@@ -15,7 +15,7 @@ import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { Input } from '@shared/components/ui';
 import { GOALS, HEALTH_CONCERNS, ACTIVITIES } from '@shared/constants/healthConstants';
-import { useGetAccount, useUpdateAccount } from '@features/account/hooks/useAccount';
+import { useGetAccount, useUpdateAccount, useUpdateMedicalProfile } from '@features/account/hooks/useAccount';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { MetricCard, GoalSelector, RestrictionSelector, ActivitySelector, SaveButton } from '../components';
 import { AppScreen } from '@shared/components';
@@ -39,15 +39,25 @@ const healthSchema = object().shape({
 export const HealthProfileScreen = () => {
   const { colors, isDark } = useTheme();
   const { data: userData, isLoading: loading, error: fetchError, refetch } = useGetAccount();
-  const { 
-    mutate: updateMe, 
-    isPending: updating,
-    error: updateError,
-    reset: resetMutation
+  const {
+    mutateAsync: updateMeAsync,
+    isPending: updatingMe,
+    error: updateMeError,
+    reset: resetMeMutation
   } = useUpdateAccount();
-  const { isEditing, setIsEditing } = useEditableHeader({ 
+
+  const {
+    mutateAsync: updateMedicalProfileAsync,
+    isPending: updatingMedical,
+    error: updateMedicalError,
+    reset: resetMedicalMutation
+  } = useUpdateMedicalProfile();
+
+  const updating = updatingMe || updatingMedical;
+  const updateError = updateMeError || updateMedicalError;
+  const { isEditing, setIsEditing } = useEditableHeader({
     colors,
-    isUpdating: updating 
+    isUpdating: updating
   });
   const { control, handleSubmit, setValue, reset, watch, formState: { errors } } = useForm({
     resolver: yupResolver(healthSchema),
@@ -67,8 +77,8 @@ export const HealthProfileScreen = () => {
   const selectedActivities = watch('activities') as string[];
   useEffect(() => {
     if (userData) {
-      const rawGoals = Array.isArray(userData.fitnessObjective) 
-        ? userData.fitnessObjective 
+      const rawGoals = Array.isArray(userData.fitnessObjective)
+        ? userData.fitnessObjective
         : (userData.fitnessObjective ? [userData.fitnessObjective] : []);
       const standardGoalIds = GOALS.map(g => g.id).filter(id => id !== 'other');
       const selectedGoalIds = rawGoals.filter(g => standardGoalIds.includes(g));
@@ -113,7 +123,7 @@ export const HealthProfileScreen = () => {
       });
     }
   }, [userData, reset]);
-  const onSubmit = (formData: InferType<typeof healthSchema>) => {
+  const onSubmit = async (formData: InferType<typeof healthSchema>) => {
     let finalGoals = (formData.goals || []).filter((g): g is string => g !== undefined && g !== 'other');
     if (formData.goals?.includes('other') && formData.otherGoalText) {
       finalGoals.push(formData.otherGoalText);
@@ -126,21 +136,25 @@ export const HealthProfileScreen = () => {
     if (formData.activities?.includes('other') && formData.otherActivityText) {
       finalActivities.push(`Activity: ${formData.otherActivityText}`);
     }
-    const mergedRestrictionsAndActivities = [...finalActivities, ...finalRestrictions];
-    updateMe({
-      healthProfile: {
-        heightValue: formData.height,
-        heightUnit: 'cm',
-        weightValue: formData.weight,
-        weightUnit: 'kg',
-        restrictions: formatRestrictions(mergedRestrictionsAndActivities),
-        goals: finalGoals,
-      },
-    }, {
-      onSuccess: () => {
-        setIsEditing(false);
-      },
-    });
+
+    const joinedActivities = finalActivities.join(', ');
+    const joinedRestrictions = formatRestrictions(finalRestrictions);
+    const joinedGoals = finalGoals.join(', ');
+
+    try {
+      await Promise.all([
+        updateMeAsync({
+          height: formData.height,
+          weight: formData.weight,
+        }),
+        updateMedicalProfileAsync({
+          medicalRestrictions: joinedRestrictions || null,
+          fitnessObjective: joinedGoals || '',
+          activities: joinedActivities || null,
+        })
+      ]);
+      setIsEditing(false);
+    } catch (_e) {}
   };
   const onToggleGoal = (id: string) => {
     if (!isEditing) return;
@@ -163,7 +177,8 @@ export const HealthProfileScreen = () => {
     setValue('activities', current.includes(id) ? current.filter(a => a !== id) : [...current, id]);
   };
   const handleDismissError = () => {
-    if (updateError) resetMutation();
+    if (updateMeError) resetMeMutation();
+    if (updateMedicalError) resetMedicalMutation();
     if (fetchError) refetch();
   };
   return (
@@ -259,7 +274,7 @@ export const HealthProfileScreen = () => {
   );
 };
 const styles = StyleSheet.create({
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
+  scrollContent: { paddingHorizontal: 8, paddingBottom: 20 },
   form: { gap: 20, paddingTop: 20 },
   metricsRow: {
     flexDirection: 'row',

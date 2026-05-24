@@ -34,7 +34,9 @@ interface AppScreenProps {
   isLoading?: boolean;
   loadingMessage?: string;
   errorMessage?: string | null;
+  successMessage?: string | null;
   onDismissError?: () => void;
+  onDismissSuccess?: () => void;
   safeArea?: boolean;
 }
 export const AppScreen: React.FC<AppScreenProps> = ({
@@ -49,7 +51,9 @@ export const AppScreen: React.FC<AppScreenProps> = ({
   isLoading,
   loadingMessage = 'Please wait...',
   errorMessage,
+  successMessage,
   onDismissError,
+  onDismissSuccess,
   safeArea = true,
 }) => {
   const { colors, isDark } = useTheme();
@@ -133,6 +137,27 @@ export const AppScreen: React.FC<AppScreenProps> = ({
           <Text style={[styles.errorText, { color: colors.white }]}>{errorMessage}</Text>
           {onDismissError && (
             <TouchableOpacity onPress={onDismissError}>
+              <Ionicons name="close" size={20} color={colors.white} />
+            </TouchableOpacity>
+          )}
+        </Animated.View>
+      )}
+      {successMessage && (
+        <Animated.View 
+          entering={FadeInUp} 
+          exiting={FadeOutUp}
+          style={[
+            styles.errorBanner, 
+            { 
+              backgroundColor: colors.success, 
+              top: safeArea ? Math.max(insets.top + 10, Platform.OS === 'ios' ? 50 : 40) : 15 
+            }
+          ]}
+        >
+          <Ionicons name="checkmark-circle" size={20} color={colors.white} />
+          <Text style={[styles.errorText, { color: colors.white }]}>{successMessage}</Text>
+          {onDismissSuccess && (
+            <TouchableOpacity onPress={onDismissSuccess}>
               <Ionicons name="close" size={20} color={colors.white} />
             </TouchableOpacity>
           )}

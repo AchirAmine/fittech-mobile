@@ -13,7 +13,7 @@ interface InfoRowProps {
 export const InfoRow = ({ label, value, icon, colors, isDark }: InfoRowProps) => (
   <Input
     label={label}
-    labelBg={isDark ? colors.card : '#fff'}
+    labelBg={colors.card}
     value={value}
     containerStyle={styles.inputSpacing}
     icon={icon}

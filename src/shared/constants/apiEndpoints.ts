@@ -7,10 +7,14 @@ export const API_ENDPOINTS = {
     RESET_PASSWORD: "/auth/reset-password",
     VERIFY_OTP: "/auth/verify-otp",
     VERIFY_EMAIL: "/auth/verify-email",
+    CHANGE_PASSWORD: "/auth/me/password",
   },
   MEMBER: {
     GET_ME: "/members/me",
     UPDATE_ME: "/members/me",
+    MEDICAL_PROFILE: "/members/medical-profile",
+    NOTIFICATION_PREFERENCES: "/members/me/notification-preferences",
+    PRIVACY_SETTINGS: "/members/me/privacy-settings",
   },
   COURSES: {
     LIST: "/courses",
