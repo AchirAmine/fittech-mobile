@@ -11,9 +11,6 @@ export const HomePlanningCard: React.FC<HomePlanningCardProps> = ({ onPress }) =
   const { colors, isDark } = useTheme();
   return (
     <View style={styles.outerContainer}>
-      <View style={styles.headerRow}>
-        <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>WEEKLY PLANNING</Text>
-      </View>
       <TouchableOpacity 
         style={[
           styles.container, 
@@ -43,18 +40,7 @@ export const HomePlanningCard: React.FC<HomePlanningCardProps> = ({ onPress }) =
 };
 const styles = StyleSheet.create({
   outerContainer: {
-    marginBottom: 24,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontFamily: Theme.Typography.fontFamily.bold,
-    letterSpacing: 1,
+    marginBottom: 16,
   },
   container: {
     flexDirection: 'row',

@@ -14,9 +14,6 @@ export const HomeExerciseCard: React.FC<HomeExerciseCardProps> = ({ onPress }) =
 
   return (
     <View style={styles.outerContainer}>
-      <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>
-        EXERCISE GUIDE
-      </Text>
       <TouchableOpacity
         style={[
           styles.container,
@@ -87,13 +84,7 @@ export const HomeExerciseCard: React.FC<HomeExerciseCardProps> = ({ onPress }) =
 
 const styles = StyleSheet.create({
   outerContainer: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontFamily: Theme.Typography.fontFamily.bold,
-    letterSpacing: 1,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   container: {
     flexDirection: 'row',

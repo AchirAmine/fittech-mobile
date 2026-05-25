@@ -15,11 +15,6 @@ export const CheckInCard = () => {
 
   return (
     <View style={styles.outerContainer}>
-      <View style={styles.headerRow}>
-        <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>
-          QUICK CHECK-IN
-        </Text>
-      </View>
       <TouchableOpacity
         style={[
           styles.container,
@@ -54,18 +49,7 @@ export const CheckInCard = () => {
 
 const styles = StyleSheet.create({
   outerContainer: {
-    marginBottom: 40,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontFamily: Theme.Typography.fontFamily.bold,
-    letterSpacing: 1,
+    marginBottom: 20,
   },
   container: {
     flexDirection: 'row',

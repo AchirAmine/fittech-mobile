@@ -18,6 +18,15 @@ export type ProfileStackParamList = {
   ProfileMain: undefined;
   HealthProfile: undefined;
   ActivityHistory: undefined;
+  ActivityDetail: {
+    title: string;
+    description: string;
+    status?: string;
+    iconName: string;
+    iconColor: string;
+    iconBg: string;
+    time: string;
+  };
   SettingsMain: undefined;
   ChangePassword: undefined;
   NotificationPreferences: undefined;
@@ -71,6 +80,15 @@ export const AccountNavigator = () => {
           title: 'Activity History',
           headerBackVisible: true,
         }}
+      />
+      <Stack.Screen
+        name="ActivityDetail"
+        component={require('@features/account/screens/ActivityDetailScreen').ActivityDetailScreen}
+        options={({ route }) => ({
+          title: '',
+          headerBackVisible: true,
+          headerTransparent: false,
+        })}
       />
       <Stack.Screen 
         name="SettingsMain" 

@@ -11,7 +11,7 @@ import { HomeStackParamList } from '@appTypes/navigation.types';
 import { CoachInfoCard } from '../components/CoachInfoCard';
 import { BookingSessionsCard } from '../components/BookingSessionsCard';
 import { NextSessionItem } from '../components/NextSessionItem';
-import { EmptyCoachingState } from '../components/EmptyCoachingState';
+
 export const MyCoachingDashboardScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
@@ -32,9 +32,9 @@ export const MyCoachingDashboardScreen = () => {
     return (
       <AppScreen safeArea={true} style={{ backgroundColor: colors.background }}>
         <View style={styles.emptyContainer}>
-          <EmptyCoachingState 
-            onPress={() => navigation.navigate(ROUTES.MAIN.PERSONAL_COACHES)}
-          />
+          <Text style={{ color: colors.textSecondary, fontFamily: Theme.Typography.fontFamily.medium }}>
+            You do not have an active personal coaching plan.
+          </Text>
         </View>
       </AppScreen>
     );

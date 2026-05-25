@@ -20,7 +20,7 @@ export const CheckInSelectionScreen = () => {
   const route = useRoute();
   const { zone: scannedZone } = (route.params as any) || {};
 
-  
+
   const { mutateAsync: scanDoor, isPending: isSubmitting } = useScanDoor();
   const { status, showSuccess, showError, hideStatus } = useCheckInStatus();
   const { confirmationSheet, openSheet, closeSheet } = useConfirmationSheet();
@@ -133,12 +133,20 @@ export const CheckInSelectionScreen = () => {
         onClose={closeSheet}
         onConfirm={handleCheckIn}
         data={{
-          title: summary?.nearestCourse?.title || 'Strength Training',
-          zone: summary?.nearestCourse?.gymZone || 'Zone A',
-          schedule: summary?.nearestCourse
-            ? `Mon ${summary.nearestCourse.startTime}-${summary.nearestCourse.endTime}`
-            : 'Mon 12:00-14:00',
-          instructor: 'Coach Karim A.',
+          title: confirmationSheet.type === 'COURSE'
+            ? summary?.nearestCourse?.title || 'Course Session'
+            : 'Open Access Session',
+          zone: confirmationSheet.type === 'COURSE'
+            ? summary?.nearestCourse?.gymZone || 'Gym'
+            : 'Gym / Pool',
+          schedule: confirmationSheet.type === 'COURSE'
+            ? summary?.nearestCourse
+              ? `${summary.nearestCourse.dayOfWeek.substring(0, 3).toUpperCase()} ${summary.nearestCourse.startTime} - ${summary.nearestCourse.endTime}`
+              : 'Today'
+            : 'Today (Anytime)',
+          instructor: confirmationSheet.type === 'COURSE'
+            ? 'Course Instructor'
+            : 'Self-guided',
         }}
       />
 

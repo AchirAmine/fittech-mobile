@@ -10,20 +10,19 @@ interface NearestCourseCardProps {
   gymZone: string | null;
   onPress?: () => void;
 }
-export const NearestCourseCard: React.FC<NearestCourseCardProps> = ({ 
-  title, 
-  startTime, 
-  gymZone, 
-  onPress 
+export const NearestCourseCard: React.FC<NearestCourseCardProps> = ({
+  title,
+  startTime,
+  gymZone,
+  onPress
 }) => {
   const { colors, isDark } = useTheme();
   return (
     <View style={styles.outerContainer}>
-      <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>NEXT CLASS</Text>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={[
-          styles.container, 
-          { 
+          styles.container,
+          {
             backgroundColor: colors.card,
             shadowColor: colors.shadow,
           }
@@ -31,10 +30,10 @@ export const NearestCourseCard: React.FC<NearestCourseCardProps> = ({
         activeOpacity={0.8}
         onPress={onPress}
       >
-        {}
+        { }
         <View style={[styles.accentLine, { backgroundColor: colors.primaryMid }]} />
         <View style={styles.content}>
-          <View style={styles.headerRow}>
+          <View style={styles.statusHeaderRow}>
             <View style={[styles.statusDot, { backgroundColor: colors.primaryMid }]} />
             <Text style={[styles.statusText, { color: colors.primaryMid }]}>UPCOMING</Text>
           </View>
@@ -53,7 +52,7 @@ export const NearestCourseCard: React.FC<NearestCourseCardProps> = ({
             </View>
           </View>
         </View>
-        {}
+        { }
         <View style={[styles.iconContainer, { backgroundColor: colors.cardSecondary }]}>
           <Ionicons name="barbell-outline" size={20} color={colors.primaryMid} />
         </View>
@@ -63,13 +62,7 @@ export const NearestCourseCard: React.FC<NearestCourseCardProps> = ({
 };
 const styles = StyleSheet.create({
   outerContainer: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 13,
-    fontFamily: Theme.Typography.fontFamily.bold,
-    letterSpacing: 1,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   container: {
     flexDirection: 'row',
@@ -90,7 +83,7 @@ const styles = StyleSheet.create({
     padding: 16,
     justifyContent: 'center',
   },
-  headerRow: {
+  statusHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 6,

@@ -6,11 +6,12 @@ interface ActivePlanCardProps {
   title: string;
   subtitle: string;
   image: any;
-  value: string;
-  unit: string;
+  daysRemaining: string;
+  freeSessions: number;
+  courseSessions: number;
   onPress: () => void;
 }
-export const ActivePlanCard = ({ title, subtitle, image, value, unit, onPress }: ActivePlanCardProps) => {
+export const ActivePlanCard = ({ title, subtitle, image, daysRemaining, freeSessions, courseSessions, onPress }: ActivePlanCardProps) => {
   const { colors } = useTheme();
   return (
     <View style={[styles.card, { backgroundColor: colors.card, shadowColor: colors.black }]}>
@@ -25,19 +26,27 @@ export const ActivePlanCard = ({ title, subtitle, image, value, unit, onPress }:
           <Text style={[styles.cardTitle, { color: colors.textPrimary }]}>{title}</Text>
           <Text style={[styles.cardSubtitle, { color: colors.textSecondary }]}>{subtitle}</Text>
         </View>
-        <View style={styles.cardFooter}>
-          <View>
-            <Text style={[styles.valueText, { color: colors.primaryMid }]}>{value}</Text>
-            <Text style={[styles.unitText, { color: colors.textMuted }]}>{unit}</Text>
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={[styles.valueText, { color: colors.primaryMid }]}>{daysRemaining}</Text>
+            <Text style={[styles.unitText, { color: colors.textMuted }]}>DAYS LEFT</Text>
           </View>
-          <TouchableOpacity 
-            style={[styles.checkButton, { backgroundColor: colors.primaryMid }]} 
-            onPress={onPress}
-            activeOpacity={0.85}
-          >
-            <Text style={[styles.checkButtonText, { color: colors.white }]}>Check</Text>
-          </TouchableOpacity>
+          <View style={styles.statItem}>
+            <Text style={[styles.valueText, { color: colors.primaryMid }]}>{freeSessions}</Text>
+            <Text style={[styles.unitText, { color: colors.textMuted }]}>FREE SESSIONS</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={[styles.valueText, { color: colors.primaryMid }]}>{courseSessions}</Text>
+            <Text style={[styles.unitText, { color: colors.textMuted }]}>COACH SESSIONS</Text>
+          </View>
         </View>
+        <TouchableOpacity 
+          style={[styles.checkButton, { backgroundColor: colors.primaryMid }]} 
+          onPress={onPress}
+          activeOpacity={0.85}
+        >
+          <Text style={[styles.checkButtonText, { color: colors.white }]}>View Details</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -89,10 +98,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: Theme.Typography.fontFamily.medium,
   },
-  cardFooter: {
+  statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    marginBottom: 16,
+  },
+  statItem: {
+    alignItems: 'center',
   },
   valueText: {
     fontSize: 28,
@@ -108,6 +120,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 16,
+    width: '100%',
+    alignItems: 'center',
   },
   checkButtonText: {
     fontSize: 15,

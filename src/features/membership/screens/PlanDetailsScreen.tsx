@@ -53,57 +53,50 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
             <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Session Balances</Text>
         </View>
         <View style={styles.statsContainer}>
-          {}
-          {(() => {
-            const initialSolo = (offer.sports || []).reduce((acc, s) => acc + s.freeSessions, 0);
-            const soloProgress = initialSolo > 0 ? (subscription.remainingOpenSessions / initialSolo) : 0;
-            return (
-              <View style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <View style={styles.progressHeader}>
-                  <Text style={[styles.progressTitle, { color: colors.textPrimary }]}>Solo Sessions Remaining</Text>
-                  <Text style={[styles.progressCounter, { color: colors.primaryMid }]}>
-                    {subscription.remainingOpenSessions} <Text style={{ color: colors.textSecondary }}>/ {initialSolo}</Text>
-                  </Text>
-                </View>
-                <View style={[styles.progressBarBg, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : hexToRGBA(colors.black, 0.05) }]}>
-                  <View style={[styles.progressBarFill, { backgroundColor: colors.primaryMid, width: `${soloProgress * 100}%` }]} />
-                </View>
-                <View style={styles.infoRow}>
-                  <Ionicons name="information-circle-outline" size={16} color={colors.textMuted} />
-                  <Text style={[styles.infoText, { color: colors.textMuted }]}>Shared across all available activities.</Text>
-                </View>
-              </View>
-            );
-          })()}
-          {}
-          <View style={styles.sectionHeader}>
-              <Text style={[styles.subSectionTitle, { color: colors.textMuted, marginTop: 10 }]}>COACH ASSISTANCE</Text>
-          </View>
           {(subscription.sportBalances && subscription.sportBalances.length > 0) ? (
             subscription.sportBalances.map(balance => {
-              const initialSport = (offer.sports || []).find(s => s.sportType.toUpperCase() === balance.sportType.toUpperCase());
+              const normalizeType = (t: string) => t.toUpperCase().replace(/[\s-]+/g, '_');
+              const initialSport = (offer.sports || []).find(s => normalizeType(s.sportType) === normalizeType(balance.sportType));
               const initialCoach = initialSport?.coachSessions || 0;
-              const coachProgress = initialCoach > 0 ? (balance.remainingSessions / initialCoach) : 0;
+              const initialFree = initialSport?.freeSessions || 0;
+              const coachProgress = initialCoach > 0 ? (balance.remainingCourseSessions / initialCoach) : 0;
+              const freeProgress = initialFree > 0 ? (balance.remainingFreeSessions / initialFree) : 0;
               return (
-                <View key={balance.id} style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                  <View style={styles.progressHeader}>
-                    <Text style={[styles.progressTitle, { color: colors.textPrimary }]}>{balance.sportType.toUpperCase()}</Text>
-                    <Text style={[styles.progressCounter, { color: colors.primaryMid }]}>
-                      {balance.remainingSessions} <Text style={{ color: colors.textSecondary }}>/ {initialCoach}</Text>
-                    </Text>
-                  </View>
-                  <View style={[styles.progressBarBg, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : hexToRGBA(colors.black, 0.05) }]}>
-                    <View style={[styles.progressBarFill, { backgroundColor: colors.primaryMid, width: `${coachProgress * 100}%` }]} />
-                  </View>
-                  <View style={styles.infoRow}>
-                    <Ionicons name="people-outline" size={16} color={colors.textMuted} />
-                    <Text style={[styles.infoText, { color: colors.textMuted }]}>Remaining sessions for current billing cycle.</Text>
-                  </View>
+                <View key={balance.id} style={{ gap: 12, marginBottom: 12 }}>
+                  <Text style={[styles.subSectionTitle, { color: colors.textMuted }]}>{balance.sportType.toUpperCase()} SESSIONS</Text>
+                  
+                  {initialFree > 0 && (
+                    <View style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                      <View style={styles.progressHeader}>
+                        <Text style={[styles.progressTitle, { color: colors.textPrimary }]}>Free Sessions</Text>
+                        <Text style={[styles.progressCounter, { color: colors.primaryMid }]}>
+                          {balance.remainingFreeSessions} <Text style={{ color: colors.textSecondary }}>/ {initialFree}</Text>
+                        </Text>
+                      </View>
+                      <View style={[styles.progressBarBg, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : hexToRGBA(colors.black, 0.05) }]}>
+                        <View style={[styles.progressBarFill, { backgroundColor: colors.primaryMid, width: `${freeProgress * 100}%` }]} />
+                      </View>
+                    </View>
+                  )}
+
+                  {initialCoach > 0 && (
+                    <View style={[styles.progressCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                      <View style={styles.progressHeader}>
+                        <Text style={[styles.progressTitle, { color: colors.textPrimary }]}>Coach Sessions</Text>
+                        <Text style={[styles.progressCounter, { color: colors.primaryMid }]}>
+                          {balance.remainingCourseSessions} <Text style={{ color: colors.textSecondary }}>/ {initialCoach}</Text>
+                        </Text>
+                      </View>
+                      <View style={[styles.progressBarBg, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : hexToRGBA(colors.black, 0.05) }]}>
+                        <View style={[styles.progressBarFill, { backgroundColor: colors.primaryMid, width: `${coachProgress * 100}%` }]} />
+                      </View>
+                    </View>
+                  )}
                 </View>
               );
             })
           ) : (
-              <Text style={[styles.noneText, { color: colors.textMuted }]}>No coach sessions available</Text>
+              <Text style={[styles.noneText, { color: colors.textMuted }]}>No sessions available</Text>
           )}
         </View>
         {}

@@ -55,7 +55,11 @@ export default function ChatListScreen({ navigation }: Props) {
       return matchCategory && matchSearch && isActive;
     });
     const deduped = new Map<string, Conversation>(filtered.map((c: Conversation) => [c.id, c]));
-    return Array.from(deduped.values());
+    return Array.from(deduped.values()).sort((a, b) => {
+      const tA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
+      const tB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
+      return tB - tA; // newest first
+    });
   }, [conversations, selectedCategory, searchQuery]);
   const newCoaches = useMemo(() => {
     if (!contactableCoaches) return [];

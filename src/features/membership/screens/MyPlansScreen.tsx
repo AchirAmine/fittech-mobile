@@ -42,8 +42,9 @@ export const MyPlansScreen = () => {
               title={sub.offer.title}
               subtitle={`${(sub.offer.sports || []).map(s => s.sportType).join(' & ')}`}
               image={sub.offer.picture ? { uri: `${process.env.EXPO_PUBLIC_API_URL?.split('/api')[0]}/${sub.offer.picture}` } : undefined}
-              value={sub.endDate ? Math.ceil((new Date(sub.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)).toString() : '0'}
-              unit="DAYS REMAINING"
+              daysRemaining={sub.endDate ? Math.ceil((new Date(sub.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)).toString() : '0'}
+              freeSessions={(sub.sportBalances || []).reduce((acc, bal) => acc + bal.remainingFreeSessions, 0)}
+              courseSessions={(sub.sportBalances || []).reduce((acc, bal) => acc + bal.remainingCourseSessions, 0)}
               onPress={() => handleCheck(sub.id, sub.offer.title)}
             />
           ))}

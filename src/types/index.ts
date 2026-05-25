@@ -23,7 +23,8 @@ export interface Payment {
 export interface SubscriptionSportBalance {
   id: string;
   sportType: string;
-  remainingSessions: number;
+  remainingCourseSessions: number;
+  remainingFreeSessions: number;
 }
 export interface Subscription {
   id: string;

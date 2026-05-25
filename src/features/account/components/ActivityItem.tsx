@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { ActivityLog } from '../types/activity.types';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { Palette } from '@shared/constants/colors';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ProfileStackParamList } from '@navigation/AccountNavigator';
 
 interface ActivityItemProps {
   activity: ActivityLog;
@@ -94,18 +97,40 @@ const formatTime = (dateString: string) => {
 
 export const ActivityItem: React.FC<ActivityItemProps> = ({ activity }) => {
   const { colors } = useTheme();
+  const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
 
   const iconConfig = getIconForCategory(activity.category, activity.type, colors);
 
+  const handlePress = () => {
+    navigation.navigate('ActivityDetail', {
+      title: activity.title,
+      description: activity.description,
+      status: activity.status,
+      iconName: iconConfig.name,
+      iconColor: iconConfig.color,
+      iconBg: iconConfig.bg,
+      time: activity.createdAt,
+    });
+  };
+
   return (
-    <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+    <TouchableOpacity
+      style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
+      onPress={handlePress}
+      activeOpacity={0.75}
+    >
       <View style={[styles.iconContainer, { backgroundColor: iconConfig.bg }]}>
         <Ionicons name={iconConfig.name as any} size={24} color={iconConfig.color} />
       </View>
 
       <View style={styles.contentContainer}>
         <View style={styles.headerRow}>
-          <Text style={[styles.title, { color: colors.textPrimary }]} numberOfLines={2}>
+          {/* Title — always 1 line with ellipsis */}
+          <Text
+            style={[styles.title, { color: colors.textPrimary }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {activity.title}
           </Text>
           <View style={styles.timeWrapper}>
@@ -115,21 +140,33 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity }) => {
           </View>
         </View>
 
-        <Text style={[styles.description, { color: colors.textSecondary }]} numberOfLines={2}>
+        {/* Description — max 2 lines, tap card to read more */}
+        <Text
+          style={[styles.description, { color: colors.textSecondary }]}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
           {activity.description}
         </Text>
 
-        {activity.status && (
-          <View style={styles.statusPillContainer}>
+        <View style={styles.bottomRow}>
+          {activity.status && (
             <View style={[styles.statusPill, { backgroundColor: iconConfig.bg }]}>
               <Text style={[styles.statusText, { color: iconConfig.color }]}>
                 {activity.status.toUpperCase()}
               </Text>
             </View>
+          )}
+          {/* "Read more" indicator */}
+          <View style={styles.readMoreRow}>
+            <Text style={[styles.readMoreText, { color: colors.primaryMid }]}>
+              View details
+            </Text>
+            <Ionicons name="chevron-forward" size={12} color={colors.primaryMid} />
           </View>
-        )}
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -149,6 +186,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+    flexShrink: 0,
   },
   contentContainer: {
     flex: 1,
@@ -157,18 +195,17 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: 4,
   },
   title: {
     fontFamily: Theme.Typography.fontFamily.semiBold,
-    fontSize: 16,
+    fontSize: 15,
     flex: 1,
     marginRight: 8,
-    lineHeight: 22,
   },
   timeWrapper: {
-    paddingTop: 2,
+    flexShrink: 0,
   },
   time: {
     fontFamily: Theme.Typography.fontFamily.medium,
@@ -176,12 +213,14 @@ const styles = StyleSheet.create({
   },
   description: {
     fontFamily: Theme.Typography.fontFamily.regular,
-    fontSize: 14,
+    fontSize: 13,
+    lineHeight: 19,
     marginBottom: 8,
   },
-  statusPillContainer: {
-    alignItems: 'flex-start',
-    marginTop: 4,
+  bottomRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   statusPill: {
     paddingHorizontal: 10,
@@ -192,5 +231,15 @@ const styles = StyleSheet.create({
     fontFamily: Theme.Typography.fontFamily.bold,
     fontSize: 10,
     letterSpacing: 0.5,
+  },
+  readMoreRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginLeft: 'auto',
+  },
+  readMoreText: {
+    fontFamily: Theme.Typography.fontFamily.medium,
+    fontSize: 11,
   },
 });

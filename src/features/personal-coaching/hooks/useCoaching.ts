@@ -35,6 +35,13 @@ export const useGetCoach = (id: string) => {
     queryKey: coachingKeys.detail(id),
     queryFn: () => coachingService.getCoachById(id) as any,
     enabled: !!id,
+    refetchInterval: (query) => {
+      const status = query.state.data?.invitation?.status;
+      if (status === 'PENDING' || status === 'ACCEPTED_UNPAID') {
+        return 3000;
+      }
+      return false;
+    },
   });
 };
 export const useGetActiveCoaching = () => {

@@ -1,5 +1,8 @@
-import React, { useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useCallback, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_WIDTH = SCREEN_WIDTH - 36;
 import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '@shared/constants/theme';
 import { useTheme } from '@shared/hooks/useTheme';
@@ -16,7 +19,6 @@ import { useHomeSummary } from '../hooks/useHomeSummary';
 import { NearestCourseCard } from '../components/NearestCourseCard';
 import { AttendanceCheckInCard } from '../components/AttendanceCheckInCard';
 import { HomePlanningCard } from '../components/HomePlanningCard';
-import { FindCoachCard } from '../components/FindCoachCard';
 import { CheckInCard } from '@features/check-in/components/CheckInCard';
 import { PointsBadge } from '@features/rewards/components/PointsBadge';
 import { getImageSource } from '@shared/utils/imageUtils';
@@ -24,6 +26,27 @@ import { useUnreadCount } from '@features/notifications/hooks/useNotifications';
 import { HomeExerciseCard } from '../components/HomeExerciseCard';
 import { HomeProgressCard } from '../components/HomeProgressCard';
 
+const isScanTime = (dateString: string, startTime: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+
+  const isToday = date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear();
+
+  if (!isToday) return false;
+
+  try {
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const courseTime = new Date();
+    courseTime.setHours(hours, minutes, 0, 0);
+
+    const diffInMinutes = (courseTime.getTime() - now.getTime()) / (1000 * 60);
+    return diffInMinutes <= 60 && diffInMinutes >= -60;
+  } catch (e) {
+    return true;
+  }
+};
 
 export const HomeScreen = () => {
   const { colors, isDark } = useTheme();
@@ -31,6 +54,14 @@ export const HomeScreen = () => {
   const authUser = useAppSelector((state) => state.auth.user);
   const { data: summary, isLoading: isSummaryLoading, refetch } = useHomeSummary();
   const unreadCount = useUnreadCount();
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  const handleScroll = (event: any) => {
+    const xOffset = event.nativeEvent.contentOffset.x;
+    const index = Math.max(0, Math.round(xOffset / (CARD_WIDTH + 16)));
+    setActiveSlide(index);
+  };
+
   useFocusEffect(
     useCallback(() => {
       refetch();
@@ -41,21 +72,37 @@ export const HomeScreen = () => {
     lastName: summary.fullName.split(' ').slice(1).join(' '),
     profilePicture: getImageSource(summary.profilePicture),
   } : authUser;
-  const hasActivePlan = !!summary?.activeSubscription;
-  const activeSubscription = summary?.activeSubscription;
-  const coaching = summary?.personalCoachName ? {
+  const hasActivePlan = summary?.hasActiveSubscription || false;
+  const activeSubscriptions = summary?.subscriptions?.filter((s: any) => s.status === 'ACTIVE') || [];
+
+  const coachingState = summary?.personalCoaching?.state;
+  const SHOW_COACHING_CARD_STATES = ['ACTIVE', 'INVITATION_PENDING', 'ACCEPTED_NOT_PAID'];
+  const showCoachingCard = coachingState && SHOW_COACHING_CARD_STATES.includes(coachingState) && summary?.personalCoaching?.coach;
+
+  const coaching = showCoachingCard ? {
     coach: {
-      id: 'active',
-      name: summary.personalCoachName,
-      specialty: 'Personal Training',
+      id: summary!.personalCoaching!.coach!.id,
+      name: `${summary!.personalCoaching!.coach!.firstName} ${summary!.personalCoaching!.coach!.lastName}`,
+      specialty: summary!.personalCoaching!.coach!.speciality || 'Personal Training',
       clientsCount: 1,
-      image: undefined, 
+      image: getImageSource(summary!.personalCoaching!.coach!.profilePicture),
       experience: 'Professional',
       price: 0,
-      about: 'Your active personal coach.'
+      about: 'Your coach.'
     },
-    planTitle: 'Personal Coaching'
+    planTitle: summary!.personalCoaching!.label,
+    state: coachingState as any,
   } : null;
+
+  const handleCoachingPress = () => {
+    if (!coaching) return;
+    if (coaching.state === 'ACTIVE') {
+      navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD as any);
+    } else {
+      navigation.navigate(ROUTES.MAIN.COACH_PROFILE as any, { coachId: coaching.coach.id });
+    }
+  };
+
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -68,9 +115,9 @@ export const HomeScreen = () => {
       ),
       headerRight: () => (
         <View style={styles.headerRight}>
-          <PointsBadge 
+          <PointsBadge
             balance={summary?.starBalance ?? (isSummaryLoading ? '...' : undefined)}
-            onPress={() => navigation.navigate(ROUTES.MAIN.REWARDS as any)} 
+            onPress={() => navigation.navigate(ROUTES.MAIN.REWARDS as any)}
           />
           <TouchableOpacity
             style={styles.notificationBtn}
@@ -84,8 +131,8 @@ export const HomeScreen = () => {
               </View>
             )}
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.avatarContainer, { backgroundColor: colors.cardSecondary }]} 
+          <TouchableOpacity
+            style={[styles.avatarContainer, { backgroundColor: colors.cardSecondary }]}
             activeOpacity={0.8}
             onPress={() => navigation.navigate('ProfileMain' as any)}
           >
@@ -105,66 +152,152 @@ export const HomeScreen = () => {
     });
   }, [navigation, user, colors]);
   return (
-    <AppScreen 
+    <AppScreen
       safeArea={false}
       isLoading={isSummaryLoading}
       backgroundColor={colors.background}
     >
       {!isSummaryLoading && (
-        <ScrollView 
+        <ScrollView
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.mainContainer}>
-            {summary?.nearestCourse && (
-              <View style={styles.discoverySection}>
-                <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>
-                  MARK ATTENDANCE
+            {!hasActivePlan && (
+              <View style={styles.welcomeBanner}>
+                <Text style={[styles.welcomeTitle, { color: colors.textPrimary }]}>
+                  Ready to start your journey?
                 </Text>
-                <AttendanceCheckInCard 
-                  courseTitle={summary.nearestCourse.title}
-                  startTime={summary.nearestCourse.startTime}
-                  onPress={() => navigation.navigate(ROUTES.MAIN.COURSE_ATTENDANCE as any)}
-                />
+                <Text style={[styles.welcomeSubtitle, { color: colors.textSecondary }]}>
+                  Browse our plans to unlock premium features, book your courses, and achieve your fitness goals with us!
+                </Text>
               </View>
             )}
-            <View style={styles.discoverySection}>
-              <Text style={[styles.sectionTitle, { color: isDark ? '#FFFFFF' : colors.textPrimary }]}>
-                YOUR SUBSCRIPTION
-              </Text>
-              {hasActivePlan && activeSubscription ? (
-                <HomeActivePlan 
-                  title={activeSubscription.offerTitle}
-                  endDate={activeSubscription.endDate || undefined}
-                  onPress={() => navigation.navigate(ROUTES.MAIN.MY_PLANS as any)}
-                />
+            {summary?.nearestCourse && (
+              isScanTime(summary.nearestCourse.date, summary.nearestCourse.startTime) ? (
+                <View style={styles.discoverySection}>
+                  <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                    MARK ATTENDANCE
+                  </Text>
+                  <AttendanceCheckInCard
+                    courseTitle={summary.nearestCourse.title}
+                    startTime={summary.nearestCourse.startTime}
+                    onPress={() => navigation.navigate(ROUTES.MAIN.COURSE_ATTENDANCE as any)}
+                  />
+                </View>
               ) : (
-                <HomeInactivePlan 
-                  onBrowsePlans={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)} 
+                <View style={styles.discoverySection}>
+                  <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                    NEXT COURSE
+                  </Text>
+                  <NearestCourseCard
+                    title={summary.nearestCourse.title}
+                    startTime={summary.nearestCourse.startTime}
+                    gymZone={summary.nearestCourse.gymZone}
+                  />
+                </View>
+              )
+            )}
+            {hasActivePlan && (
+              <View style={styles.discoverySection}>
+                <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                  GYM ACCESS
+                </Text>
+                <CheckInCard />
+              </View>
+            )}
+
+            <View style={styles.discoverySection}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                {activeSubscriptions.length > 1 ? 'YOUR SUBSCRIPTIONS' : 'YOUR SUBSCRIPTION'}
+              </Text>
+              {hasActivePlan && activeSubscriptions.length > 0 ? (
+                <View>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 16, paddingRight: 16 }}
+                    snapToInterval={CARD_WIDTH + 16}
+                    decelerationRate="fast"
+                    onScroll={handleScroll}
+                    scrollEventThrottle={16}
+                  >
+                    {activeSubscriptions.map((sub: any) => (
+                      <View key={sub.id} style={{ width: CARD_WIDTH }}>
+                        <HomeActivePlan
+                          title={sub.offer.title}
+                          endDate={sub.endDate || undefined}
+                          onPress={() => navigation.navigate(ROUTES.MAIN.MY_PLANS as any)}
+                        />
+                      </View>
+                    ))}
+                  </ScrollView>
+                  {activeSubscriptions.length > 1 && (
+                    <View style={styles.paginationContainer}>
+                      {activeSubscriptions.map((_, index) => (
+                        <View
+                          key={index}
+                          style={[
+                            styles.paginationDot,
+                            activeSlide === index ? [styles.paginationDotActive, { backgroundColor: colors.primaryMid }] : { backgroundColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)' }
+                          ]}
+                        />
+                      ))}
+                    </View>
+                  )}
+                </View>
+              ) : (
+                <HomeInactivePlan
+                  onBrowsePlans={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)}
                 />
               )}
             </View>
-            {coaching ? (
-              <MyCoachingCard 
-                coach={coaching.coach}
-                planTitle={coaching.planTitle}
-                onPress={() => navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD)}
-                onDashboardPress={() => navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD)}
-              />
-            ) : (
-              <FindCoachCard 
-                onPress={() => navigation.navigate(ROUTES.MAIN.PERSONAL_COACHES as any)} 
-              />
+
+            {hasActivePlan && coaching && (
+              <View style={styles.discoverySection}>
+                <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                  PERSONAL COACHING
+                </Text>
+                <MyCoachingCard
+                  coach={coaching.coach}
+                  planTitle={coaching.planTitle}
+                  state={coaching.state}
+                  onPress={handleCoachingPress}
+                  onDashboardPress={handleCoachingPress}
+                  onChatPress={() => navigation.navigate(ROUTES.MAIN.CHAT_MAIN as any)}
+                />
+              </View>
             )}
-            <HomePlanningCard 
-              onPress={() => navigation.navigate(ROUTES.MAIN.PLANNING as any)}
-            />
-            <CheckInCard />
-            <HomeProgressCard 
-              onPress={() => navigation.navigate(ROUTES.MAIN.PROGRESS_TRACKER as any)} 
-            />
-            <HomeExerciseCard 
-              onPress={() => navigation.navigate(ROUTES.MAIN.EXERCISES as any)} 
-            />
+
+            {hasActivePlan && (
+              <>
+                <View style={styles.discoverySection}>
+                  <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                    YOUR PROGRESS
+                  </Text>
+                  <HomeProgressCard
+                    onPress={() => navigation.navigate(ROUTES.MAIN.PROGRESS_TRACKER as any)}
+                  />
+                </View>
+
+                <View style={styles.discoverySection}>
+                  <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                    EXPLORE EXERCISES
+                  </Text>
+                  <HomeExerciseCard
+                    onPress={() => navigation.navigate(ROUTES.MAIN.EXERCISES as any)}
+                  />
+                </View>
+              </>
+            )}
+
+            <View style={styles.discoverySection}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                YOUR SCHEDULE
+              </Text>
+              <HomePlanningCard
+                onPress={() => navigation.navigate(ROUTES.MAIN.PLANNING as any)}
+              />
+            </View>
           </View>
 
         </ScrollView>
@@ -236,6 +369,21 @@ const styles = StyleSheet.create({
   mainContainer: {
     paddingTop: 10,
   },
+  welcomeBanner: {
+    marginBottom: 24,
+    paddingHorizontal: 4,
+  },
+  welcomeTitle: {
+    fontSize: 24,
+    fontFamily: Theme.Typography.fontFamily.bold,
+    marginBottom: 8,
+    lineHeight: 32,
+  },
+  welcomeSubtitle: {
+    fontSize: 15,
+    fontFamily: Theme.Typography.fontFamily.medium,
+    lineHeight: 24,
+  },
   discoverySection: {
     marginBottom: 0,
   },
@@ -251,5 +399,21 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -12,
+    marginBottom: 24,
+    gap: 8,
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  paginationDotActive: {
+    width: 24,
   },
 });
