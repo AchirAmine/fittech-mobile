@@ -32,6 +32,9 @@ import { ProgressDashboardScreen } from '@features/progress/screens/ProgressDash
 import { AddProgressScreen } from '@features/progress/screens/AddProgressScreen';
 import { ProgressHistoryScreen } from '@features/progress/screens/ProgressHistoryScreen';
 import { GoalScreen } from '@features/progress/screens/GoalScreen';
+import { NutritionScreen } from '@features/nutrition/screens/NutritionScreen';
+import { FoodDetailsScreen } from '@features/nutrition/screens/FoodDetailsScreen';
+
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 export const HomeNavigator = () => {
   const { colors } = useTheme();
@@ -258,6 +261,24 @@ export const HomeNavigator = () => {
         component={GoalScreen} 
         options={({ navigation }) => ({ 
           title: 'My Fitness Goal',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+          headerStyle: { backgroundColor: colors.background },
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.NUTRITION as any} 
+        component={NutritionScreen} 
+        options={({ navigation }) => ({ 
+          title: 'NUTRITION',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+          headerStyle: { backgroundColor: colors.background },
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.FOOD_DETAILS as any} 
+        component={FoodDetailsScreen} 
+        options={({ navigation, route }) => ({ 
+          title: (route.params as any)?.foodName?.toUpperCase() || 'FOOD DETAILS',
           headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
           headerStyle: { backgroundColor: colors.background },
         })} 

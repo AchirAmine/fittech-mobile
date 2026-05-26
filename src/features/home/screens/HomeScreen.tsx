@@ -25,6 +25,7 @@ import { getImageSource } from '@shared/utils/imageUtils';
 import { useUnreadCount } from '@features/notifications/hooks/useNotifications';
 import { HomeExerciseCard } from '../components/HomeExerciseCard';
 import { HomeProgressCard } from '../components/HomeProgressCard';
+import { HomeNutritionCard } from '../components/HomeNutritionCard';
 
 const isScanTime = (dateString: string, startTime: string) => {
   const date = new Date(dateString);
@@ -276,6 +277,15 @@ export const HomeScreen = () => {
                   </Text>
                   <HomeProgressCard
                     onPress={() => navigation.navigate(ROUTES.MAIN.PROGRESS_TRACKER as any)}
+                  />
+                </View>
+
+                <View style={styles.discoverySection}>
+                  <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                    NUTRITION & DIET
+                  </Text>
+                  <HomeNutritionCard
+                    onPress={() => navigation.navigate(ROUTES.MAIN.NUTRITION as any)}
                   />
                 </View>
 

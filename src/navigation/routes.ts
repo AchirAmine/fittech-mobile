@@ -51,6 +51,8 @@ export const ROUTES = {
     ADD_PROGRESS: 'AddProgress',
     PROGRESS_HISTORY: 'ProgressHistory',
     PROGRESS_GOAL: 'ProgressGoal',
+    NUTRITION: 'Nutrition',
+    FOOD_DETAILS: 'FoodDetails',
   },
 } as const;
 export type CoursesStackParamList = {

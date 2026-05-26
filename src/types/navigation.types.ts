@@ -96,6 +96,8 @@ export type HomeStackParamList = {
   [ROUTES.MAIN.ADD_PROGRESS]: { progressId?: string; initialData?: any } | undefined;
   [ROUTES.MAIN.PROGRESS_HISTORY]: undefined;
   [ROUTES.MAIN.PROGRESS_GOAL]: undefined;
+  [ROUTES.MAIN.NUTRITION]: undefined;
+  [ROUTES.MAIN.FOOD_DETAILS]: { fdcId: string; foodName: string; foodData?: string };
 };
 export type MainTabParamList = {
   [ROUTES.MAIN.HOME]: undefined; 
