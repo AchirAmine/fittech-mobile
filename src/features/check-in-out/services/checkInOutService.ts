@@ -19,7 +19,22 @@ export interface CheckInResponse {
   };
 }
 
-export const checkInService = {
+export interface SessionData {
+  id: string;
+  status: string;
+  checkInAt: string;
+  checkOutAt?: string | null;
+  durationMin?: number | null;
+  accessType: string;
+}
+
+export interface CheckoutResponse {
+  success: boolean;
+  message?: string;
+  data?: SessionData;
+}
+
+export const checkInOutService = {
   scanDoor: async (data: CheckInRequest): Promise<{ success: boolean; message?: string }> => {
     const response = await axiosClient.post<CheckInResponse>(
       API_ENDPOINTS.PRESENCE.SCAN_DOOR,
@@ -33,4 +48,23 @@ export const checkInService = {
     const response = await axiosClient.post(API_ENDPOINTS.PRESENCE.SCAN_COACH, { qrToken });
     return response.data;
   },
+
+  getOpenSession: async (): Promise<SessionData | null> => {
+    try {
+      const response = await axiosClient.get<{ success: boolean; data: SessionData | null }>(
+        API_ENDPOINTS.PRESENCE.OPEN_SESSION
+      );
+      return response.data.data;
+    } catch (error) {
+      return null;
+    }
+  },
+
+  checkout: async (data?: { sessionId?: string }): Promise<CheckoutResponse> => {
+    const response = await axiosClient.post<CheckoutResponse>(
+      API_ENDPOINTS.PRESENCE.CHECKOUT,
+      data || {}
+    );
+    return response.data;
+  }
 };

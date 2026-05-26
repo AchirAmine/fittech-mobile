@@ -16,7 +16,7 @@ import { RewardsEmptyState } from '../components/RewardsEmptyState';
 import { RedeemConfirmModal } from '../components/RedeemConfirmModal';
 export const RewardsScreen = () => {
   const { colors, isDark } = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const [activeTab, setActiveTab] = useState<RewardTab>('unlocked');
   const [selectedReward, setSelectedReward] = useState<{ id: string; name: string; stars: number; endDate?: string } | null>(null);
   const [redeemedCode, setRedeemedCode] = useState<string | null>(null);

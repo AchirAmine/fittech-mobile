@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { checkInService, CheckInRequest } from '../services/checkInService';
-
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { checkInOutService, CheckInRequest } from '../services/checkInOutService';
 
 
 
@@ -10,10 +9,10 @@ export const useScanDoor = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CheckInRequest) => checkInService.scanDoor(data),
+    mutationFn: (data: CheckInRequest) => checkInOutService.scanDoor(data),
     onSuccess: () => {
-      
       queryClient.invalidateQueries({ queryKey: ['homeSummary'] });
+      queryClient.invalidateQueries({ queryKey: ['openSession'] });
     },
   });
 };
@@ -22,11 +21,30 @@ export const useScanDoor = () => {
 
 
 
+export const useOpenSession = () => {
+  return useQuery({
+    queryKey: ['openSession'],
+    queryFn: () => checkInOutService.getOpenSession(),
+  });
+};
+
+export const useCheckout = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data?: { sessionId?: string }) => checkInOutService.checkout(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['openSession'] });
+      queryClient.invalidateQueries({ queryKey: ['homeSummary'] });
+    },
+  });
+};
+
 export const useScanCoach = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (qrToken: string) => checkInService.scanCoach(qrToken),
+    mutationFn: (qrToken: string) => checkInOutService.scanCoach(qrToken),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['homeSummary'] });
     },

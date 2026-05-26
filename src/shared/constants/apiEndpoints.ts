@@ -66,5 +66,7 @@ export const API_ENDPOINTS = {
   PRESENCE: {
     SCAN_DOOR: '/presence/scan/door',
     SCAN_COACH: '/presence/scan/coach',
+    OPEN_SESSION: '/presence/access-session/open',
+    CHECKOUT: '/presence/scan/door/checkout',
   },
 } as const;

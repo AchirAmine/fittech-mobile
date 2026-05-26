@@ -23,9 +23,10 @@ import { RewardsScreen } from '@features/rewards/screens/RewardsScreen';
 import { MyVouchersScreen } from '@features/rewards/screens/MyVouchersScreen';
 import { NotificationScreen } from '@features/notifications/screens/NotificationScreen';
 import { NotificationDetailScreen } from '@features/notifications/screens/NotificationDetailScreen';
-import { CheckInScreen } from '@features/check-in/screens/CheckInScreen';
-import { CheckInSelectionScreen } from '@features/check-in/screens/CheckInSelectionScreen';
-import { CourseAttendanceScreen } from '@features/check-in/screens/CourseAttendanceScreen';
+import { CheckInScreen } from '@features/check-in-out/screens/CheckInScreen';
+import { CheckOutScreen } from '@features/check-in-out/screens/CheckOutScreen';
+import { CheckInSelectionScreen } from '@features/check-in-out/screens/CheckInSelectionScreen';
+import { CourseAttendanceScreen } from '@features/check-in-out/screens/CourseAttendanceScreen';
 import { ExerciseDatabaseScreen } from '@features/exercises/screens/ExerciseDatabaseScreen';
 import { ProgressDashboardScreen } from '@features/progress/screens/ProgressDashboardScreen';
 import { AddProgressScreen } from '@features/progress/screens/AddProgressScreen';
@@ -178,6 +179,22 @@ export const HomeNavigator = () => {
       <Stack.Screen 
         name={ROUTES.MAIN.CHECK_IN as any} 
         component={CheckInScreen} 
+        options={({ navigation }) => ({ 
+          title: 'SCAN QR CODE',
+          headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
+          headerTransparent: true,
+          headerStyle: { backgroundColor: 'transparent' },
+          headerTintColor: '#ffffff',
+          headerTitleStyle: {
+            fontFamily: Theme.Typography.fontFamily.bold,
+            fontSize: 16,
+            color: '#ffffff',
+          },
+        })} 
+      />
+      <Stack.Screen 
+        name={ROUTES.MAIN.CHECK_OUT as any} 
+        component={CheckOutScreen} 
         options={({ navigation }) => ({ 
           title: 'SCAN QR CODE',
           headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,

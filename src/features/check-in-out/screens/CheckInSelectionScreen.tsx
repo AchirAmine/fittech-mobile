@@ -10,7 +10,7 @@ import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/nativ
 import { CheckInConfirmationSheet } from '../components/CheckInConfirmationSheet';
 import { SessionSummaryCard } from '../components/SessionSummaryCard';
 import { CheckInOptionCard } from '../components/CheckInOptionCard';
-import { useScanDoor, useCheckInStatus, useConfirmationSheet } from '../hooks/useCheckIn';
+import { useScanDoor, useCheckInStatus, useConfirmationSheet } from '../hooks/useCheckInOut';
 import { ROUTES } from '@navigation/routes';
 
 export const CheckInSelectionScreen = () => {
@@ -50,7 +50,7 @@ export const CheckInSelectionScreen = () => {
       }
     } catch (error: any) {
       closeSheet();
-      const msg = error.response?.data?.message || '';
+      const msg = error.response?.data?.message || error.message || '';
       let title = 'Check-in Failed';
       let type: 'success' | 'error' = 'error';
 

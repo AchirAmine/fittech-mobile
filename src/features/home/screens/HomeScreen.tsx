@@ -19,7 +19,7 @@ import { useHomeSummary } from '../hooks/useHomeSummary';
 import { NearestCourseCard } from '../components/NearestCourseCard';
 import { AttendanceCheckInCard } from '../components/AttendanceCheckInCard';
 import { HomePlanningCard } from '../components/HomePlanningCard';
-import { CheckInCard } from '@features/check-in/components/CheckInCard';
+import { CheckInCard } from '@features/check-in-out/components/CheckInCard';
 import { PointsBadge } from '@features/rewards/components/PointsBadge';
 import { getImageSource } from '@shared/utils/imageUtils';
 import { useUnreadCount } from '@features/notifications/hooks/useNotifications';

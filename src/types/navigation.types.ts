@@ -67,7 +67,7 @@ export type MembershipStackParamList = {
   [ROUTES.MAIN.PAYMENT_DETAILS]: { plan: SubscriptionPlan };
 };
 export type CoursesStackParamList = {
-  [ROUTES.MAIN.COURSES]: undefined;
+  [ROUTES.MAIN.COURSES_MAIN]: undefined;
   [ROUTES.MAIN.COURSE_DETAILS]: { courseId: string; courseTitle?: string; category?: string };
 };
 export type HomeStackParamList = {
@@ -88,6 +88,7 @@ export type HomeStackParamList = {
   [ROUTES.MAIN.NOTIFICATIONS]: undefined;
   [ROUTES.MAIN.NOTIFICATION_DETAIL]: { notificationId: string };
   [ROUTES.MAIN.CHECK_IN]: undefined;
+  [ROUTES.MAIN.CHECK_OUT]: undefined;
   [ROUTES.MAIN.CHECK_IN_SELECTION]: { gymId?: string };
   [ROUTES.MAIN.COURSE_ATTENDANCE]: undefined;
   [ROUTES.MAIN.EXERCISES]: undefined;
@@ -101,5 +102,5 @@ export type MainTabParamList = {
   [ROUTES.MAIN.COURSES]: undefined;
   [ROUTES.MAIN.MEMBERSHIP]: undefined;
   [ROUTES.MAIN.ACCOUNT]: undefined;
-  [ROUTES.MAIN.CHAT_MAIN]: undefined;
+  [ROUTES.MAIN.CHAT]: undefined;
 };

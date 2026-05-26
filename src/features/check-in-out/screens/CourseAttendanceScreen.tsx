@@ -14,7 +14,7 @@ import { Theme } from '@shared/constants/theme';
 import { AppScreen, Loader } from '@shared/components';
 import { StatusModal } from '@shared/components/ui/StatusModal';
 import { ScannerOverlay } from '../components/ScannerOverlay';
-import { useScanCoach, useCheckInStatus } from '../hooks/useCheckIn';
+import { useScanCoach, useCheckInStatus } from '../hooks/useCheckInOut';
 import { ROUTES } from '@navigation/routes';
 
 export const CourseAttendanceScreen = () => {
@@ -66,7 +66,7 @@ export const CourseAttendanceScreen = () => {
     } catch (error: any) {
       showError(
         'Check-in Failed',
-        error.response?.data?.message || 'Invalid or expired course token.'
+        error.response?.data?.message || error.message || 'Invalid or expired course token.'
       );
     }
   };

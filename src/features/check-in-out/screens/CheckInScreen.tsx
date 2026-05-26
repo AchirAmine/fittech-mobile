@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { StatusModal } from '@shared/components/ui/StatusModal';
 import { ScannerOverlay } from '../components/ScannerOverlay';
-import { useScanDoor, useCheckInStatus } from '../hooks/useCheckIn';
+import { useScanDoor, useCheckInStatus } from '../hooks/useCheckInOut';
 import { ROUTES } from '@navigation/routes';
 
 export const CheckInScreen = () => {

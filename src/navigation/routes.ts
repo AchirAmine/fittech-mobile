@@ -43,6 +43,7 @@ export const ROUTES = {
     NOTIFICATIONS: 'Notifications',
     NOTIFICATION_DETAIL: 'NotificationDetail',
     CHECK_IN: 'CheckIn',
+    CHECK_OUT: 'CheckOut',
     CHECK_IN_SELECTION: 'CheckInSelection',
     COURSE_ATTENDANCE: 'CourseAttendance',
     EXERCISES: 'Exercises',
