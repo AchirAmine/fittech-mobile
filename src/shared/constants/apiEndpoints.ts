@@ -47,6 +47,15 @@ export const API_ENDPOINTS = {
     ME: "/subscriptions/me",
     CREATE: "/subscriptions",
   },
+  SUSPENSIONS: {
+    POLICY: `/membre/suspension-policy`,
+    REQUESTS: (subId: string) => `/membre/subscriptions/${subId}/suspension-requests`,
+    CANCEL: (reqId: string) => `/membre/subscription-suspension-requests/${reqId}/cancel`,
+    DETAIL: (reqId: string) => `/membre/subscription-suspension-requests/${reqId}`,
+    DIRECT_SUSPEND: (subId: string) => `/membre/abonnement/${subId}/suspendre`,
+    DIRECT_RESUME: (subId: string) => `/membre/abonnement/${subId}/reprendre`,
+    DIRECT_LIST: (subId: string) => `/membre/abonnement/${subId}/suspensions`,
+  },
   OFFERS: {
     LIST: "/offers",
     PUBLIC: "/offers/public",

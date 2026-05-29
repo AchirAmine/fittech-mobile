@@ -122,6 +122,7 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           <TouchableOpacity 
             style={[styles.suspendButton, { borderColor: colors.error + '40' }]}
             activeOpacity={0.7}
+            onPress={() => navigation.navigate(ROUTES.MAIN.SUSPENSION_REQUESTS, { subscriptionId: subscription.id, planName: offer.title })}
           >
             <Text style={[styles.suspendButtonText, { color: colors.error }]}>Suspend Plan</Text>
           </TouchableOpacity>

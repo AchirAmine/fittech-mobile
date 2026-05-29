@@ -29,6 +29,7 @@ export const ROUTES = {
     PAYMENT_DETAILS: 'PaymentDetails',
     MY_PLANS: 'MyPlans',
     PLAN_DETAILS: 'PlanDetails',
+    SUSPENSION_REQUESTS: 'SuspensionRequests',
     MEMBERSHIP: 'Membership',
     COURSE_DETAILS: 'CourseDetails',
     COACH_PROFILE: 'CoachProfile',

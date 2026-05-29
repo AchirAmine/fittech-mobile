@@ -34,3 +34,9 @@ export function useUploadAttachment() {
       chatApi.uploadAttachment(fileUri, mimeType, fileName),
   });
 }
+export function useStartCoursePrivateConversation() {
+  return useMutation({
+    mutationFn: ({ courseId, memberId }: { courseId: string; memberId?: string }) =>
+      chatApi.startCoursePrivateConversation(courseId, memberId),
+  });
+}

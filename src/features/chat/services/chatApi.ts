@@ -85,4 +85,12 @@ export const chatApi = {
     const { data } = await api.get<{ success: boolean, data: ContactableCoach[] }>(API_ENDPOINTS.CHAT.MY_COACHES);
     return data.data;
   },
+  startCoursePrivateConversation: async (courseId: string, memberId?: string): Promise<Conversation> => {
+    const payload = memberId ? { courseId, memberId } : { courseId };
+    const { data } = await api.post<{ success: boolean; data: Conversation }>(
+      `${API_ENDPOINTS.CHAT.CONVERSATIONS}/course-private`,
+      payload
+    );
+    return data.data;
+  },
 };

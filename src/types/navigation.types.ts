@@ -63,6 +63,7 @@ export type AuthStackParamList = {
 export type MembershipStackParamList = {
   [ROUTES.MAIN.MY_PLANS]: undefined;
   [ROUTES.MAIN.PLAN_DETAILS]: { planId: string; planName?: string };
+  [ROUTES.MAIN.SUSPENSION_REQUESTS]: { subscriptionId: string; planName?: string };
   [ROUTES.MAIN.SUBSCRIPTION_OFFERS]: undefined;
   [ROUTES.MAIN.PAYMENT_DETAILS]: { plan: SubscriptionPlan };
 };
@@ -83,6 +84,7 @@ export type HomeStackParamList = {
   [ROUTES.MAIN.COURSE_DETAILS]: { courseId: string; courseTitle?: string; category?: string };
   [ROUTES.MAIN.MY_PLANS]: undefined;
   [ROUTES.MAIN.PLAN_DETAILS]: { planId: string; planName?: string };
+  [ROUTES.MAIN.SUSPENSION_REQUESTS]: { subscriptionId: string; planName?: string };
   [ROUTES.MAIN.REWARDS]: undefined;
   [ROUTES.MAIN.MY_VOUCHERS]: undefined;
   [ROUTES.MAIN.NOTIFICATIONS]: undefined;

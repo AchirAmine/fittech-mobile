@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { 
-  View, Text, StyleSheet, FlatList, ActivityIndicator, 
-  TouchableOpacity, ScrollView, TextInput, Image 
+import {
+  View, Text, StyleSheet, FlatList, ActivityIndicator,
+  TouchableOpacity, ScrollView, TextInput, Image
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
@@ -39,8 +39,8 @@ export default function ChatListScreen({ navigation }: Props) {
   const filteredConversations = useMemo(() => {
     if (!conversations) return [];
     const filtered = conversations.filter(conv => {
-      const matchSearch = conv.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (conv.lastMessagePreview?.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchSearch = conv.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (conv.lastMessagePreview?.toLowerCase().includes(searchQuery.toLowerCase()));
       let matchCategory = false;
       if (selectedCategory === 'ALL') {
         matchCategory = true;
@@ -51,14 +51,14 @@ export default function ChatListScreen({ navigation }: Props) {
       } else if (selectedCategory === 'COACHING') {
         matchCategory = conv.type === ConversationType.PERSONAL_COACHING;
       }
-      const isActive = !!conv.lastMessagePreview || conv.type === ConversationType.COURSE_GROUP; 
+      const isActive = !!conv.lastMessagePreview || conv.type === ConversationType.COURSE_GROUP;
       return matchCategory && matchSearch && isActive;
     });
     const deduped = new Map<string, Conversation>(filtered.map((c: Conversation) => [c.id, c]));
     return Array.from(deduped.values()).sort((a, b) => {
       const tA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : 0;
       const tB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : 0;
-      return tB - tA; // newest first
+      return tB - tA;
     });
   }, [conversations, selectedCategory, searchQuery]);
   const newCoaches = useMemo(() => {
@@ -90,7 +90,7 @@ export default function ChatListScreen({ navigation }: Props) {
   }
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {}
+      { }
       <View style={[styles.header, { backgroundColor: colors.background }]}>
         <View style={[styles.searchBar, { backgroundColor: hexToRGBA(colors.textMuted, 0.08) }]}>
           <Ionicons name="search" size={20} color={colors.textMuted} />
@@ -102,11 +102,11 @@ export default function ChatListScreen({ navigation }: Props) {
             onChangeText={setSearchQuery}
           />
         </View>
-        {}
+        { }
         <View style={styles.tabsWrapper}>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.tabsContainer}
           >
             {categories.map((cat) => (
@@ -119,7 +119,7 @@ export default function ChatListScreen({ navigation }: Props) {
                 onPress={() => setSelectedCategory(cat.id)}
               >
                 <Text style={[
-                  styles.tabLabel, 
+                  styles.tabLabel,
                   { color: selectedCategory === cat.id ? colors.primary : colors.textMuted }
                 ]}>
                   {cat.label}
@@ -141,20 +141,20 @@ export default function ChatListScreen({ navigation }: Props) {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <View style={[styles.emptyIconCircle, { backgroundColor: hexToRGBA(colors.primary, 0.05) }]}>
-              <Ionicons 
-                name={selectedCategory === 'GROUPS' ? 'people-outline' : 'chatbubble-ellipses-outline'} 
-                size={48} 
-                color={colors.primary} 
+              <Ionicons
+                name={selectedCategory === 'GROUPS' ? 'people-outline' : 'chatbubble-ellipses-outline'}
+                size={48}
+                color={colors.primary}
               />
             </View>
             <Text style={[styles.emptyTitle, { color: colors.textPrimary }]}>
-              {searchQuery ? 'No results found' : 
-               selectedCategory === 'GROUPS' ? 'No group chats yet' :
-               selectedCategory === 'COACHING' ? 'No coaching sessions' : 'Your inbox is empty'}
+              {searchQuery ? 'No results found' :
+                selectedCategory === 'GROUPS' ? 'No group chats yet' :
+                  selectedCategory === 'COACHING' ? 'No coaching sessions' : 'Your inbox is empty'}
             </Text>
             <Text style={[styles.emptySubtitle, { color: colors.textMuted }]}>
-              {searchQuery ? 'Try searching for something else' : 
-               'Active conversations and groups will appear here once you start messaging.'}
+              {searchQuery ? 'Try searching for something else' :
+                'Active conversations and groups will appear here once you start messaging.'}
             </Text>
           </View>
         }
@@ -163,14 +163,14 @@ export default function ChatListScreen({ navigation }: Props) {
             {newCoaches.length > 0 && (selectedCategory === 'ALL' || selectedCategory === 'PRIVATE') && !searchQuery && (
               <View style={styles.newChatsSection}>
                 <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>My Coaches</Text>
-                <ScrollView 
-                  horizontal 
-                  showsHorizontalScrollIndicator={false} 
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.newChatsScroll}
                 >
                   {newCoaches.map((item) => (
-                    <TouchableOpacity 
-                      key={item.coachId} 
+                    <TouchableOpacity
+                      key={item.coachId}
                       style={styles.coachCircleWrapper}
                       onPress={() => navigation.navigate('ChatRoom', { conversationId: item.conversationId })}
                     >
@@ -192,9 +192,9 @@ export default function ChatListScreen({ navigation }: Props) {
               </View>
             )}
             {conversations && conversations.length > 0 && (
-               <View style={[styles.mainListHeader, { borderTopColor: colors.border }]}>
-                 <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Recent Messages</Text>
-               </View>
+              <View style={[styles.mainListHeader, { borderTopColor: colors.border }]}>
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Recent Messages</Text>
+              </View>
             )}
           </>
         }

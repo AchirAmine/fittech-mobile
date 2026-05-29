@@ -2,12 +2,16 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ROUTES } from '@navigation/routes';
 import { MembershipStackParamList } from '@appTypes/navigation.types';
-import { MyPlansScreen } from '@features/membership/screens/MyPlansScreen';
-import { PlanDetailsScreen } from '@features/membership/screens/PlanDetailsScreen';
-import { SubscriptionScreen } from '@features/membership/screens/SubscriptionScreen';
+import { 
+  MyPlansScreen, 
+  PlanDetailsScreen, 
+  SubscriptionScreen, 
+  SuspensionRequestsScreen 
+} from '@features/membership/screens';
 import { PaymentDetailsScreen } from '@features/payment/screens/PaymentDetailsScreen';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
+
 const Stack = createNativeStackNavigator<MembershipStackParamList>();
 export const MembershipNavigator = () => {
   const { colors } = useTheme();
@@ -40,6 +44,11 @@ export const MembershipNavigator = () => {
         })}
       />
       <Stack.Screen 
+        name={ROUTES.MAIN.SUSPENSION_REQUESTS} 
+        component={SuspensionRequestsScreen} 
+        options={{ title: 'Suspension Requests', headerBackVisible: true }}
+      />
+      <Stack.Screen 
         name={ROUTES.MAIN.SUBSCRIPTION_OFFERS} 
         component={SubscriptionScreen} 
         options={{ title: 'Explore Plans' }}
@@ -52,3 +61,4 @@ export const MembershipNavigator = () => {
     </Stack.Navigator>
   );
 };
+
