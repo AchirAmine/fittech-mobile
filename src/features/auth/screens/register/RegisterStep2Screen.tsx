@@ -36,9 +36,9 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
   const { control, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: yupResolver(registerStep2Schema),
     defaultValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
+      email: 'yacinehy572@gmail.com',
+      password: 'Test@123',
+      confirmPassword: 'Test@123',
     },
   });
   const password = watch('password');

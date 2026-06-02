@@ -63,11 +63,11 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
   const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     resolver: yupResolver(registerStep1Schema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      phone: '',
-      dateOfBirth: '',
-      gender: '' as 'male' | 'female' | '',
+      firstName: 'amine',
+      lastName: 'achir',
+      phone: '0555555555',
+      dateOfBirth: '15/04/2005',
+      gender: 'male' as 'male' | 'female' | '',
       photo: undefined as string | undefined,
     },
   });

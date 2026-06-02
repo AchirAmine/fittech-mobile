@@ -46,7 +46,7 @@ const CONTACT_CHANNELS = [
   {
     id: 'phone',
     label: 'Phone',
-    value: '+213 XX XXX XXXX',
+    value: '+213 12 345 678',
     icon: 'call-outline' as keyof typeof Ionicons.glyphMap,
     color: '#10B981',
     onPress: () => Linking.openURL('tel:+213XXXXXXXXX'),
@@ -119,14 +119,6 @@ export const SettingsScreen = () => {
           icon: 'chatbubble-ellipses-outline',
           iconBg: '#06B6D4',
           onPress: () => setSupportModalVisible(true),
-        },
-        {
-          id: 'terms',
-          title: 'Terms of Service',
-          description: 'Read our terms and conditions',
-          icon: 'document-text-outline',
-          iconBg: '#64748B',
-          onPress: () => Linking.openURL('https://fittech.dz/terms'),
         },
       ],
     },

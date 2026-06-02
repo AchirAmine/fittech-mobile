@@ -31,7 +31,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const [showPass, setShowPass] = useState<boolean>(false);
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: 'yacinehy572@gmail.com', password: 'Fittechpw@0' },
   });
   const onSubmit = useCallback(async (data: { email: string; password: string }) => {
     try {

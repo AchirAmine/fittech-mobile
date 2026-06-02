@@ -77,7 +77,8 @@ export const HomeScreen = () => {
   const activeSubscriptions = summary?.subscriptions?.filter((s: any) => s.status === 'ACTIVE' && (!s.endDate || new Date(s.endDate).getTime() > new Date().getTime())) || [];
 
   const coachingState = summary?.personalCoaching?.state;
-  const showCoachingCard = coachingState && coachingState !== 'NO_COACHING' && summary?.personalCoaching?.coach;
+  const HIDDEN_COACHING_STATES = ['NO_COACHING', 'REJECTED', 'EXPIRED', 'CANCELLED', 'ENDED'];
+  const showCoachingCard = coachingState && !HIDDEN_COACHING_STATES.includes(coachingState) && summary?.personalCoaching?.coach;
 
   const coaching = showCoachingCard ? {
     coach: {

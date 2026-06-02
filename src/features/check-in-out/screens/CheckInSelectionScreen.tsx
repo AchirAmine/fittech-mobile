@@ -143,23 +143,25 @@ export const CheckInSelectionScreen = () => {
     }
   };
 
-  const fullActiveSub = summary?.subscriptions?.find(s => s.id === summary?.activeSubscription?.id);
+  // Use the same subscription shown first in My Plans (most recently created active sub with completed payment)
+  // This matches the backend's getMemberSubscriptionsSummary ordering (createdAt desc)
+  const primaryActiveSub = summary?.subscriptions?.find((s: any) =>
+    s.status === 'ACTIVE' &&
+    (!s.endDate || new Date(s.endDate) > now) &&
+    s.payment?.status === 'COMPLETED'
+  );
 
-  const remainingCourse = fullActiveSub 
-    ? (fullActiveSub.sportBalances || []).reduce((acc: number, bal: any) => acc + bal.remainingCourseSessions, 0)
+  const remainingCourse = primaryActiveSub
+    ? (primaryActiveSub.sportBalances || []).reduce((acc: number, bal: any) => acc + bal.remainingCourseSessions, 0)
     : (summary?.activeSubscription?.remainingSessions ?? 0);
-    
-  const remainingOpen = fullActiveSub
-    ? (fullActiveSub.sportBalances || []).reduce((acc: number, bal: any) => acc + bal.remainingFreeSessions, 0)
+
+  const remainingOpen = primaryActiveSub
+    ? (primaryActiveSub.sportBalances || []).reduce((acc: number, bal: any) => acc + bal.remainingFreeSessions, 0)
     : (summary?.activeSubscription?.remainingOpenSessions ?? 0);
 
-  const maxCourse = fullActiveSub
-    ? remainingCourse + (fullActiveSub.consumedCourseSessions || 0)
-    : Math.max(remainingCourse, 1);
-    
-  const maxOpen = fullActiveSub
-    ? remainingOpen + (fullActiveSub.consumedFreeSessions || 0)
-    : Math.max(remainingOpen, 1);
+  // Max = remaining (no consumed field available, so just use remaining as 100%)
+  const maxCourse = Math.max(remainingCourse, 1);
+  const maxOpen = Math.max(remainingOpen, 1);
 
   return (
     <AppScreen isLoading={isLoading} backgroundColor={colors.background} safeArea={true}>
