@@ -38,11 +38,11 @@ export const API_ENDPOINTS = {
     PAY_INVITATION: (id: string) => `/personal-coaching/invitations/${id}/pay`,
   },
   PROMO: {
-    ACTIVE: "/promo/active",
-    REDEEM: (id: string) => `/promo/${id}/redeem`,
-    HISTORY: "/promo/star-transactions",
-    MY_CODES: "/promo/my-codes",
-    APPLY_CODE: "/promo/apply-code",
+    ACTIVE: "/promo/member/offers/active",
+    REDEEM: (id: string) => `/promo/member/offers/${id}/redeem`,
+    HISTORY: "/promo/member/star-transactions",
+    MY_CODES: "/promo/member/my-codes",
+    APPLY_CODE: "/promo/member/apply-code",
   },
   SUBSCRIPTIONS: {
     ME: "/subscriptions/me",

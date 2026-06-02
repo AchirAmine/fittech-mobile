@@ -77,8 +77,7 @@ export const HomeScreen = () => {
   const activeSubscriptions = summary?.subscriptions?.filter((s: any) => s.status === 'ACTIVE' && (!s.endDate || new Date(s.endDate).getTime() > new Date().getTime())) || [];
 
   const coachingState = summary?.personalCoaching?.state;
-  const SHOW_COACHING_CARD_STATES = ['ACTIVE', 'INVITATION_PENDING', 'ACCEPTED_NOT_PAID', 'PAYMENT_PENDING'];
-  const showCoachingCard = coachingState && SHOW_COACHING_CARD_STATES.includes(coachingState) && summary?.personalCoaching?.coach;
+  const showCoachingCard = coachingState && coachingState !== 'NO_COACHING' && summary?.personalCoaching?.coach;
 
   const coaching = showCoachingCard ? {
     coach: {
@@ -163,7 +162,7 @@ export const HomeScreen = () => {
       {!isSummaryLoading && (
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 10 }}
         >
           <View style={styles.mainContainer}>
             {!hasActivePlan && (
@@ -256,11 +255,11 @@ export const HomeScreen = () => {
               )}
             </View>
 
-            {hasActivePlan && coaching && (
-              <View style={styles.discoverySection}>
-                <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
-                  PERSONAL COACHING
-                </Text>
+            <View style={styles.discoverySection}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
+                PERSONAL COACHING
+              </Text>
+              {coaching ? (
                 <MyCoachingCard
                   coach={coaching.coach}
                   planTitle={coaching.planTitle}
@@ -269,8 +268,26 @@ export const HomeScreen = () => {
                   onDashboardPress={handleCoachingPress}
                   onChatPress={() => navigation.navigate(ROUTES.MAIN.CHAT_MAIN as any)}
                 />
-              </View>
-            )}
+              ) : (
+                <TouchableOpacity
+                  style={[
+                    styles.findCoachCard,
+                    { backgroundColor: colors.card, shadowColor: colors.shadow },
+                  ]}
+                  activeOpacity={0.85}
+                  onPress={() => navigation.navigate(ROUTES.MAIN.PERSONAL_COACHES as any)}
+                >
+                  <View style={[styles.findCoachIconWrap, { backgroundColor: isDark ? 'rgba(139,92,246,0.15)' : 'rgba(139,92,246,0.1)' }]}>
+                    <Ionicons name="fitness-outline" size={28} color="#8B5CF6" />
+                  </View>
+                  <View style={styles.findCoachText}>
+                    <Text style={[styles.findCoachTitle, { color: colors.textPrimary }]}>Find a Personal Coach</Text>
+                    <Text style={[styles.findCoachSub, { color: colors.textSecondary }]}>Get a tailored training plan from our certified coaches</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
+                </TouchableOpacity>
+              )}
+            </View>
 
             {hasActivePlan && (
               <>
@@ -428,5 +445,37 @@ const styles = StyleSheet.create({
   },
   paginationDotActive: {
     width: 24,
+  },
+  findCoachCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 24,
+    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    gap: 14,
+  },
+  findCoachIconWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  findCoachText: {
+    flex: 1,
+    gap: 4,
+  },
+  findCoachTitle: {
+    fontSize: 15,
+    fontFamily: Theme.Typography.fontFamily.bold,
+  },
+  findCoachSub: {
+    fontSize: 12,
+    fontFamily: Theme.Typography.fontFamily.medium,
+    lineHeight: 18,
   },
 });

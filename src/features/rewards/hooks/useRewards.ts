@@ -32,6 +32,7 @@ export const useRedeemReward = () => {
       queryClient.invalidateQueries({ queryKey: ['rewardsSummary'] });
       queryClient.invalidateQueries({ queryKey: ['rewardHistory'] });
       queryClient.invalidateQueries({ queryKey: ['homeSummary'] });
+      queryClient.invalidateQueries({ queryKey: ['myPromoCodes'] });
     },
   });
 };

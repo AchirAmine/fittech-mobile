@@ -12,14 +12,24 @@ import { SessionSummaryCard } from '../components/SessionSummaryCard';
 import { CheckInOptionCard } from '../components/CheckInOptionCard';
 import { useScanDoor, useCheckInStatus, useConfirmationSheet } from '../hooks/useCheckInOut';
 import { ROUTES } from '@navigation/routes';
+import { useMemberPolicy } from '@features/account/hooks/useMemberPolicy';
+
+const DAYS_OF_WEEK = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+
+function parseTimeToDate(baseDate: Date, timeStr: string): Date {
+  const [h, m] = timeStr.split(':').map(Number);
+  const d = new Date(baseDate);
+  d.setHours(h, m, 0, 0);
+  return d;
+}
 
 export const CheckInSelectionScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const { data: summary, isLoading, refetch } = useHomeSummary();
+  const { data: memberPolicy } = useMemberPolicy();
   const route = useRoute();
   const { zone: scannedZone } = (route.params as any) || {};
-
 
   const { mutateAsync: scanDoor, isPending: isSubmitting } = useScanDoor();
   const { status, showSuccess, showError, hideStatus } = useCheckInStatus();
@@ -30,6 +40,69 @@ export const CheckInSelectionScreen = () => {
       refetch();
     }, [refetch])
   );
+
+  const now = new Date();
+  const attendancePolicy = memberPolicy?.attendancePolicy;
+
+  const isCourseAvailableNow = React.useMemo(() => {
+    const course = summary?.nearestCourse;
+    if (!course || !attendancePolicy) return false;
+
+    const courseDate = new Date(course.date);
+    const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const courseDateUTC = Date.UTC(courseDate.getUTCFullYear(), courseDate.getUTCMonth(), courseDate.getUTCDate());
+    if (courseDateUTC !== todayUTC) return false;
+
+    const courseStart = parseTimeToDate(now, course.startTime);
+    const windowStart = new Date(courseStart.getTime() - attendancePolicy.courseEntryWindowBeforeMinutes * 60000);
+    const windowEnd = new Date(courseStart.getTime() + attendancePolicy.qrCheckinWindowAfterMinutes * 60000);
+
+    return now >= windowStart && now <= windowEnd;
+  }, [summary?.nearestCourse, attendancePolicy]);
+
+  const isFreeAvailableNow = React.useMemo(() => {
+    if (!summary?.actualPlanning) return false;
+    const today = DAYS_OF_WEEK[now.getDay()];
+
+    for (const sport of summary.actualPlanning.sports) {
+      for (const slot of sport.slots) {
+        if (slot.slotType !== 'OPEN_SESSION') continue;
+        if (slot.dayOfWeek !== today) continue;
+
+        const slotStart = parseTimeToDate(now, slot.startTime);
+        const slotEnd = parseTimeToDate(now, slot.endTime);
+
+        if (now >= slotStart && now < slotEnd) return true;
+      }
+    }
+    return false;
+  }, [summary?.actualPlanning]);
+
+  const courseSubtitle = React.useMemo(() => {
+    const course = summary?.nearestCourse;
+    if (!course) return 'No course reserved for today';
+    if (isCourseAvailableNow) return `${course.title} · ${course.startTime}`;
+    const courseDate = new Date(course.date);
+    const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const courseDateUTC = Date.UTC(courseDate.getUTCFullYear(), courseDate.getUTCMonth(), courseDate.getUTCDate());
+    if (courseDateUTC !== todayUTC) return `Next: ${course.title} · ${courseDate.toLocaleDateString()}`;
+    return `${course.title} · Starts at ${course.startTime}`;
+  }, [summary?.nearestCourse, isCourseAvailableNow]);
+
+  const freeSubtitle = React.useMemo(() => {
+    if (isFreeAvailableNow) return 'Open session available now';
+    if (!summary?.actualPlanning) return 'No planning available';
+    const today = DAYS_OF_WEEK[now.getDay()];
+    for (const sport of summary.actualPlanning.sports) {
+      for (const slot of sport.slots) {
+        if (slot.slotType !== 'OPEN_SESSION') continue;
+        if (slot.dayOfWeek !== today) continue;
+        const slotStart = parseTimeToDate(now, slot.startTime);
+        if (slotStart > now) return `Next free session at ${slot.startTime}`;
+      }
+    }
+    return 'No open session available today';
+  }, [summary?.actualPlanning, isFreeAvailableNow]);
 
   const handleCheckIn = async () => {
     const sessionType = confirmationSheet.type;
@@ -70,9 +143,23 @@ export const CheckInSelectionScreen = () => {
     }
   };
 
-  const remainingCourse = summary?.activeSubscription?.remainingSessions ?? 0;
-  const remainingOpen = summary?.activeSubscription?.remainingOpenSessions ?? 0;
-  const maxSessions = 10;
+  const fullActiveSub = summary?.subscriptions?.find(s => s.id === summary?.activeSubscription?.id);
+
+  const remainingCourse = fullActiveSub 
+    ? (fullActiveSub.sportBalances || []).reduce((acc: number, bal: any) => acc + bal.remainingCourseSessions, 0)
+    : (summary?.activeSubscription?.remainingSessions ?? 0);
+    
+  const remainingOpen = fullActiveSub
+    ? (fullActiveSub.sportBalances || []).reduce((acc: number, bal: any) => acc + bal.remainingFreeSessions, 0)
+    : (summary?.activeSubscription?.remainingOpenSessions ?? 0);
+
+  const maxCourse = fullActiveSub
+    ? remainingCourse + (fullActiveSub.consumedCourseSessions || 0)
+    : Math.max(remainingCourse, 1);
+    
+  const maxOpen = fullActiveSub
+    ? remainingOpen + (fullActiveSub.consumedFreeSessions || 0)
+    : Math.max(remainingOpen, 1);
 
   return (
     <AppScreen isLoading={isLoading} backgroundColor={colors.background} safeArea={true}>
@@ -87,7 +174,7 @@ export const CheckInSelectionScreen = () => {
             iconColor="#3b82f6"
             iconBgColor="#f0f4ff"
             progressColor="#3b82f6"
-            progress={Math.min(remainingCourse / maxSessions, 1)}
+            progress={Math.min(remainingCourse / maxCourse, 1)}
           />
           <SessionSummaryCard
             label="OPEN ACCESS SESSIONS"
@@ -96,7 +183,7 @@ export const CheckInSelectionScreen = () => {
             iconColor="#10b981"
             iconBgColor="#f0fff4"
             progressColor="#10b981"
-            progress={Math.min(remainingOpen / maxSessions, 1)}
+            progress={Math.min(remainingOpen / maxOpen, 1)}
           />
         </View>
 
@@ -105,23 +192,33 @@ export const CheckInSelectionScreen = () => {
           <Ionicons name="qr-code-outline" size={20} color={colors.primary} />
         </View>
 
+        {!isCourseAvailableNow && !isFreeAvailableNow && (
+          <View style={[styles.noSessionBanner, { backgroundColor: colors.card }]}>
+            <Ionicons name="time-outline" size={20} color={colors.textSecondary} />
+            <Text style={[styles.noSessionText, { color: colors.textSecondary }]}>
+              No check-in window is active right now. Options are enabled when a session is about to start.
+            </Text>
+          </View>
+        )}
+
         <View style={styles.checkInOptions}>
           <CheckInOptionCard
             title="Course Session"
-            subtitle={summary?.nearestCourse ? 'Access scheduled classes' : 'No active course at this time'}
+            subtitle={courseSubtitle}
             iconName="dumbbell"
             iconColor="#3b82f6"
             iconBgColor="#eff6ff"
             onPress={() => openSheet('COURSE')}
-            disabled={!summary?.nearestCourse}
+            disabled={!isCourseAvailableNow}
           />
           <CheckInOptionCard
             title="Open Session"
-            subtitle="Self-guided training"
+            subtitle={freeSubtitle}
             iconName="weight-lifter"
             iconColor="#10b981"
             iconBgColor="#ecfdf5"
             onPress={() => openSheet('FREE')}
+            disabled={!isFreeAvailableNow}
           />
         </View>
       </ScrollView>
@@ -189,6 +286,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: Theme.Typography.fontFamily.bold,
     letterSpacing: 0.5,
+  },
+  noSessionBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    padding: 14,
+    borderRadius: 14,
+    marginBottom: 16,
+  },
+  noSessionText: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: Theme.Typography.fontFamily.medium,
+    lineHeight: 20,
   },
   checkInOptions: {
     gap: 0,

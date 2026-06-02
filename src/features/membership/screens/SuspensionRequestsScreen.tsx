@@ -53,8 +53,20 @@ export const SuspensionRequestsScreen: React.FC<Props> = ({ route }) => {
   const { data: memberPolicy } = useMemberPolicy();
   const policy = memberPolicy?.subscriptionSuspensionPolicy;
 
-  const minNoticeMs = (policy?.noticeDelayHours ?? 48) * 60 * 60 * 1000;
-  const minDurationMs = (policy?.minimumDurationDays ?? 7) * 24 * 60 * 60 * 1000;
+  const noticeHours = policy?.noticeDelayHours ?? 48;
+  const minDurationDays = policy?.minimumDurationDays ?? 7;
+  const maxDurationDays = policy?.maximumDurationDays ?? 30;
+  const minNoticeMs = noticeHours * 60 * 60 * 1000;
+  const minDurationMs = minDurationDays * 24 * 60 * 60 * 1000;
+
+  React.useEffect(() => {
+    if (policy) {
+      const newStart = new Date(Date.now() + noticeHours * 60 * 60 * 1000 + 60 * 1000);
+      const newEnd = new Date(newStart.getTime() + minDurationDays * 24 * 60 * 60 * 1000);
+      setStartDate(newStart);
+      setEndDate(newEnd);
+    }
+  }, [policy?.noticeDelayHours, policy?.minimumDurationDays]);
 
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -187,12 +199,64 @@ export const SuspensionRequestsScreen: React.FC<Props> = ({ route }) => {
   };
 
   const handleSubmit = async () => {
+    const now = new Date();
+    const minStart = new Date(now.getTime() + minNoticeMs);
+
+    if (startDate <= now) {
+      setStatusModalConfig({
+        visible: true,
+        type: 'error',
+        title: 'Invalid Start Date',
+        message: 'The start date must be in the future.',
+        onConfirm: hideStatusModal,
+        confirmText: 'OK'
+      });
+      return;
+    }
+
+    if (startDate < minStart) {
+      setStatusModalConfig({
+        visible: true,
+        type: 'error',
+        title: 'Too Soon',
+        message: `Suspension must be requested at least ${noticeHours} hours in advance. Please choose a later start date.`,
+        onConfirm: hideStatusModal,
+        confirmText: 'OK'
+      });
+      return;
+    }
+
     if (startDate >= endDate) {
       setStatusModalConfig({
         visible: true,
         type: 'error',
         title: 'Validation Error',
         message: 'End date must be after the start date.',
+        onConfirm: hideStatusModal,
+        confirmText: 'OK'
+      });
+      return;
+    }
+
+    const durationDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    if (durationDays < minDurationDays) {
+      setStatusModalConfig({
+        visible: true,
+        type: 'error',
+        title: 'Duration Too Short',
+        message: `Minimum suspension duration is ${minDurationDays} days. Please extend the end date.`,
+        onConfirm: hideStatusModal,
+        confirmText: 'OK'
+      });
+      return;
+    }
+
+    if (durationDays > maxDurationDays) {
+      setStatusModalConfig({
+        visible: true,
+        type: 'error',
+        title: 'Duration Too Long',
+        message: `Maximum suspension duration is ${maxDurationDays} days. Please shorten the end date.`,
         onConfirm: hideStatusModal,
         confirmText: 'OK'
       });
@@ -220,12 +284,11 @@ export const SuspensionRequestsScreen: React.FC<Props> = ({ route }) => {
       } catch (error: any) {
         const errorData = error.response?.data;
         const msg = errorData?.message || 'Failed to create suspension.';
-        const details = errorData?.errors ? JSON.stringify(errorData.errors) : '';
         setStatusModalConfig({
           visible: true,
           type: 'error',
           title: 'Error',
-          message: details ? `${msg}\n${details}` : msg,
+          message: msg,
           onConfirm: hideStatusModal,
           confirmText: 'OK'
         });
