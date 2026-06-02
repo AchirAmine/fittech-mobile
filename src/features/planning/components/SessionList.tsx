@@ -9,6 +9,16 @@ import { Session } from '@appTypes/planning';
 interface Props {
   sessions: Session[];
 }
+
+const formatTimeLabel = (time: string) => {
+  const [hours, minutes] = time.split(':').map(Number);
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return time;
+
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const displayHours = hours % 12 || 12;
+  return `${displayHours}:${String(minutes).padStart(2, '0')} ${period}`;
+};
+
 const SessionList: React.FC<Props> = ({ sessions }) => {
   const { colors } = useTheme();
   const { grouped, sortedTimes } = useMemo(() => {
@@ -41,7 +51,7 @@ const SessionList: React.FC<Props> = ({ sessions }) => {
       {sortedTimes.map((time) => (
         <View key={time} style={styles.timeGroup}>
           <Text style={[styles.groupHeader, { color: colors.textSecondary }]}>
-            {`${time} ${parseInt(time.split(':')[0]) < 12 ? 'AM' : 'PM'}`}
+            {formatTimeLabel(time)}
           </Text>
           <View style={styles.sessionsList}>
             {grouped[time].map((session) => (

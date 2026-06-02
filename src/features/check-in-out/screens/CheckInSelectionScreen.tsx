@@ -6,12 +6,99 @@ import { Theme } from '@shared/constants/theme';
 import { AppScreen } from '@shared/components';
 import { StatusModal } from '@shared/components/ui/StatusModal';
 import { useHomeSummary } from '@features/home/hooks/useHomeSummary';
+import type { HomeSummary } from '@features/home/types/home.types';
 import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
 import { CheckInConfirmationSheet } from '../components/CheckInConfirmationSheet';
 import { SessionSummaryCard } from '../components/SessionSummaryCard';
 import { CheckInOptionCard } from '../components/CheckInOptionCard';
 import { useScanDoor, useCheckInStatus, useConfirmationSheet } from '../hooks/useCheckInOut';
 import { ROUTES } from '@navigation/routes';
+
+const toMinutes = (time: string) => {
+  const [hours, minutes] = time.split(':').map(Number);
+  return (hours * 60) + minutes;
+};
+
+const isCurrentTimeWithinSlot = (startTime: string, endTime: string) => {
+  const now = new Date();
+  const current = (now.getHours() * 60) + now.getMinutes();
+  const start = toMinutes(startTime);
+  const end = toMinutes(endTime);
+
+  if (!Number.isFinite(start) || !Number.isFinite(end)) return false;
+  if (start === end) return true;
+
+  return start < end
+    ? current >= start && current <= end
+    : current >= start || current <= end;
+};
+
+const isTodaySlot = (dayOfWeek: string) => {
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+  return dayOfWeek.toUpperCase() === today;
+};
+
+const isTodayCourse = (date?: string) => {
+  if (!date) return true;
+
+  const courseDate = new Date(date);
+  const today = new Date();
+  if (Number.isNaN(courseDate.getTime())) return false;
+
+  return courseDate.getFullYear() === today.getFullYear() &&
+    courseDate.getMonth() === today.getMonth() &&
+    courseDate.getDate() === today.getDate();
+};
+
+const hasCurrentOpenSession = (summary?: HomeSummary) => {
+  return !!summary?.actualPlanning?.sports?.some((sport) =>
+    sport.slots.some((slot) =>
+      slot.slotType === 'OPEN_SESSION' &&
+      isTodaySlot(slot.dayOfWeek) &&
+      isCurrentTimeWithinSlot(slot.startTime, slot.endTime)
+    )
+  );
+};
+
+type CourseCheckInOption = {
+  title: string;
+  gymZone: string | null;
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+};
+
+const getCurrentCourseFromPlanning = (summary?: HomeSummary): CourseCheckInOption | null => {
+  for (const sport of summary?.actualPlanning?.sports ?? []) {
+    for (const slot of sport.slots) {
+      if (
+        slot.slotType !== 'COURSE_SLOT' ||
+        !isTodaySlot(slot.dayOfWeek) ||
+        !isCurrentTimeWithinSlot(slot.startTime, slot.endTime)
+      ) {
+        continue;
+      }
+
+      const currentCourses = slot.courses?.filter((course) => isTodayCourse(course.date)) ?? [];
+      const reservedCourse = currentCourses.find((course) => course.isReservedByMember);
+      const course = reservedCourse ?? currentCourses[0];
+
+      if (slot.courses?.length && !course) {
+        continue;
+      }
+
+      return {
+        title: course?.title || 'Course Session',
+        gymZone: course?.gymZone ?? (sport.sport === 'POOL' ? 'POOL' : 'GYM'),
+        dayOfWeek: slot.dayOfWeek,
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+      };
+    }
+  }
+
+  return null;
+};
 
 export const CheckInSelectionScreen = () => {
   const { colors } = useTheme();
@@ -35,7 +122,11 @@ export const CheckInSelectionScreen = () => {
     const sessionType = confirmationSheet.type;
 
     try {
-      const zone = scannedZone || (sessionType === 'COURSE' && summary?.nearestCourse?.gymZone === 'POOL' ? 'POOL' : 'GYM');
+      if (sessionType === 'FREE' && summary?.actualPlanning && !hasCurrentOpenSession(summary)) {
+        throw new Error('It is not a free session time.');
+      }
+
+      const zone = scannedZone || (sessionType === 'COURSE' && courseCheckInOption?.gymZone === 'POOL' ? 'POOL' : 'GYM');
       const result = await scanDoor({ zone, sessionType });
 
       if (result.success) {
@@ -44,19 +135,19 @@ export const CheckInSelectionScreen = () => {
         showSuccess(
           'Check-in Successful!',
           sessionType === 'COURSE'
-            ? `You're checked in to ${summary?.nearestCourse?.title || 'Course'}\nToday at ${currentTime}`
+            ? `You're checked in to ${courseCheckInOption?.title || 'Course'}\nToday at ${currentTime}`
             : `You're checked in to Free session\nToday at ${currentTime}`,
         );
       }
     } catch (error: any) {
       closeSheet();
+      await refetch();
       const msg = error.response?.data?.message || error.message || '';
       let title = 'Check-in Failed';
-      let type: 'success' | 'error' = 'error';
 
       if (msg.includes('No remaining') || msg.includes('balance')) title = 'No sessions remaining';
       else if (msg.includes('suspended')) title = 'Account suspended';
-      else if (msg.includes('already')) { title = 'Already Checked In'; type = 'success'; }
+      else if (msg.toLowerCase().includes('already')) title = 'Already Checked In';
 
       showError(title, msg || 'Something went wrong. Please try again.');
     }
@@ -72,6 +163,10 @@ export const CheckInSelectionScreen = () => {
 
   const remainingCourse = summary?.activeSubscription?.remainingSessions ?? 0;
   const remainingOpen = summary?.activeSubscription?.remainingOpenSessions ?? 0;
+  const hasPlanningLoaded = !!summary?.actualPlanning;
+  const openSessionAvailable = !hasPlanningLoaded || hasCurrentOpenSession(summary);
+  const canStartOpenSession = remainingOpen > 0 && openSessionAvailable;
+  const courseCheckInOption = getCurrentCourseFromPlanning(summary) ?? summary?.nearestCourse;
   const maxSessions = 10;
 
   return (
@@ -108,20 +203,21 @@ export const CheckInSelectionScreen = () => {
         <View style={styles.checkInOptions}>
           <CheckInOptionCard
             title="Course Session"
-            subtitle={summary?.nearestCourse ? 'Access scheduled classes' : 'No active course at this time'}
+            subtitle={courseCheckInOption ? 'Access scheduled classes' : 'No active course at this time'}
             iconName="dumbbell"
             iconColor="#3b82f6"
             iconBgColor="#eff6ff"
             onPress={() => openSheet('COURSE')}
-            disabled={!summary?.nearestCourse}
+            disabled={!courseCheckInOption}
           />
           <CheckInOptionCard
             title="Open Session"
-            subtitle="Self-guided training"
+            subtitle={openSessionAvailable ? 'Self-guided training' : 'No open session at this time'}
             iconName="weight-lifter"
             iconColor="#10b981"
             iconBgColor="#ecfdf5"
             onPress={() => openSheet('FREE')}
+            disabled={!canStartOpenSession}
           />
         </View>
       </ScrollView>
@@ -134,14 +230,14 @@ export const CheckInSelectionScreen = () => {
         onConfirm={handleCheckIn}
         data={{
           title: confirmationSheet.type === 'COURSE'
-            ? summary?.nearestCourse?.title || 'Course Session'
+            ? courseCheckInOption?.title || 'Course Session'
             : 'Open Access Session',
           zone: confirmationSheet.type === 'COURSE'
-            ? summary?.nearestCourse?.gymZone || 'Gym'
+            ? courseCheckInOption?.gymZone || 'Gym'
             : 'Gym / Pool',
           schedule: confirmationSheet.type === 'COURSE'
-            ? summary?.nearestCourse
-              ? `${summary.nearestCourse.dayOfWeek.substring(0, 3).toUpperCase()} ${summary.nearestCourse.startTime} - ${summary.nearestCourse.endTime}`
+            ? courseCheckInOption
+              ? `${courseCheckInOption.dayOfWeek.substring(0, 3).toUpperCase()} ${courseCheckInOption.startTime} - ${courseCheckInOption.endTime}`
               : 'Today'
             : 'Today (Anytime)',
           instructor: confirmationSheet.type === 'COURSE'

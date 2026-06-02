@@ -26,6 +26,7 @@ import { useUnreadCount } from '@features/notifications/hooks/useNotifications';
 import { HomeExerciseCard } from '../components/HomeExerciseCard';
 import { HomeProgressCard } from '../components/HomeProgressCard';
 import { HomeNutritionCard } from '../components/HomeNutritionCard';
+import type { HomeSummary } from '../types/home.types';
 
 const isScanTime = (dateString: string, startTime: string) => {
   const date = new Date(dateString);
@@ -47,6 +48,72 @@ const isScanTime = (dateString: string, startTime: string) => {
   } catch (e) {
     return true;
   }
+};
+
+const toMinutes = (time: string) => {
+  const [hours, minutes] = time.split(':').map(Number);
+  return (hours * 60) + minutes;
+};
+
+const isCurrentTimeWithinSlot = (startTime: string, endTime: string) => {
+  const now = new Date();
+  const current = (now.getHours() * 60) + now.getMinutes();
+  const start = toMinutes(startTime);
+  const end = toMinutes(endTime);
+
+  if (!Number.isFinite(start) || !Number.isFinite(end)) return false;
+  if (start === end) return true;
+
+  return start < end
+    ? current >= start && current <= end
+    : current >= start || current <= end;
+};
+
+const isTodaySlot = (dayOfWeek: string) => {
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+  return dayOfWeek.toUpperCase() === today;
+};
+
+const isTodayCourse = (date?: string) => {
+  if (!date) return true;
+
+  const courseDate = new Date(date);
+  const today = new Date();
+  if (Number.isNaN(courseDate.getTime())) return false;
+
+  return courseDate.getFullYear() === today.getFullYear() &&
+    courseDate.getMonth() === today.getMonth() &&
+    courseDate.getDate() === today.getDate();
+};
+
+const getCurrentCourseFromPlanning = (summary?: HomeSummary | null) => {
+  for (const sport of summary?.actualPlanning?.sports ?? []) {
+    for (const slot of sport.slots) {
+      if (
+        slot.slotType !== 'COURSE_SLOT' ||
+        !isTodaySlot(slot.dayOfWeek) ||
+        !isCurrentTimeWithinSlot(slot.startTime, slot.endTime)
+      ) {
+        continue;
+      }
+
+      const currentCourses = slot.courses?.filter((course) => isTodayCourse(course.date)) ?? [];
+      const reservedCourse = currentCourses.find((course) => course.isReservedByMember);
+      const course = reservedCourse ?? currentCourses[0];
+
+      if (slot.courses?.length && !course) {
+        continue;
+      }
+
+      return {
+        title: course?.title || 'Course Session',
+        startTime: slot.startTime,
+        gymZone: course?.gymZone ?? (sport.sport === 'POOL' ? 'POOL' : 'GYM'),
+      };
+    }
+  }
+
+  return null;
 };
 
 export const HomeScreen = () => {
@@ -75,6 +142,10 @@ export const HomeScreen = () => {
   } : authUser;
   const hasActivePlan = summary?.hasActiveSubscription || false;
   const activeSubscriptions = summary?.subscriptions?.filter((s: any) => s.status === 'ACTIVE') || [];
+  const currentPlanningCourse = getCurrentCourseFromPlanning(summary);
+  const courseDisplay = currentPlanningCourse ?? summary?.nearestCourse ?? null;
+  const showAttendanceCheckIn = !!currentPlanningCourse ||
+    !!(summary?.nearestCourse && isScanTime(summary.nearestCourse.date, summary.nearestCourse.startTime));
 
   const coachingState = summary?.personalCoaching?.state;
   const SHOW_COACHING_CARD_STATES = ['ACTIVE', 'INVITATION_PENDING', 'ACCEPTED_NOT_PAID'];
@@ -173,15 +244,15 @@ export const HomeScreen = () => {
                 </Text>
               </View>
             )}
-            {summary?.nearestCourse && (
-              isScanTime(summary.nearestCourse.date, summary.nearestCourse.startTime) ? (
+            {courseDisplay && (
+              showAttendanceCheckIn ? (
                 <View style={styles.discoverySection}>
                   <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>
                     MARK ATTENDANCE
                   </Text>
                   <AttendanceCheckInCard
-                    courseTitle={summary.nearestCourse.title}
-                    startTime={summary.nearestCourse.startTime}
+                    courseTitle={courseDisplay.title}
+                    startTime={courseDisplay.startTime}
                     onPress={() => navigation.navigate(ROUTES.MAIN.COURSE_ATTENDANCE as any)}
                   />
                 </View>
@@ -191,9 +262,9 @@ export const HomeScreen = () => {
                     NEXT COURSE
                   </Text>
                   <NearestCourseCard
-                    title={summary.nearestCourse.title}
-                    startTime={summary.nearestCourse.startTime}
-                    gymZone={summary.nearestCourse.gymZone}
+                    title={courseDisplay.title}
+                    startTime={courseDisplay.startTime}
+                    gymZone={courseDisplay.gymZone}
                   />
                 </View>
               )

@@ -19,6 +19,8 @@ const PlanningScreen: React.FC<Props> = ({ navigation }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const { data: filteredSessions = [], isLoading, isError, error, refetch } = usePlanningSessions(currentDate, selectedCategory);
+  const sessionsToDisplay = isError ? [] : filteredSessions;
+
   useFocusEffect(
     useCallback(() => {
       refetch();
@@ -62,7 +64,7 @@ const PlanningScreen: React.FC<Props> = ({ navigation }) => {
         selectedDate={currentDate}
         onDateSelect={setCurrentDate}
       />
-      <PlanningContent sessions={filteredSessions} isLoading={isLoading} />
+      <PlanningContent sessions={sessionsToDisplay} isLoading={isLoading} />
     </AppScreen>
   );
 };

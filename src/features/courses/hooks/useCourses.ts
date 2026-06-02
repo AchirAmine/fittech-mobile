@@ -25,7 +25,7 @@ export const useReserveCourse = () => {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ['course', id] });
       queryClient.invalidateQueries({ queryKey: ['courses'] });
-      queryClient.invalidateQueries({ queryKey: ['sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['planningSessions'] });
     },
   });
 };
@@ -36,7 +36,7 @@ export const useCancelReservation = () => {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ['course', id] });
       queryClient.invalidateQueries({ queryKey: ['courses'] });
-      queryClient.invalidateQueries({ queryKey: ['sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['planningSessions'] });
     },
   });
 };
@@ -47,7 +47,7 @@ export const useJoinWaitingList = () => {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ['course', id] });
       queryClient.invalidateQueries({ queryKey: ['courses'] });
-      queryClient.invalidateQueries({ queryKey: ['sessions'] });
+      queryClient.invalidateQueries({ queryKey: ['planningSessions'] });
     },
   });
 };

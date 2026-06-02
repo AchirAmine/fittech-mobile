@@ -19,6 +19,16 @@ export interface CheckInResponse {
   };
 }
 
+const unwrapCheckInResponse = (response: CheckInResponse): { success: boolean; message?: string } => {
+  const result = response.data ?? response;
+
+  if (!result.success) {
+    throw new Error(result.message || response.message || 'Check-in failed.');
+  }
+
+  return result;
+};
+
 export interface SessionData {
   id: string;
   status: string;
@@ -40,8 +50,8 @@ export const checkInOutService = {
       API_ENDPOINTS.PRESENCE.SCAN_DOOR,
       data,
     );
-    
-    return response.data.data ?? response.data;
+
+    return unwrapCheckInResponse(response.data);
   },
 
   scanCoach: async (qrToken: string): Promise<{ success: boolean; message?: string }> => {

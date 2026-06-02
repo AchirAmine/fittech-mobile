@@ -29,6 +29,14 @@ export interface HomeSummary {
         startTime: string;
         endTime: string;
         gender: string | null;
+        courses?: Array<{
+          id: string;
+          title: string;
+          date?: string;
+          gymZone: string | null;
+          isReservedByMember?: boolean;
+          isWaitlistedByMember?: boolean;
+        }>;
       }>;
     }>;
   } | null;

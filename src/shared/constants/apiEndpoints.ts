@@ -25,6 +25,9 @@ export const API_ENDPOINTS = {
     WAITLIST: (id: string) => `/courses/${id}/waitlist`,
     MEMBER_PLANNING: (sport: string, day: string) => `/courses/member-planning/${sport}/${day}`,
   },
+  PLANNING: {
+    ALL: "/planning",
+  },
   MEMBER_EXTENDED: {
     HOME_SUMMARY: "/members/home-summary",
   },

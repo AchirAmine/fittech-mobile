@@ -1,12 +1,25 @@
 import { useQuery } from '@tanstack/react-query';
 import { planningService } from '../services/planningService';
 import { useAppSelector } from '@shared/hooks/useReduxHooks';
+
+const toDateKey = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export const usePlanningSessions = (date: Date, category: string = 'all') => {
   const user = useAppSelector((state) => state.auth.user);
   const gender = user?.gender;
+  const dateKey = toDateKey(date);
+
   return useQuery({
-    queryKey: ['sessions', date.toDateString(), category, gender],
+    queryKey: ['planningSessions', dateKey, category, gender],
     queryFn: () => planningService.getSessions(date, category, gender),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: 'always',
+    refetchOnReconnect: 'always',
   });
 };
