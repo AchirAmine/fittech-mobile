@@ -77,6 +77,7 @@ export const useBookSlot = () => {
 };
 export const usePayCoaching = () => {
   return useMutation({
-    mutationFn: (invitationId: string) => coachingService.payCoaching(invitationId),
+    mutationFn: ({ invitationId, paymentMethod }: { invitationId: string; paymentMethod: 'ONLINE' | 'AT_CLUB' }) =>
+      coachingService.payCoaching(invitationId, paymentMethod),
   });
 };

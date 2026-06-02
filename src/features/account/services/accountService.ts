@@ -17,5 +17,9 @@ export const accountService = {
   updateMedicalProfile: async (data: any): Promise<any> => {
     const response = await axiosClient.patch(API_ENDPOINTS.MEMBER.MEDICAL_PROFILE, data);
     return response.data.data;
+  },
+  getPolicy: async (): Promise<any> => {
+    const response = await axiosClient.get(API_ENDPOINTS.MEMBER.GET_POLICY);
+    return response.data.data;
   }
 };

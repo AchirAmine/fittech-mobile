@@ -83,14 +83,15 @@ export const PaymentDetailsScreen = () => {
   const handleConfirmPay = () => {
     const backendMethod = selectedMethod === 'credit_card' ? 'ONLINE' : 'AT_CLUB';
     if (plan.type === 'coaching') {
-      if (backendMethod === 'ONLINE') {
-        if (!plan.invitationId) {
-          showModal('error', 'Missing Data', 'Invitation ID is missing. Please try again from the coach profile.', hideModal);
-          return;
-        }
-        payCoaching(plan.invitationId, {
+      if (!plan.invitationId) {
+        showModal('error', 'Missing Data', 'Invitation ID is missing. Please try again from the coach profile.', hideModal);
+        return;
+      }
+      payCoaching(
+        { invitationId: plan.invitationId, paymentMethod: backendMethod },
+        {
           onSuccess: async (data: any) => {
-            if (data?.checkoutUrl) {
+            if (backendMethod === 'ONLINE' && data?.checkoutUrl) {
               const result = await WebBrowser.openAuthSessionAsync(
                 data.checkoutUrl,
                 'fittech://payment-callback'
@@ -110,20 +111,20 @@ export const PaymentDetailsScreen = () => {
                   hideModal
                 );
               }
+            } else {
+              showModal(
+                'success',
+                'Request Pending',
+                'Please visit the front desk to complete your payment. Once paid, your coach will be active.',
+                () => { hideModal(); navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD); }
+              );
             }
           },
           onError: (err: any) => {
             showModal('error', 'Payment Failed', err.response?.data?.message || 'Failed to initialize payment.', hideModal);
           }
-        });
-      } else {
-        showModal(
-          'success',
-          'Request Pending',
-          'Please visit the front desk to complete your payment. Once paid, your coach will be active.',
-          () => { hideModal(); navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD); }
-        );
-      }
+        }
+      );
       return;
     }
     subscribe(
@@ -140,7 +141,13 @@ export const PaymentDetailsScreen = () => {
                 'success',
                 'Payment Done!',
                 'Your subscription is being activated. It will be ready in a moment.',
-                () => { hideModal(); navigation.navigate(ROUTES.MAIN.MEMBERSHIP); }
+                () => { 
+                  hideModal(); 
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: ROUTES.MAIN.MY_PLANS }],
+                  });
+                }
               );
             } else if (result.type === 'cancel' || result.type === 'dismiss') {
               showModal(
@@ -155,7 +162,13 @@ export const PaymentDetailsScreen = () => {
               'success',
               'Subscription Pending',
               'Please visit the front desk to complete your payment and activate your plan.',
-              () => { hideModal(); navigation.navigate(ROUTES.MAIN.MEMBERSHIP); }
+              () => { 
+                hideModal(); 
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: ROUTES.MAIN.MY_PLANS }],
+                });
+              }
             );
           }
         },
@@ -208,14 +221,20 @@ export const PaymentDetailsScreen = () => {
           onPress={handleConfirmPay}
           loading={isPending}
           disabled={isPending}
-          style={[styles.confirmButton, { backgroundColor: colors.primaryMid, shadowColor: colors.black }]}
+          style={[
+            styles.confirmButton, 
+            { backgroundColor: colors.primaryMid, shadowColor: colors.black },
+            isPending && { justifyContent: 'center' }
+          ]}
           content={
-            <View style={styles.buttonPriceContainer}>
-              <Text style={[styles.buttonPriceText, { color: colors.white }]}>
-                {(appliedDiscount?.finalPrice ?? plan.price).toLocaleString()} {plan.currency}
-              </Text>
-              <Ionicons name="arrow-forward" size={18} color={colors.white} />
-            </View>
+            !isPending ? (
+              <View style={styles.buttonPriceContainer}>
+                <Text style={[styles.buttonPriceText, { color: colors.white }]}>
+                  {(appliedDiscount?.finalPrice ?? plan.price).toLocaleString()} {plan.currency}
+                </Text>
+                <Ionicons name="arrow-forward" size={18} color={colors.white} />
+              </View>
+            ) : undefined
           }
         />
       </View>

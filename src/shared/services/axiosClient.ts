@@ -67,7 +67,8 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: AxiosError<ApiErrorResponseData>) => {
-    if (error.response?.status === 401 && store) {
+    const isAuthRoute = error.config?.url?.includes('/auth/login') || error.config?.url?.includes('/auth/register');
+    if (error.response?.status === 401 && store && !isAuthRoute) {
       store.dispatch({ type: 'auth/logout' });
       return Promise.reject({
         message: 'Session expired. Please log in again.',

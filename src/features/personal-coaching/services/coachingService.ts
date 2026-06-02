@@ -63,8 +63,8 @@ export const coachingService = {
     const { data } = await axiosClient.post(API_ENDPOINTS.PERSONAL_COACHING.BOOK_SLOT(slotId));
     return data;
   },
-  payCoaching: async (invitationId: string) => {
-    const { data } = await axiosClient.post(API_ENDPOINTS.PERSONAL_COACHING.PAY_INVITATION(invitationId));
+  payCoaching: async (invitationId: string, paymentMethod: 'ONLINE' | 'AT_CLUB' = 'ONLINE') => {
+    const { data } = await axiosClient.post(API_ENDPOINTS.PERSONAL_COACHING.PAY_INVITATION(invitationId), { paymentMethod });
     return data.data;
   },
 };

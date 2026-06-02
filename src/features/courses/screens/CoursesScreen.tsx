@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, RefreshControl } from 'react-native';
 import { useTheme } from '@shared/hooks/useTheme';
 import { AppScreen, ErrorBanner } from '@shared/components/layout';
 import CategoryFilters, { Category } from '@shared/components/ui/CategoryFilters';
@@ -15,7 +15,14 @@ const COURSE_CATEGORIES: Category[] = [
 const CoursesScreen = () => {
   const { colors, isDark } = useTheme();
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [refreshing, setRefreshing] = useState(false);
   const { data: filteredCourses = [], isLoading, isError, error, refetch } = useCourses(activeCategory);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
 
   useFocusEffect(
     useCallback(() => {
@@ -27,6 +34,9 @@ const CoursesScreen = () => {
       safeArea={false}
       backgroundColor={isDark ? colors.background : '#F8F9FB'}
       contentContainerStyle={styles.scrollContent}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+      }
     >
       {isError && (
         <ErrorBanner 

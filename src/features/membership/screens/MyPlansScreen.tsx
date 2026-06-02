@@ -27,9 +27,9 @@ export const MyPlansScreen = () => {
   };
   const activeSubscriptions = (subscriptions || []).filter((s: Subscription) => s.status === 'ACTIVE');
   return (
-    <AppScreen 
+    <AppScreen
       safeArea={false}
-      errorMessage={isError ? (error as any)?.message || 'Failed to load your plans' : null} 
+      errorMessage={isError ? (error as any)?.message || 'Failed to load your plans' : null}
       isLoading={isLoading}
       backgroundColor={colors.background}
       contentContainerStyle={styles.scrollContent}
@@ -42,14 +42,14 @@ export const MyPlansScreen = () => {
               title={sub.offer.title}
               subtitle={`${(sub.offer.sports || []).map(s => s.sportType).join(' & ')}`}
               image={sub.offer.picture ? { uri: `${process.env.EXPO_PUBLIC_API_URL?.split('/api')[0]}/${sub.offer.picture}` } : undefined}
-              daysRemaining={sub.endDate ? Math.ceil((new Date(sub.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)).toString() : '0'}
+              daysRemaining={sub.endDate ? Math.max(0, Math.ceil((new Date(sub.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))).toString() : '0'}
               freeSessions={(sub.sportBalances || []).reduce((acc, bal) => acc + bal.remainingFreeSessions, 0)}
               courseSessions={(sub.sportBalances || []).reduce((acc, bal) => acc + bal.remainingCourseSessions, 0)}
               onPress={() => handleCheck(sub.id, sub.offer.title)}
             />
           ))}
-          <NeonButton 
-            title="Explore More Plans" 
+          <NeonButton
+            title="Explore More Plans"
             onPress={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)}
             style={styles.exploreMoreBtn}
             icon="compass-outline"
@@ -64,8 +64,8 @@ export const MyPlansScreen = () => {
           <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
             You haven't subscribed to any membership plan yet. Start your fitness journey today!
           </Text>
-          <NeonButton 
-            title="Explore Plans" 
+          <NeonButton
+            title="Explore Plans"
             onPress={() => navigation.navigate(ROUTES.MAIN.SUBSCRIPTION_OFFERS as any)}
             style={styles.exploreBtn}
             icon="compass-outline"
@@ -77,7 +77,6 @@ export const MyPlansScreen = () => {
 };
 const styles = StyleSheet.create({
   scrollContent: {
-    paddingBottom: 30,
     gap: 20,
   },
   exploreMoreBtn: {

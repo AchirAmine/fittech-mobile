@@ -22,7 +22,12 @@ export const useReserveCourse = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => coursesService.reserveCourse(id),
-    onSuccess: (_, id) => {
+    onSuccess: (data, id) => {
+      // Optimistically/Instantly update course status in Cache
+      queryClient.setQueryData(['course', id], (old: any) => {
+        if (!old) return old;
+        return { ...old, status: 'RESERVED' };
+      });
       queryClient.invalidateQueries({ queryKey: ['course', id] });
       queryClient.invalidateQueries({ queryKey: ['courses'] });
       queryClient.invalidateQueries({ queryKey: ['sessions'] });
@@ -33,7 +38,12 @@ export const useCancelReservation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => coursesService.cancelReservation(id),
-    onSuccess: (_, id) => {
+    onSuccess: (data, id) => {
+      // Optimistically/Instantly update course status in Cache
+      queryClient.setQueryData(['course', id], (old: any) => {
+        if (!old) return old;
+        return { ...old, status: 'AVAILABLE' }; // default status after cancelling
+      });
       queryClient.invalidateQueries({ queryKey: ['course', id] });
       queryClient.invalidateQueries({ queryKey: ['courses'] });
       queryClient.invalidateQueries({ queryKey: ['sessions'] });
@@ -44,7 +54,12 @@ export const useJoinWaitingList = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => coursesService.joinWaitingList(id),
-    onSuccess: (_, id) => {
+    onSuccess: (data, id) => {
+      // Optimistically/Instantly update course status in Cache
+      queryClient.setQueryData(['course', id], (old: any) => {
+        if (!old) return old;
+        return { ...old, status: 'WAITLISTED' };
+      });
       queryClient.invalidateQueries({ queryKey: ['course', id] });
       queryClient.invalidateQueries({ queryKey: ['courses'] });
       queryClient.invalidateQueries({ queryKey: ['sessions'] });

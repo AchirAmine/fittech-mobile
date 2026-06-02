@@ -1,10 +1,11 @@
-import React, { useLayoutEffect, useCallback } from 'react';
+import React, { useLayoutEffect, useCallback, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import { useNavigation, NavigationProp, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -50,6 +51,13 @@ export const NotificationScreen = () => {
   const { data, isLoading, refetch } = useNotifications();
   const { mutate: markAsRead } = useMarkNotificationRead();
   const { mutate: markAllAsRead } = useMarkAllNotificationsRead();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
 
   useFocusEffect(
     useCallback(() => {
@@ -78,7 +86,12 @@ export const NotificationScreen = () => {
   }
   return (
     <AppScreen safeArea={false} scrollable={false} backgroundColor={colors.background}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+        }
+      >
         {unreadCount > 0 && (
           <View
             style={[

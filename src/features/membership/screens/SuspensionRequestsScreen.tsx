@@ -15,8 +15,8 @@ import {
   useDirectSuspensions,
   useCreateDirectSuspension,
   useResumeDirectSuspension,
-  useSuspensionPolicy,
 } from '../hooks/useSuspension';
+import { useMemberPolicy } from '../../account/hooks/useMemberPolicy';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { hexToRGBA } from '@shared/constants/colors';
@@ -30,6 +30,17 @@ export const SuspensionRequestsScreen: React.FC<Props> = ({ route }) => {
 
   const [activeTab, setActiveTab] = useState<'DIRECT' | 'REQUESTS'>('DIRECT');
 
+  const handleTabChange = (tab: 'DIRECT' | 'REQUESTS') => {
+    setActiveTab(tab);
+    const newStart = new Date(Date.now() + (policy?.noticeDelayHours ?? 48) * 60 * 60 * 1000);
+    const newEnd = new Date(newStart.getTime() + (policy?.minimumDurationDays ?? 7) * 24 * 60 * 60 * 1000);
+    setStartDate(newStart);
+    setEndDate(newEnd);
+    setReason('');
+    setComment('');
+    setJustificationUri(null);
+  };
+
   const { data: requests, isLoading: isLoadingRequests, isError: isErrorRequests } = useSuspensionRequests(subscriptionId);
   const { data: directSuspensions, isLoading: isLoadingDirect, isError: isErrorDirect } = useDirectSuspensions(subscriptionId);
 
@@ -39,10 +50,11 @@ export const SuspensionRequestsScreen: React.FC<Props> = ({ route }) => {
   const { mutateAsync: createDirect, isPending: isCreatingDirect } = useCreateDirectSuspension();
   const { mutateAsync: resumeDirect, isPending: isResuming } = useResumeDirectSuspension();
 
-  const { data: policy } = useSuspensionPolicy();
+  const { data: memberPolicy } = useMemberPolicy();
+  const policy = memberPolicy?.subscriptionSuspensionPolicy;
 
-  const minNoticeMs = (policy?.minNoticeHours ?? 48) * 60 * 60 * 1000;
-  const minDurationMs = (policy?.minDurationDays ?? 7) * 24 * 60 * 60 * 1000;
+  const minNoticeMs = (policy?.noticeDelayHours ?? 48) * 60 * 60 * 1000;
+  const minDurationMs = (policy?.minimumDurationDays ?? 7) * 24 * 60 * 60 * 1000;
 
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -266,7 +278,6 @@ export const SuspensionRequestsScreen: React.FC<Props> = ({ route }) => {
 
       await createRequest({ subscriptionId, formData });
       setModalVisible(false);
-
       setReason('');
       setComment('');
       setJustificationUri(null);
@@ -305,13 +316,13 @@ export const SuspensionRequestsScreen: React.FC<Props> = ({ route }) => {
           </View>
           <Text style={[styles.infoText, { color: colors.textPrimary }]}>• <Text style={styles.boldText}>No admin approval</Text> is required.</Text>
           <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-            • Allowed up to <Text style={styles.boldText}>{policy?.maxSuspensionsPerYear ?? 2} time(s) per year</Text>.
+            • Allowed up to <Text style={styles.boldText}>{policy?.maximumSuspensionsPerYear ?? 2} time(s) per year</Text>.
           </Text>
           <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-            • Request must be submitted at least <Text style={styles.boldText}>{policy?.minNoticeHours ?? 48} hours</Text> in advance.
+            • Request must be submitted at least <Text style={styles.boldText}>{policy?.noticeDelayHours ?? 48} hours</Text> in advance.
           </Text>
           <Text style={[styles.infoText, { color: colors.textSecondary }]}>
-            • Duration must be between <Text style={styles.boldText}>{policy?.minDurationDays ?? 7} and {policy?.maxDurationDays ?? 30} days</Text>.
+            • Duration must be between <Text style={styles.boldText}>{policy?.minimumDurationDays ?? 7} and {policy?.maximumDurationDays ?? 30} days</Text>.
           </Text>
         </View>
       );
@@ -340,7 +351,7 @@ export const SuspensionRequestsScreen: React.FC<Props> = ({ route }) => {
       <View style={[styles.tabsContainer, { backgroundColor: colors.card }]}>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'DIRECT' && { backgroundColor: colors.primaryMid }]}
-          onPress={() => setActiveTab('DIRECT')}
+          onPress={() => handleTabChange('DIRECT')}
         >
           <Text style={[styles.tabText, activeTab === 'DIRECT' ? { color: colors.white } : { color: colors.textSecondary }]}>
             🔒 Standard Freeze
@@ -348,7 +359,7 @@ export const SuspensionRequestsScreen: React.FC<Props> = ({ route }) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'REQUESTS' && { backgroundColor: colors.primaryMid }]}
-          onPress={() => setActiveTab('REQUESTS')}
+          onPress={() => handleTabChange('REQUESTS')}
         >
           <Text style={[styles.tabText, activeTab === 'REQUESTS' ? { color: colors.white } : { color: colors.textSecondary }]}>
             📋 Special Request

@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Switch,
-  Alert,
+  Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
@@ -16,6 +15,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProfileStackParamList } from '@navigation/AccountNavigator';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { Modal } from '@shared/components/ui/Modal';
 
 type SettingsNavigation = NativeStackNavigationProp<ProfileStackParamList>;
 
@@ -34,9 +34,37 @@ type Section = {
   items: SectionItem[];
 };
 
+const CONTACT_CHANNELS = [
+  {
+    id: 'email',
+    label: 'Email',
+    value: 'support.fittech@gmail.com',
+    icon: 'mail-outline' as keyof typeof Ionicons.glyphMap,
+    color: '#06B6D4',
+    onPress: () => Linking.openURL('mailto:support@fittech.dz'),
+  },
+  {
+    id: 'phone',
+    label: 'Phone',
+    value: '+213 XX XXX XXXX',
+    icon: 'call-outline' as keyof typeof Ionicons.glyphMap,
+    color: '#10B981',
+    onPress: () => Linking.openURL('tel:+213XXXXXXXXX'),
+  },
+  {
+    id: 'whatsapp',
+    label: 'WhatsApp',
+    value: 'Chat with us',
+    icon: 'logo-whatsapp' as keyof typeof Ionicons.glyphMap,
+    color: '#25D366',
+    onPress: () => Linking.openURL('https://wa.me/213XXXXXXXXX'),
+  },
+];
+
 export const SettingsScreen = () => {
   const { colors, theme, setTheme } = useTheme();
   const navigation = useNavigation<SettingsNavigation>();
+  const [supportModalVisible, setSupportModalVisible] = useState(false);
 
   const themeOptions = [
     { id: 'light', color: '#4A7FD4', icon: 'sunny', label: 'Light' },
@@ -90,7 +118,7 @@ export const SettingsScreen = () => {
           description: 'Get help from our team',
           icon: 'chatbubble-ellipses-outline',
           iconBg: '#06B6D4',
-          onPress: () => Alert.alert('Support', 'Contact us at support@fittech.dz'),
+          onPress: () => setSupportModalVisible(true),
         },
         {
           id: 'terms',
@@ -98,7 +126,7 @@ export const SettingsScreen = () => {
           description: 'Read our terms and conditions',
           icon: 'document-text-outline',
           iconBg: '#64748B',
-          onPress: () => {},
+          onPress: () => Linking.openURL('https://fittech.dz/terms'),
         },
       ],
     },
@@ -117,7 +145,7 @@ export const SettingsScreen = () => {
               {section.title}
             </Text>
             <View style={[styles.sectionCard, { backgroundColor: colors.card }]}>
-              
+
               {section.title === 'Preferences' && (
                 <View style={[styles.themeSection, { borderBottomColor: colors.border }]}>
                   <View style={styles.themeHeader}>
@@ -138,7 +166,7 @@ export const SettingsScreen = () => {
                             onPress={() => setTheme(option.id as any)}
                             style={[
                               styles.themeSwatchWrapper,
-                              isActive && { borderColor: option.color }
+                              isActive && { borderColor: option.color },
                             ]}
                             activeOpacity={0.8}
                           >
@@ -148,10 +176,10 @@ export const SettingsScreen = () => {
                               )}
                             </View>
                           </TouchableOpacity>
-                          <Text style={{ 
-                            fontSize: 11, 
-                            fontFamily: Theme.Typography.fontFamily.medium, 
-                            color: isActive ? colors.textPrimary : colors.textSecondary 
+                          <Text style={{
+                            fontSize: 11,
+                            fontFamily: Theme.Typography.fontFamily.medium,
+                            color: isActive ? colors.textPrimary : colors.textSecondary,
                           }}>
                             {option.label}
                           </Text>
@@ -173,11 +201,7 @@ export const SettingsScreen = () => {
                   activeOpacity={0.7}
                 >
                   <View style={[styles.iconBox, { backgroundColor: item.iconBg + '25' }]}>
-                    <Ionicons
-                      name={item.icon}
-                      size={22}
-                      color={item.iconBg}
-                    />
+                    <Ionicons name={item.icon} size={22} color={item.iconBg} />
                   </View>
                   <View style={styles.rowText}>
                     <Text style={[styles.rowTitle, { color: colors.textPrimary }]}>
@@ -190,11 +214,7 @@ export const SettingsScreen = () => {
                   {item.rightElement ? (
                     item.rightElement
                   ) : (
-                    <Ionicons
-                      name="chevron-forward"
-                      size={18}
-                      color={colors.textMuted}
-                    />
+                    <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
                   )}
                 </TouchableOpacity>
               ))}
@@ -204,6 +224,49 @@ export const SettingsScreen = () => {
 
         <Text style={[styles.version, { color: colors.textMuted }]}>FitTech v1.0.0</Text>
       </ScrollView>
+
+      {/* ── Contact Support Modal ── */}
+      <Modal
+        visible={supportModalVisible}
+        onClose={() => setSupportModalVisible(false)}
+        title="Contact Support"
+      >
+        <View style={styles.supportIntro}>
+          <View style={[styles.supportIconWrap, { backgroundColor: '#06B6D4' + '20' }]}>
+            <Ionicons name="headset-outline" size={32} color="#06B6D4" />
+          </View>
+          <Text style={[styles.supportTitle, { color: colors.textPrimary }]}>
+            We're here to help!
+          </Text>
+          <Text style={[styles.supportSubtitle, { color: colors.textSecondary }]}>
+            Reach out through any of the channels below and our team will get back to you as soon as possible.
+          </Text>
+        </View>
+
+        <View style={styles.channelList}>
+          {CONTACT_CHANNELS.map((ch, idx) => (
+            <TouchableOpacity
+              key={ch.id}
+              style={[
+                styles.channelItem,
+                { backgroundColor: colors.cardSecondary },
+                idx < CONTACT_CHANNELS.length - 1 && { marginBottom: 10 },
+              ]}
+              onPress={ch.onPress}
+              activeOpacity={0.75}
+            >
+              <View style={[styles.channelIcon, { backgroundColor: ch.color + '20' }]}>
+                <Ionicons name={ch.icon} size={22} color={ch.color} />
+              </View>
+              <View style={styles.channelText}>
+                <Text style={[styles.channelLabel, { color: colors.textSecondary }]}>{ch.label}</Text>
+                <Text style={[styles.channelValue, { color: colors.textPrimary }]}>{ch.value}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+            </TouchableOpacity>
+          ))}
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -215,7 +278,6 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     paddingTop: 12,
   },
-
   sectionTitle: {
     fontSize: 12,
     fontFamily: Theme.Typography.fontFamily.semiBold,
@@ -229,7 +291,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginBottom: 24,
   },
-
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -257,7 +318,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: Theme.Typography.fontFamily.regular,
   },
-
   version: {
     textAlign: 'center',
     fontSize: 12,
@@ -295,5 +355,55 @@ const styles = StyleSheet.create({
     borderRadius: 17,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  supportIntro: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  supportIconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  supportTitle: {
+    fontSize: 18,
+    fontFamily: Theme.Typography.fontFamily.bold,
+    marginBottom: 6,
+  },
+  supportSubtitle: {
+    fontSize: 13,
+    fontFamily: Theme.Typography.fontFamily.regular,
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: 8,
+  },
+  channelList: {},
+  channelItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderRadius: 14,
+    gap: 12,
+  },
+  channelIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  channelText: { flex: 1 },
+  channelLabel: {
+    fontSize: 11,
+    fontFamily: Theme.Typography.fontFamily.medium,
+    marginBottom: 2,
+  },
+  channelValue: {
+    fontSize: 14,
+    fontFamily: Theme.Typography.fontFamily.semiBold,
   },
 });

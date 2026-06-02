@@ -55,7 +55,6 @@ const SessionList: React.FC<Props> = ({ sessions }) => {
 };
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 20,
     paddingHorizontal: 4,
   },
   timeGroup: {

@@ -38,6 +38,7 @@ interface AppScreenProps {
   onDismissError?: () => void;
   onDismissSuccess?: () => void;
   safeArea?: boolean;
+  refreshControl?: React.ReactElement;
 }
 export const AppScreen: React.FC<AppScreenProps> = ({
   children,
@@ -55,6 +56,7 @@ export const AppScreen: React.FC<AppScreenProps> = ({
   onDismissError,
   onDismissSuccess,
   safeArea = true,
+  refreshControl,
 }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
@@ -72,6 +74,7 @@ export const AppScreen: React.FC<AppScreenProps> = ({
       ]}
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
+      refreshControl={refreshControl}
     >
       <Animated.View 
         entering={FadeInDown.duration(400).springify()}

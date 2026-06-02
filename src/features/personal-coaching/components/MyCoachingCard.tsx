@@ -10,6 +10,7 @@ export type PersonalCoachingHomeState =
   | 'NO_COACHING'
   | 'INVITATION_PENDING'
   | 'ACCEPTED_NOT_PAID'
+  | 'PAYMENT_PENDING'
   | 'ACTIVE'
   | 'REJECTED'
   | 'EXPIRED'
@@ -33,7 +34,7 @@ function getStateConfig(state: PersonalCoachingHomeState, colors: any, isDark: b
         badgeColor: colors.success,
         badgeTextColor: '#FFFFFF',
         borderColor: colors.primaryMid,
-        headerAction: 'Dashboard',
+        headerAction: null,
         headerActionIcon: 'grid-outline' as const,
         headerActionColor: colors.primaryMid,
         showChat: true,
@@ -58,6 +59,17 @@ function getStateConfig(state: PersonalCoachingHomeState, colors: any, isDark: b
         headerAction: null,
         headerActionIcon: 'card-outline' as const,
         headerActionColor: colors.primaryMid,
+        showChat: false,
+      };
+    case 'PAYMENT_PENDING':
+      return {
+        badgeLabel: 'PAYMENT REVIEW',
+        badgeColor: colors.warning,
+        badgeTextColor: '#FFFFFF',
+        borderColor: colors.warning,
+        headerAction: null,
+        headerActionIcon: 'time-outline' as const,
+        headerActionColor: colors.warning,
         showChat: false,
       };
     default:
@@ -98,24 +110,26 @@ export const MyCoachingCard = ({ coach, planTitle, state, onPress, onDashboardPr
           {
             backgroundColor: colors.card,
             shadowColor: colors.shadow,
-            borderWidth: state === 'INVITATION_PENDING' || state === 'ACCEPTED_NOT_PAID' ? 1.5 : 0,
-            borderColor: state === 'INVITATION_PENDING' || state === 'ACCEPTED_NOT_PAID' ? hexToRGBA(config.borderColor, 0.4) : 'transparent',
+            borderWidth: state === 'INVITATION_PENDING' || state === 'ACCEPTED_NOT_PAID' || state === 'PAYMENT_PENDING' ? 1.5 : 0,
+            borderColor: state === 'INVITATION_PENDING' || state === 'ACCEPTED_NOT_PAID' || state === 'PAYMENT_PENDING' ? hexToRGBA(config.borderColor, 0.4) : 'transparent',
           }
         ]}
         activeOpacity={0.85}
         onPress={onPress}
       >
-        {(state === 'INVITATION_PENDING' || state === 'ACCEPTED_NOT_PAID') && (
+        {(state === 'INVITATION_PENDING' || state === 'ACCEPTED_NOT_PAID' || state === 'PAYMENT_PENDING') && (
           <View style={[styles.urgentBanner, { backgroundColor: hexToRGBA(config.badgeColor, isDark ? 0.15 : 0.08) }]}>
             <Ionicons
-              name={state === 'INVITATION_PENDING' ? 'time-outline' : 'alert-circle-outline'}
+              name={state === 'INVITATION_PENDING' ? 'time-outline' : state === 'PAYMENT_PENDING' ? 'hourglass-outline' : 'alert-circle-outline'}
               size={14}
               color={config.badgeColor}
             />
             <Text style={[styles.urgentBannerText, { color: config.badgeColor }]}>
               {state === 'INVITATION_PENDING'
                 ? 'You have a pending coaching invitation'
-                : 'Complete payment to activate your coaching'}
+                : state === 'PAYMENT_PENDING'
+                  ? 'Your cash payment is awaiting admin approval'
+                  : 'Complete payment to activate your coaching'}
             </Text>
           </View>
         )}

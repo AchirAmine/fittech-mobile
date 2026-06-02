@@ -27,7 +27,7 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     );
   }
   const { offer } = subscription;
-  const renewalDate = subscription.endDate ? new Date(subscription.endDate).toLocaleDateString() : 'N/A';
+  const renewalDate = subscription.endDate ? new Date(subscription.endDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
   return (
     <AppScreen scrollable={false} backgroundColor={colors.background}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -48,6 +48,24 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
             <Text style={[styles.renewalText, { color: hexToRGBA(colors.white, 0.8) }]}>Renews on {renewalDate}</Text>
           </View>
         </View>
+        {offer.sports && offer.sports.length > 0 && (
+          <>
+            <View style={styles.sectionHeader}>
+                <Ionicons name="fitness-outline" size={20} color={colors.primaryMid} />
+                <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Included Sports</Text>
+            </View>
+            <View style={styles.sportsContainer}>
+              {offer.sports.map((sport: any) => (
+                <View key={sport.sportType} style={[styles.sportCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                  <Text style={[styles.sportTitle, { color: colors.textPrimary }]}>{sport.sportType.toUpperCase()}</Text>
+                  <Text style={[styles.sportDetail, { color: colors.textSecondary }]}>
+                    {sport.freeSessions > 0 ? `${sport.freeSessions} Solo` : 'No Solo'} • {sport.coachSessions > 0 ? `${sport.coachSessions} Coach` : 'No Coach'}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
         <View style={styles.sectionHeader}>
             <Ionicons name="stats-chart" size={20} color={colors.primaryMid} />
             <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Session Balances</Text>
@@ -118,15 +136,17 @@ export const PlanDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
         <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitleLabel, { color: colors.textSecondary }]}>Manage Subscription</Text>
         </View>
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity 
-            style={[styles.suspendButton, { borderColor: colors.error + '40' }]}
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate(ROUTES.MAIN.SUSPENSION_REQUESTS, { subscriptionId: subscription.id, planName: offer.title })}
-          >
-            <Text style={[styles.suspendButtonText, { color: colors.error }]}>Suspend Plan</Text>
-          </TouchableOpacity>
-        </View>
+        {subscription.status === 'ACTIVE' && (
+          <View style={styles.actionsContainer}>
+            <TouchableOpacity
+              style={[styles.suspendButton, { borderColor: colors.error + '40' }]}
+              activeOpacity={0.7}
+              onPress={() => navigation.navigate(ROUTES.MAIN.SUSPENSION_REQUESTS, { subscriptionId: subscription.id, planName: offer.title })}
+            >
+              <Text style={[styles.suspendButtonText, { color: colors.error }]}>Suspend Plan</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </AppScreen>
   );
@@ -205,6 +225,25 @@ const styles = StyleSheet.create({
   sectionTitleLabel: {
     fontSize: 16,
     fontFamily: Theme.Typography.fontFamily.regular,
+  },
+  sportsContainer: {
+    gap: 12,
+  },
+  sportCard: {
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  sportTitle: {
+    fontSize: 16,
+    fontFamily: Theme.Typography.fontFamily.bold,
+  },
+  sportDetail: {
+    fontSize: 14,
+    fontFamily: Theme.Typography.fontFamily.medium,
   },
   statsContainer: {
     gap: 16,

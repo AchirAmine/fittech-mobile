@@ -26,11 +26,8 @@ const CourseDetailsScreen: React.FC<Props> = ({ route }) => {
   );
   if (isLoading) {
     return (
-      <AppScreen safeArea={false}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Loading course details...</Text>
-        </View>
+      <AppScreen isLoading={true} safeArea={false} backgroundColor={isDark ? colors.background : '#F8F9FB'}>
+        <View style={styles.loadingContainer} />
       </AppScreen>
     );
   }

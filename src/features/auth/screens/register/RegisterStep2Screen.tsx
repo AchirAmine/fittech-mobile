@@ -58,7 +58,13 @@ const RegisterStep2Screen: React.FC<Props> = ({ navigation, route }) => {
         <RegisterStepHeader
           currentStep={2}
           totalSteps={7}
-          onBack={() => navigation.goBack()}
+          onBack={() => {
+            if (navigation.canGoBack()) {
+              navigation.goBack();
+            } else {
+              navigation.navigate(ROUTES.AUTH.LOGIN as never);
+            }
+          }}
         />
       }
       footer={

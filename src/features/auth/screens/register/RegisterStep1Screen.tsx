@@ -25,7 +25,14 @@ const registerStep1Schema = object().shape({
     .matches(/^[a-zA-Z\s]+$/, 'Only letters and spaces allowed'),
   phone: string().trim()
     .required('Phone number is required')
-    .matches(/^0[567][0-9]{8}$/, 'Must start with 05, 06, or 07 followed by 8 digits'),
+    .test('valid-prefix', 'Must start with 05, 06, 07 or +213', (value) => {
+      if (!value) return false;
+      return /^(0[567]|\+213)/.test(value);
+    })
+    .test('valid-length', 'Incomplete phone number', (value) => {
+      if (!value) return false;
+      return /^(0[567]\d{8}|\+213[567]\d{8})$/.test(value);
+    }),
   dateOfBirth: string().trim().required('Date of birth is required')
     .test('is-valid-date', 'Invalid date', (value) => {
       if (!value) return false;
@@ -82,7 +89,7 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
     }
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.7,
@@ -132,7 +139,14 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
         <RegisterStepHeader
           currentStep={1}
           totalSteps={7}
-          onBack={() => navigation.goBack()}
+          onBack={() => {
+            if (navigation.canGoBack()) {
+              navigation.goBack();
+            } else {
+              // Fallback if no history exists (e.g. during dev refresh)
+              navigation.navigate(ROUTES.AUTH.LOGIN as never);
+            }
+          }}
         />
       }
       footer={
@@ -209,6 +223,7 @@ const RegisterStep1Screen: React.FC<Props> = ({ navigation }) => {
               onChangeText={onChange}
               value={value}
               keyboardType="phone-pad"
+              maxLength={value?.startsWith('+') ? 13 : 10}
               error={errors.phone?.message}
             />
           )}

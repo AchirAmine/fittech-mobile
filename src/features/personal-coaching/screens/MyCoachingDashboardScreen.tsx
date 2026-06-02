@@ -54,13 +54,21 @@ export const MyCoachingDashboardScreen = () => {
         />
         <View>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>NEXT SESSIONS</Text>
-          {coaching.sessions.map((session: any) => (
-            <NextSessionItem 
-              key={session.id}
-              day={session.day}
-              time={session.time}
-            />
-          ))}
+          {coaching.sessions && coaching.sessions.length > 0 ? (
+            coaching.sessions.map((session: any) => (
+              <NextSessionItem 
+                key={session.id}
+                day={session.day}
+                time={session.time}
+              />
+            ))
+          ) : (
+            <View style={styles.noSessionsContainer}>
+              <Text style={[styles.noSessionsText, { color: colors.textSecondary }]}>
+                You don't have any upcoming sessions.
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </AppScreen>
@@ -81,5 +89,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
+  },
+  noSessionsContainer: {
+    padding: 16,
+    backgroundColor: 'rgba(0,0,0,0.02)',
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  noSessionsText: {
+    fontSize: 14,
+    fontFamily: Theme.Typography.fontFamily.medium,
+    textAlign: 'center',
   }
 });

@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
     MEDICAL_PROFILE: "/members/medical-profile",
     NOTIFICATION_PREFERENCES: "/members/me/notification-preferences",
     PRIVACY_SETTINGS: "/members/me/privacy-settings",
+    GET_POLICY: "/member/policy",
   },
   COURSES: {
     LIST: "/courses",

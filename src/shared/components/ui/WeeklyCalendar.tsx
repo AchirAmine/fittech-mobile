@@ -4,21 +4,24 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/hooks/useTheme';
 import { Theme } from '@shared/constants/theme';
 import { hexToRGBA } from '@shared/constants/colors';
+
 interface Props {
   selectedDate: Date;
   onDateSelect: (date: Date) => void;
 }
-const WeeklyCalendar: React.FC<Props> = ({ 
-  selectedDate, 
-  onDateSelect, 
+
+const WeeklyCalendar: React.FC<Props> = ({
+  selectedDate,
+  onDateSelect,
 }) => {
   const { colors, isDark } = useTheme();
   const [viewDate, setViewDate] = React.useState(new Date(selectedDate));
+
   const weekDays = useMemo(() => {
     const days = [];
     const startOfWeek = new Date(viewDate);
     const day = startOfWeek.getDay();
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); 
+    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
     startOfWeek.setDate(diff);
     startOfWeek.setHours(0, 0, 0, 0);
     for (let i = 0; i < 7; i++) {
@@ -28,6 +31,7 @@ const WeeklyCalendar: React.FC<Props> = ({
     }
     return days;
   }, [viewDate]);
+
   const weekRangeText = useMemo(() => {
     const start = weekDays[0];
     const end = weekDays[6];
@@ -36,21 +40,30 @@ const WeeklyCalendar: React.FC<Props> = ({
     const startDate = start.getDate();
     const endDate = end.getDate();
     const today = new Date();
-    today.setHours(0,0,0,0);
-    const isThisWeek = weekDays.some(day => day.getTime() === today.getTime());
+    today.setHours(0, 0, 0, 0);
+    const isThisWeek = weekDays.some(d => d.getTime() === today.getTime());
     const label = isThisWeek ? 'This Week' : 'Selected Week';
     return `${label} · ${startMonth} ${startDate} – ${endMonth} ${endDate}`;
   }, [weekDays]);
+
+  const today = useMemo(() => {
+    const t = new Date();
+    t.setHours(0, 0, 0, 0);
+    return t;
+  }, []);
+
   const handlePrevWeek = () => {
     const prev = new Date(viewDate);
     prev.setDate(prev.getDate() - 7);
     setViewDate(prev);
   };
+
   const handleNextWeek = () => {
     const next = new Date(viewDate);
     next.setDate(next.getDate() + 7);
     setViewDate(next);
   };
+
   return (
     <View style={styles.container}>
       <View style={[styles.weekNavigator, { backgroundColor: isDark ? hexToRGBA(colors.white, 0.05) : colors.card }]}>
@@ -67,39 +80,42 @@ const WeeklyCalendar: React.FC<Props> = ({
       <View style={styles.daysRow}>
         {weekDays.map((day, index) => {
           const isSelected = day.toDateString() === selectedDate.toDateString();
+          const isToday = day.getTime() === today.getTime();
+          const isPast = day.getTime() < today.getTime();
           const dayName = day.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
           const dateNum = day.getDate();
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          const isPast = day.getTime() < today.getTime();
+
           return (
-            <TouchableOpacity 
+            <TouchableOpacity
               key={index}
-              onPress={() => !isPast && onDateSelect(day)}
-              disabled={isPast}
+              onPress={() => onDateSelect(day)}
               style={[
                 styles.dayCard,
                 { backgroundColor: isDark ? hexToRGBA(colors.white, 0.03) : colors.card },
+                isToday && !isSelected && { borderColor: colors.primary, borderWidth: 1.5 },
                 isSelected && { backgroundColor: colors.primary },
-                isPast && { opacity: 0.3 }
+                isPast && !isSelected && { opacity: 0.45 },
               ]}
               activeOpacity={0.7}
             >
               <Text style={[
-                styles.dayName, 
+                styles.dayName,
                 { color: colors.textMuted },
-                isSelected && { color: hexToRGBA(colors.white, 0.8) }
+                isSelected && { color: hexToRGBA(colors.white, 0.8) },
+                isToday && !isSelected && { color: colors.primary },
               ]}>
                 {dayName}
               </Text>
               <Text style={[
-                styles.dateNum, 
+                styles.dateNum,
                 { color: colors.textPrimary },
-                isSelected && { color: colors.white }
+                isSelected && { color: colors.white },
+                isToday && !isSelected && { color: colors.primary },
               ]}>
                 {dateNum}
               </Text>
               {isSelected && <View style={[styles.activeDot, { backgroundColor: colors.white }]} />}
+              {isToday && !isSelected && <View style={[styles.activeDot, { backgroundColor: colors.primary }]} />}
             </TouchableOpacity>
           );
         })}
@@ -107,6 +123,7 @@ const WeeklyCalendar: React.FC<Props> = ({
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
@@ -162,4 +179,5 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 });
+
 export default WeeklyCalendar;

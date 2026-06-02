@@ -75,17 +75,17 @@ export const RewardsScreen = () => {
         return (
           <View>
             {unlockedRewards.length === 0 ? (
-              <RewardsEmptyState 
+              <RewardsEmptyState
                 icon="lock-open-outline"
                 title="No Unlocked Offers Yet"
                 subtitle="You don't have enough stars to unlock any offers right now."
               />
             ) : (
               unlockedRewards.map(item => (
-                <RewardItem 
-                  key={item.id} 
-                  item={item as any} 
-                  type="unlocked" 
+                <RewardItem
+                  key={item.id}
+                  item={item as any}
+                  type="unlocked"
                   onPress={() => handleRedeemPress(item.id, item.name, item.starsRequired, item.endDate)}
                 />
               ))
@@ -96,7 +96,7 @@ export const RewardsScreen = () => {
         return (
           <View>
             {lockedRewards.length === 0 ? (
-              <RewardsEmptyState 
+              <RewardsEmptyState
                 icon="gift-outline"
                 title="No Promo Codes Available Yet"
                 subtitle="There are currently no locked offers in the system."
@@ -109,13 +109,13 @@ export const RewardsScreen = () => {
           </View>
         );
       case 'vouchers':
-        return null; 
+        return null;
       case 'history':
         const grouped = groupTransactionsByDate(transactions);
         return (
           <View>
             {transactions.length === 0 ? (
-              <RewardsEmptyState 
+              <RewardsEmptyState
                 icon="bar-chart-outline"
                 title="No Transaction History"
                 subtitle="You haven't earned or spent any stars yet."
@@ -136,11 +136,11 @@ export const RewardsScreen = () => {
   };
   return (
     <AppScreen safeArea={false} backgroundColor={colors.background}>
-      <ScrollView 
+      <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 20 }}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.vouchersCard, { backgroundColor: hexToRGBA(colors.primary, 0.1), borderColor: hexToRGBA(colors.primary, 0.2) }]}
           onPress={() => navigation.navigate(ROUTES.MAIN.MY_VOUCHERS as any)}
           activeOpacity={0.8}
@@ -162,7 +162,7 @@ export const RewardsScreen = () => {
         {renderContent()}
         <View style={{ height: 40 }} />
       </ScrollView>
-      <RedeemConfirmModal 
+      <RedeemConfirmModal
         visible={!!selectedReward}
         onClose={() => setSelectedReward(null)}
         rewardName={selectedReward?.name || ''}

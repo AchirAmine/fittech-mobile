@@ -74,10 +74,10 @@ export const HomeScreen = () => {
     profilePicture: getImageSource(summary.profilePicture),
   } : authUser;
   const hasActivePlan = summary?.hasActiveSubscription || false;
-  const activeSubscriptions = summary?.subscriptions?.filter((s: any) => s.status === 'ACTIVE') || [];
+  const activeSubscriptions = summary?.subscriptions?.filter((s: any) => s.status === 'ACTIVE' && (!s.endDate || new Date(s.endDate).getTime() > new Date().getTime())) || [];
 
   const coachingState = summary?.personalCoaching?.state;
-  const SHOW_COACHING_CARD_STATES = ['ACTIVE', 'INVITATION_PENDING', 'ACCEPTED_NOT_PAID'];
+  const SHOW_COACHING_CARD_STATES = ['ACTIVE', 'INVITATION_PENDING', 'ACCEPTED_NOT_PAID', 'PAYMENT_PENDING'];
   const showCoachingCard = coachingState && SHOW_COACHING_CARD_STATES.includes(coachingState) && summary?.personalCoaching?.coach;
 
   const coaching = showCoachingCard ? {
@@ -99,6 +99,8 @@ export const HomeScreen = () => {
     if (!coaching) return;
     if (coaching.state === 'ACTIVE') {
       navigation.navigate(ROUTES.MAIN.MY_COACHING_DASHBOARD as any);
+    } else if (coaching.state === 'PAYMENT_PENDING') {
+      return;
     } else {
       navigation.navigate(ROUTES.MAIN.COACH_PROFILE as any, { coachId: coaching.coach.id });
     }
@@ -151,7 +153,7 @@ export const HomeScreen = () => {
         backgroundColor: colors.background,
       },
     });
-  }, [navigation, user, colors]);
+  }, [navigation, user, colors, summary?.hasUnreadNotifications, isSummaryLoading]);
   return (
     <AppScreen
       safeArea={false}
@@ -161,6 +163,7 @@ export const HomeScreen = () => {
       {!isSummaryLoading && (
         <ScrollView
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
         >
           <View style={styles.mainContainer}>
             {!hasActivePlan && (
@@ -212,11 +215,11 @@ export const HomeScreen = () => {
                 {activeSubscriptions.length > 1 ? 'YOUR SUBSCRIPTIONS' : 'YOUR SUBSCRIPTION'}
               </Text>
               {hasActivePlan && activeSubscriptions.length > 0 ? (
-                <View>
+                <View style={{ marginHorizontal: -18 }}>
                   <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 16, paddingRight: 16 }}
+                    contentContainerStyle={{ gap: 16, paddingHorizontal: 18 }}
                     snapToInterval={CARD_WIDTH + 16}
                     decelerationRate="fast"
                     onScroll={handleScroll}
@@ -227,7 +230,7 @@ export const HomeScreen = () => {
                         <HomeActivePlan
                           title={sub.offer.title}
                           endDate={sub.endDate || undefined}
-                          onPress={() => navigation.navigate(ROUTES.MAIN.MY_PLANS as any)}
+                          onPress={() => navigation.navigate(ROUTES.MAIN.PLAN_DETAILS as any, { planId: sub.id, planName: sub.offer.title })}
                         />
                       </View>
                     ))}
